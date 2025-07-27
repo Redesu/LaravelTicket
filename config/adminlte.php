@@ -305,10 +305,10 @@ return [
             'text' => 'search',
             'topnav_right' => true,
         ],
-        [
-            'type' => 'fullscreen-widget',
-            'topnav_right' => true,
-        ],
+        // [
+        //     'type' => 'fullscreen-widget',
+        //     'topnav_right' => true,
+        // ],
 
         // Sidebar items:
         // [
@@ -328,16 +328,23 @@ return [
         //     'label_color' => 'success',
         // ],
         // ['header' => 'account_settings'],
+
         [
-            'text' => 'profile',
+            'text' => 'Usuários',
             'url' => 'admin/settings',
             'icon' => 'fas fa-fw fa-user',
         ],
         [
-            'text' => 'change_password',
+            'text' => 'Alterar Senha',
             'url' => 'admin/settings',
             'icon' => 'fas fa-fw fa-lock',
         ],
+        [
+            'text' => 'Chamados',
+            'url' => 'admin/settings',
+            'icon' => 'fas fa-fw fa-solid fa-ticket',
+        ],
+
         // [
         //     'text' => 'multilevel',
         //     'icon' => 'fas fa-fw fa-share',
