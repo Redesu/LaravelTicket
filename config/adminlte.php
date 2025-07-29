@@ -335,6 +335,17 @@ return [
             'icon' => 'fas fa-fw fa-user',
         ],
         [
+            'text' => 'Login',
+            'url' => 'login',
+            'icon' => 'fas fa-fw fa-user',
+        ],
+        [
+            'text' => 'Registrar',
+            'url' => 'register',
+            'icon' => 'fas fa-fw fa-user',
+        ],
+        
+        [
             'text' => 'Alterar Senha',
             'url' => 'admin/settings',
             'icon' => 'fas fa-fw fa-lock',
