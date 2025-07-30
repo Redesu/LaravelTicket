@@ -305,6 +305,11 @@ return [
             'text' => 'search',
             'topnav_right' => true,
         ],
+        [
+            'type' => 'darkmode-widget',
+            'text' => 'darkmode',
+            'topnav_right' => true,
+        ],
         // [
         //     'type' => 'fullscreen-widget',
         //     'topnav_right' => true,
@@ -335,25 +340,14 @@ return [
             'icon' => 'fas fa-fw fa-user',
         ],
         [
-            'text' => 'Login',
-            'url' => 'login',
-            'icon' => 'fas fa-fw fa-user',
-        ],
-        [
-            'text' => 'Registrar',
-            'url' => 'register',
-            'icon' => 'fas fa-fw fa-user',
-        ],
-        
-        [
             'text' => 'Alterar Senha',
             'url' => 'admin/settings',
             'icon' => 'fas fa-fw fa-lock',
         ],
         [
             'text' => 'Chamados',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-solid fa-ticket',
+            'url' => 'admin/chamados',
+            'icon' => 'fas fa-fw fa-solid fa-paperclip',
         ],
 
         // [

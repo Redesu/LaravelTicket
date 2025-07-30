@@ -18,22 +18,22 @@ class RegisterController extends Controller
 
     public function register(Request $request)
     {
-            Log::debug('Request data:', $request->all());
+        Log::debug('Request data:', $request->all());
 
-            $validated = $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed' 
+            'password' => 'required|string|min:8|confirmed'
         ]);
 
         $user = User::create([
-            'name'=> $validated['name'],
-            'email'=> $validated['email'],
-            'password'=> bcrypt($validated['password']),
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => bcrypt($validated['password']),
         ]);
 
         Auth::login($user);
 
-        return redirect()->route('')->with('success','');
+        return redirect('/')->with('success', 'Registration successful!');
     }
 }
