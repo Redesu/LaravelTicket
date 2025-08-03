@@ -1,6 +1,7 @@
-@extends('adminlte::page', ['iFrameEnabled' => true])
+@extends('layouts.admin', ['iFrameEnabled' => true])
 
-@section('title', 'Dashboard')
+
+@section('title', 'Chamados')
 
 @section(section: 'content_header')
 <h1>Dashboard</h1>
@@ -8,6 +9,7 @@
 
 @section('content')
 <p>Welcome to this beautiful admin panel.</p>
+
 @stop
 
 @section('css')

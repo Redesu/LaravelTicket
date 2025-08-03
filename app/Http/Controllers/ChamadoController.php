@@ -6,6 +6,11 @@ use Illuminate\Http\Request;
 
 class ChamadoController extends Controller
 {
+
+    public function showChamadosForm()
+    {
+        return view('admin.chamados');
+    }
     /**
      * Display a listing of the resource.
      */
