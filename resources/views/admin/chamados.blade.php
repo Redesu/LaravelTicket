@@ -1,13 +1,13 @@
 @extends('layouts.admin')
 
-@section('title', 'Dashboard')
+@section('title', 'Chamados')
 
 @section(section: 'content_header')
 <h1>Chamados</h1>
 @stop
 
 @section('content')
-<p>Welcome to this beautiful chamados panel.</p>
+<p></p>
 
 @stop
 

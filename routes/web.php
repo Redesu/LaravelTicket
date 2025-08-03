@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ChamadoController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -18,4 +19,5 @@ Route::post('/register', [RegisterController::class, 'register']);
 
 Route::post('/logout', [LogoutController::class, 'logout']);
 
-Route::get('/admin/chamados', [ChamadoController::class, 'showChamadosForm'])->name('admin.chamados');
+Route::get('admin/dashboard', [DashboardController::class, 'showDashboard'])->name('admin.dashboard');
+Route::get('/admin/chamados', [ChamadoController::class, 'index'])->name('admin.chamados');

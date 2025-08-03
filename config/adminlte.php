@@ -528,7 +528,7 @@ return [
 
     'iframe' => [
         'default_tab' => [
-            'url' => '/admin/chamados',
+            'url' => '/admin/dashboard',
             'title' => null,
         ],
         'buttons' => [
