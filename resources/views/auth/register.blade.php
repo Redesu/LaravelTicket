@@ -4,7 +4,7 @@
 @section('auth_header', __('adminlte::adminlte.register_message'))
 
 @section('auth_body')
-<form action="{{ route(('register')) }}" method="post">
+<form action="{{ route('register') }}" method="post">
     @csrf
 
     {{-- Name field --}}

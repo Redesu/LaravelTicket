@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use DB;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -50,7 +51,7 @@ class ChamadoController extends Controller
 
             return response()->json($chamados);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
 
@@ -89,7 +90,7 @@ class ChamadoController extends Controller
                 'message' => 'Erro de validação',
                 'errors' => $e->errors()
             ], 422);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Erro ao criar chamado',
@@ -98,44 +99,185 @@ class ChamadoController extends Controller
         }
     }
 
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function updateChamado(Request $request): JsonResponse
     {
-        //
+        try {
+            $request->validade([
+                'Titulo' => 'required|string|max:255',
+                'Descricao' => 'required|string|max:100',
+                'Prioridade' => 'required|string|max:100',
+                'categoria_id' => 'required|numeric|min:1',
+                'departamento_id' => 'required|numeric|min:1'
+            ]);
+
+            $affected = DB::table('chamados')
+                ->where('id', $request->ID)
+                ->update([
+                    'titulo' => $request->Titulo,
+                    'descricao' => $request->Descricao,
+                    'prioridade' => $request->Prioridade,
+                    'categoria_id' => $request->categoria_id,
+                    'departamento_id' => $request->departamento_id
+
+                ]);
+
+            if ($affected > 0) {
+                $chamado = DB::table('chamados')->where('id', $request->ID)->first();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Chamado atualizado com sucesso',
+                    'data' => $chamado
+                ], 200);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Chamado não encontrado'
+                ], 404);
+            }
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro de validação',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao criar chamado',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function deleteChamado(Request $request): JsonResponse
     {
-        //
+        try {
+            $request->validate([
+                'ID' => 'required|numeric|exists:chamados,id'
+            ]);
+
+            $affected = DB::table('chamados')
+                ->where('id', $request->ID)
+                ->delete();
+
+            if ($affected > 0) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Chamado deletado com sucesso'
+                ], 200);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Chamado não encontrado'
+                ], 404);
+            }
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao deletar chamado',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function getChamado($id): JsonResponse
     {
-        //
+        try {
+            $chamado = DB::table('chamados')->where('id', $id)->first();
+
+            if ($chamado) {
+                return response()->json($chamado);
+            } else {
+                return response()->json(['error' => 'Chamado não encontrado'], 404);
+            }
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao deletar chamado',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function getChamadoByDepartamento($departamento): JsonResponse
     {
-        //
+        try {
+            $chamados = DB::table('chamados')
+                ->where('departamento', $departamento)
+                ->get();
+
+            return response()->json($chamados);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao deletar chamado',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function getEstatisticas(): JsonResponse
     {
-        //
+        try {
+            $stats = [
+                'total_chamados' => DB::table('chamados')->count(),
+                'departamentos' => DB::table('departamentos')->count(),
+                'mediaChamados' => DB::table('chamados')->avg('id'),
+            ];
+            return response()->json($stats);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function searchChamados(Request $request): JsonResponse
+    {
+        try {
+            $query = DB::table('chamados');
+
+            if ($request->has('titulo')) {
+                $query->where('titulo', 'LIKE', '%' . $request->titulo . '%');
+            }
+
+            if ($request->has('descricao')) {
+                $query->where('descricao', 'LIKE', '%' . $request->descricao . '%');
+            }
+
+            if ($request->has('comentarios')) {
+                $query->where('comentarios', 'LIKE', '%' . $request->comentarios . '%');
+            }
+
+            if ($request->has('departamento')) {
+                $query->where('departamento', $request->departamento);
+            }
+
+            if ($request->has('status')) {
+                $query->where('status', $request->status);
+            }
+
+
+            if ($request->has('prioridade')) {
+                $query->where('prioridade', $request->titulo);
+            }
+
+            if ($request->has('from_date')) {
+                $query->where('created_at', '>=', $request->from_date);
+            }
+
+            if ($request->has('to_date')) {
+                $query->where('created_at', '<=', $request->to_date);
+            }
+
+            $chamados = $query->orderBy('titulo')->get();
+
+            return response()->json($chamados);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }
+
