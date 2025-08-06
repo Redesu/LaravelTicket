@@ -1,9 +1,10 @@
 @extends('layouts.admin')
 
-@section('css')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css">
 
+@section('css')
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap4.min.css">
 @endsection
 
 @section('title', 'Chamados')
@@ -31,10 +32,10 @@
 
     <div class="row mb-3">
         <div class="col-12">
-            <button type="button" class="btn btn-success" onclick="refreshGrid()">
+            <button type="button" class="btn btn-success" id="refreshBtn">
                 <i class="fas fa-sync"></i> Recarregar
             </button>
-            <button type="button" class="btn btn-warning" onclick="exportData()">
+            <button type="button" class="btn btn-warning" id="exportBtn">
                 <i class="fas fa-download"></i> Exportar
             </button>
         </div>
@@ -42,295 +43,182 @@
 
     <!--- Grid --->
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-tools">
-                        <span class="badge badge-primary" id="totalEmployees">0</span>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <!-- jsGrid vai ser inicalizado aqui -->
-                    <div id="jsGrid"></div>
-                </div>
-            </div>
-        </div>
+    <div class="table-responsive">
+        <table id="dataTable" class="table table-bordered table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Titulo</th>
+                    <th>Descrição</th>
+                    <th>Status</th>
+                    <th>Prioridade</th>
+                    <th>Categoria</th>
+                    <th>Departamento</th>
+                    <th>Data Abertura</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data will be loaded via AJAX -->
+            </tbody>
+        </table>
     </div>
 
     @stop
 
-    @section('css')
-    <style>
-        .jsgrid-button {
-            width: 16px;
-            height: 16px;
-            margin: 2px;
-        }
-
-        .jsgrid-insert-button:before {
-            content: "➕";
-        }
-
-        .jsgrid-update-button:before {
-            content: "✓";
-        }
-
-        .jsgrid-delete-button:before {
-            content: "✖";
-        }
-
-        .jsgrid-edit-button:before {
-            content: "✎";
-        }
-
-        .jsgrid-cancel-button:before {
-            content: "✖";
-        }
-
-        /* Alternative using Font Awesome if available */
-        .jsgrid-insert-button {
-            background: none;
-            border: none;
-            color: #28a745;
-            font-size: 14px;
-        }
-
-        .jsgrid-insert-button:after {
-            font-family: "Font Awesome 5 Free";
-            content: "\f067";
-            /* fa-plus */
-            font-weight: 900;
-        }
-
-        .jsgrid-edit-button:after {
-            font-family: "Font Awesome 5 Free";
-            content: "\f044";
-            /* fa-edit */
-            font-weight: 900;
-        }
-
-        .jsgrid-delete-button:after {
-            font-family: "Font Awesome 5 Free";
-            content: "\f1f8";
-            /* fa-trash */
-            font-weight: 900;
-        }
-
-        .jsgrid-update-button:after {
-            font-family: "Font Awesome 5 Free";
-            content: "\f00c";
-            /* fa-check */
-            font-weight: 900;
-        }
-
-        .jsgrid-cancel-button:after {
-            font-family: "Font Awesome 5 Free";
-            content: "\f00d";
-            /* fa-times */
-            font-weight: 900;
-        }
-    </style>
-    @stop
-
     @section('js')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
-
+    <!-- DataTables JS - Move to scripts section -->
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 
     <script>
         $(document).ready(function () {
+            console.log('Initializing DataTables...');
 
             const currentUserId = {{ auth()->user()->id ?? 'null'}};
 
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-
-                }
-            });
-
-            $("#jsGrid").jsGrid({
-                width: "100%",
-                height: "500px",
-                inserting: true,
-                editing: true,
-                sorting: true,
-                paging: true,
-                pageSize: 15,
-                pageButtonCount: 5,
-                deleteConfirm: "Tem certeza que deseja excluir?",
-
-                controller: {
-                    loadData: function (filter) {
-                        return $.ajax({
-                            url: "{{  route('api.chamados.get') }}",
-                            method: "GET",
-                            data: filter,
-                            dataType: "json"
-                        }).done(function (data) {
-                            console.log("Resposta da API:", data);
-                            updateChamadoCount(data.length);
-                        }).fail(function (xhr, status, error) {
-                            console.error("Erro ao carregar dados:", error);
-                            showAlert('Erro ao carregar os dados dos chamados', 'danger');
-                        });
+            var table = $('#dataTable').DataTable({
+                responsive: true,
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('api.chamados.get') }}",
+                    type: "GET",
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
-
-                    insertItem: function (item) {
-                        console.log("item: ", item);
-                        return $.ajax({
-                            url: "{{ route('api.chamados.post') }}",
-                            method: "POST",
-                            data: item,
-                            dataType: "json"
-                        }).done(function (response) {
-                            if (response.success) {
-                                showAlert('Chamado criado com sucesso', 'success');
-                                refreshGrid();
-                                return response.data;
-                            }
-                        }).fail(function (xhr, status, error) {
-                            console.error("Erro ao criar chamado:", error);
-                            showAlert('Erro ao criar o chamado', 'danger');
-                        })
-                    },
-
-                    updateItem: function (item) {
-
-                        return $.ajax({
-                            url: "{{ route('api.chamados.put') }}",
-                            method: "PUT",
-                            data: item,
-                            dataType: "json"
-                        }).done(function (respone) {
-                            if (respone.success) {
-                                showAlert('Chamado atualizado com sucesso', 'success');
-                                return respone.data;
-                            }
-                        }).fail(function (xhr, status, error) {
-                            console.error("Erro ao atualizar chamado:", error);
-                            showAlert('Erro ao atualizar o chamado', 'danger');
-                        })
-                    },
-                    deleteItem: function (item) {
-                        item.user_id = currentUserId; // Adiciona o ID do usuário ao item
-                        return $.ajax({
-                            url: "{{ route('api.chamados.delete') }}",
-                            method: "DELETE",
-                            data: item,
-                            dataType: "json"
-                        }).done(function (response) {
-                            if (response.success) {
-                                showAlert('Chamado excluído com sucesso', 'success');
-                                return response.data;
-                            }
-                        }).fail(function (xhr, status, error) {
-                            console.error("Erro ao excluir chamado:", error);
-                            showAlert('Erro ao excluir o chamado', 'danger');
-                        });
+                    error: function (xhr, error, thrown) {
+                        console.log('AJAX Error:', xhr, error, thrown);
+                        console.log('Response Text:', xhr.responseText);
                     }
                 },
-
-                fields: [
-                    { name: 'id', title: "ID", type: "number", width: 100, inserting: false, editing: false },
-                    { name: 'user_id', type: "hidden", inserting: false, editing: false, visible: false },
-                    { name: 'titulo', title: "Título", type: "text", width: 150, validate: "required" },
-                    { name: 'descricao', title: "Descrição", type: "text", width: 400, validate: "required" },
+                columns: [
+                    { data: 'id', name: 'id' },
+                    { data: 'titulo', name: 'titulo' },
+                    { data: 'descricao', name: 'descricao' },
+                    { data: 'status', name: 'status' },
+                    { data: 'prioridade', name: 'prioridade' },
+                    { data: 'categoria', name: 'categoria' },
+                    { data: 'departamento', name: 'departamento' },
                     {
-                        name: 'status', title: "Status", type: "select", items: [
-                            { Name: "ABERTO", Id: "Aberto" },
-                            { Name: "EM ANDAMENTO", Id: "EM ANDAMENTO" },
-                            { Name: "FECHADO", Id: "FECHADO" }
-                        ], valueField: "Id", textField: "Name", width: 120, validate: "required"
-                    },
-                    {
-                        name: 'prioridade', title: "Prioridade", type: "select", items: [
-                            { Name: "BAIXA", Id: "BAIXA" },
-                            { Name: "MEDIA", Id: "Média" },
-                            { Name: "ALTA", Id: "ALTA" },
-                            { Name: "CRITICA", Id: "CRITICA" }
-                        ], valueField: "Id", textField: "Name", width: 120, validate: "required"
-                    },
-                    {
-                        name: 'categoria_id', title: "Categoria", type: "select", items: [
-                            { Name: "", Id: "" },
-                            { Name: "SUPORTE", Id: 1 },
-                            { Name: "DUVIDAS", Id: 2 },
-                        ], valueField: "Id", textField: "Name", width: 120, validate: "required"
-                    },
-                    {
-                        name: 'departamento_id', title: "Departamento", type: "select", items: [
-                            { Name: "", Id: "" },
-                            { Name: "SUPORTE", Id: 1 },
-                            { Name: "DESENVOLVIMENTO", Id: 2 }
-                        ], valueField: "Id", textField: "Name", width: 120, validate: "required"
-                    },
-                    {
-                        name: "created_at", title: "Data Abertura", type: "text", width: 120, inserting: false, editing: false,
-                        itemTemplate: function (value) {
-                            return value ? new Date(value).toLocaleDateString() : '';
+                        data: 'data_abertura',
+                        name: 'data_abertura',
+                        render: function (data, type, row) {
+                            if (data && data !== null) {
+                                return new Date(data).toLocaleDateString('pt-BR');
+                            }
+                            return '';
                         }
                     },
-                    { type: "control", width: 50 }
-                ]
+                    {
+                        data: null,
+                        name: 'actions',
+                        render: function (data, type, row) {
+                            let actions = `<button class="btn btn-info btn-sm view-btn" data-id="${row.id}"><i class="fas fa-eye"></i> Ver</button> `;
+                            if (currentUserId) {
+                                actions += `<button class="btn btn-primary btn-sm edit-btn" data-id="${row.id}"><i class="fas fa-edit"></i> Editar</button> `;
+                                actions += `<button class="btn btn-danger btn-sm delete-btn" data-id="${row.id}"><i class="fas fa-trash"></i> Excluir</button>`;
+                            }
+                            return actions;
+                        },
+                        orderable: false,
+                        searchable: false
+                    }
+                ],
+                pageLength: 15,
+                lengthMenu: [[15, 25, 50, -1], [15, 25, 50, "Todos"]],
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/pt-BR.json'
+                },
+                initComplete: function () {
+                    console.log('DataTables initialized successfully');
+                },
+                drawCallback: function (settings) {
+                    console.log('DataTables draw completed, rows:', settings.fnRecordsDisplay());
+                }
             });
-            $("#jsGrid").jsGrid("loadData");
+
+            $('#dataTable').on('click', '.edit-btn', function () {
+                var id = $(this).data('id');
+                var rowData = table.row($(this).closest('tr')).data();
+                console.log('Edit button clicked for ID:', id, rowData);
+            });
+
+            $('#dataTable').on('click', '.view-btn', function () {
+                var id = $(this).data('id');
+                var rowData = table.row($(this).closest('tr')).data();
+                console.log('View button clicked for ID:', id, rowData);
+            });
+
+            $('#dataTable').on('click', '.delete-btn', function () {
+                var id = $(this).data('id');
+                if (confirm('Tem certeza que deseja excluir este chamado?')) {
+                    $.ajax({
+                        url: `/api/chamados/${id}`,
+                        type: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function (result) {
+                            table.ajax.reload();
+                            showAlert('Chamado excluído com sucesso', 'success');
+                        },
+                        error: function (xhr, status, error) {
+                            console.log('Delete error:', xhr, status, error);
+                            showAlert('Erro ao excluir o chamado', 'danger');
+                        }
+                    });
+                }
+            });
+
+            $('#refreshBtn').on('click', function () {
+                table.ajax.reload();
+                showAlert('Grid recarregado com sucesso', 'success');
+            });
+
+            $('#exportBtn').on('click', function () {
+                $.ajax({
+                    url: "{{ route('api.chamados.get') }}",
+                    method: "GET",
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function (data) {
+                        let csv = 'ID;Título;Descrição;Status;Prioridade;Categoria;Departamento;Data Abertura\n';
+
+                        const records = data.data || data;
+
+                        records.forEach(function (chamado) {
+                            csv += `${chamado.id};${chamado.titulo};${chamado.descricao};${chamado.status};${chamado.prioridade};${chamado.categoria || chamado.categoria_id};${chamado.departamento || chamado.departamento_id};${chamado.data_abertura || chamado.created_at}\n`;
+                        });
+
+                        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'chamados.csv';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                        showAlert('Dados exportados com sucesso', 'success');
+                    },
+                    error: function (xhr, status, error) {
+                        console.log('Export error:', xhr, status, error);
+                        showAlert('Erro ao exportar os dados', 'danger');
+                    }
+                });
+            });
         });
 
-        function refreshGrid() {
-            $("#jsGrid").jsGrid("loadData");
-            showAlert('Lista de chamados atualizada', 'info');
-        }
-
-        function updateChamadoCount(count) {
-
-            $("#totalChamados").text(count + ' Chamados');
-        }
-
         function showAlert(message, type) {
-            const alertHtml = `
-                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                    ${message}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                `;
-            $('body').append(alertHtml);
-            setTimeout(function () {
-                $('.alert').alert('close');
-            }, 3000);
+            if (typeof toastr !== 'undefined') {
+                toastr[type](message);
+            } else {
+                alert(message);
+            }
         }
-
-        function exportData() {
-            $.ajax({
-                url: "{{ route('api.chamados.get') }}",
-                method: "GET",
-                dataType: "json",
-                success: function (data) {
-                    let csv = 'ID;Título;Descrição;Departamento;Prioridade;Data Abertura\n';
-                    data.forEach(function (chamado) {
-                        csv += `${chamado.id};${chamado.titulo};${chamado.descricao};${chamado.departamento};${chamado.prioridade};${chamado.data_abertura}\n`;
-                    });
-
-                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'chamados.csv';
-                    a.click();
-                    URL.revokeObjectURL(url);
-                    showAlert('Dados exportados com sucesso', 'success');
-                },
-                error: function () {
-                    showAlert('Erro ao exportar os dados', 'danger');
-                }
-            })
-        }
-
     </script>
 
     @stop
