@@ -49,7 +49,8 @@
                     render: function (data, type, row) {
                         let actions = `<button class="btn btn-info btn-sm view-btn" data-id="${row.id}"><i class="fas fa-eye"></i> Ver</button> `;
                         if (currentUserId) {
-                            actions += `<button class="btn btn-primary btn-sm edit-btn" data-id="${row.id}"><i class="fas fa-edit"></i> Editar</button> `;
+                            actions += `<button class="btn btn-primary btn-sm edit-btn" data-bs-toggle="modal" data-bs-target="#editChamadoModal"
+                id="edit-btn"><i class="fas fa-edit"></i> Editar</button> `;
                             actions += `<button class="btn btn-danger btn-sm delete-btn" data-id="${row.id}"><i class="fas fa-trash"></i> Excluir</button>`;
                         }
                         return actions;
@@ -187,29 +188,19 @@
         });
 
         $(document).on('click', '.edit-btn', function () {
-            const userId = $(this).data('id');
-            console.log("Submitting create form to ", "{{ route('api.chamados.post') }}");
-            console.log('Form data:', $(this).serialize());
+            const id = $(this).data('id');
+            const rowData = table.row($(this).closest('tr')).data();
+            console.log('Edit button clicked for ID:', id, rowData);
 
+            $('#editChamadoId').val(rowData.id);
+            $('#editTitulo').val(rowData.titulo);
+            $('#editDescricao').val(rowData.descricao);
+            $('#editPrioridade').val(rowData.prioridade_id || rowData.prioridade);
+            $('#editDepartamento').val(rowData.departamento_id || rowData.departamento);
+            $('#editCategoria').val(rowData.categoria_id || rowData.categoria);
 
-            $.ajax({
-                url: "{{ url('api.chamados.put') }}",
-                method: "GET",
-                success: function (response) {
-                    $('#editChamadoId').val(response.data.id);
-                    $('#editTitulo').val(response.data.titulo);
-                    $('#editDescricao').val(response.data.descricao);
-                    $('#editStatus').val(response.data.status);
-                    $('#editPrioridade').val(response.data.prioridade);
-                    $('#editCategoria').val(response.data.categoria_id);
-                    $('#editDepartamento').val(response.data.departamento_id);
-                    $('#editChamadosModal').modal('show');
-                },
-                error: function (xhr, status, error) {
-                    console.log('Edit error:', xhr, status, error);
-                    showAlert('Erro ao carregar os dados para edição', 'danger');
-                }
-            });
+            $('#editChamadoModal').modal('show');
+            $('#editChamadoForm').off('submit'); // Remove previous submit handler
         });
 
         $('#editChamadosForm').on('submit', function (e) {

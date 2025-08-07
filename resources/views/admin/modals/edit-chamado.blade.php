@@ -26,10 +26,10 @@
                         <label for="editPrioridade" class="form-label">Prioridade</label>
                         <select class="form-select" id="editPrioridade" name="prioridade" required>
                             <option value="" disabled selected>Selecione a prioridade</option>
-                            <option value="baixa">Baixa</option>
-                            <option value="media">Média</option>
-                            <option value="alta">Alta</option>
-                            <option value="urgente">Urgente</option>
+                            <option value="Baixa">Baixa</option>
+                            <option value="Média">Média</option>
+                            <option value="Alta">Alta</option>
+                            <option value="Urgente">Urgente</option>
                         </select>
                     </div>
 
@@ -37,8 +37,8 @@
                         <label for="editDepartamento" class="form-label">Departamento</label>
                         <select class="form-select" id="editDepartamento" name="departamento" required>
                             <option value="" disabled selected>Selecione o departamento</option>
-                            <option value="ti">Suporte</option>
-                            <option value="desenvolvimento">Desenvolvimento</option>
+                            <option value="SUPORTE">SUPORTE</option>
+                            <option value="DESENVOLVIMENTO">DESENVOLVIMENTO</option>
                         </select>
                     </div>
 
@@ -46,8 +46,8 @@
                         <label for="editCategoria" class="form-label">Categoria</label>
                         <select class="form-select" id="editCategoria" name="categoria" required>
                             <option value="" disabled selected>Selecione a categoria</option>
-                            <option value="suporte">Suporte</option>
-                            <option value="correcao">Correção</option>
+                            <option value="SUPORTE">SUPORTE</option>
+                            <option value="CORREÇÃO">CORREÇÃO</option>
                         </select>
                     </div>
                 </div>
