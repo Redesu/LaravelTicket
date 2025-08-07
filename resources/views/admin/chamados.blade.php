@@ -32,6 +32,10 @@
 
     <div class="row mb-3">
         <div class="col-12">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createChamadoModal"
+                id="createTicketBtn">
+                <i class="fas fa-plus"></i> Criar Chamado
+            </button>
             <button type="button" class="btn btn-success" id="refreshBtn">
                 <i class="fas fa-sync"></i> Recarregar
             </button>
@@ -39,6 +43,21 @@
                 <i class="fas fa-download"></i> Exportar
             </button>
         </div>
+
+        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <img src="..." class="rounded mr-2" alt="...">
+                <strong class="mr-auto">Bootstrap</strong>
+                <small class="text-muted">just now</small>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body">
+                See? Just like this.
+            </div>
+        </div>
+
     </div>
 
     <!--- Grid --->
@@ -62,15 +81,15 @@
                 <!-- Data will be loaded via AJAX -->
             </tbody>
         </table>
+
+
     </div>
+    @include('admin.modals.create-chamado')
+    @include('admin.modals.edit-chamado')
 
     @stop
 
     @section('js')
-    <!-- DataTables JS - Move to scripts section -->
-    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap4.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 
     @include('admin.scripts.chamados-scripts')
 

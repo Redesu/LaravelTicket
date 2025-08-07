@@ -25,6 +25,7 @@ class ChamadoController extends Controller
 
     public function getChamados(Request $request): JsonResponse
     {
+        // dd('hello world');
         Log::info('ChamadoController@getChamados called with request: ' . json_encode($request->all()));
         try {
             if ($request->ajax() && $request->has('draw')) {
@@ -149,6 +150,7 @@ class ChamadoController extends Controller
     {
         try {
 
+            error_log(message: `ChamadoController@insertChamado called with request: ` . json_encode($request->all()));
             $userId = Auth::id();
             if (!$userId) {
                 return response()->json(['error' => 'Usuário não autenticado'], 401);
@@ -165,7 +167,6 @@ class ChamadoController extends Controller
                 'titulo' => 'required|string|max:255',
                 'descricao' => 'required|string|max:100',
                 'prioridade' => 'required|string|max:100',
-                'status' => 'required|string|max:100',
                 'categoria_id' => 'required|integer|min:1',
                 'departamento_id' => 'required|integer|min:1'
             ]);
@@ -174,7 +175,6 @@ class ChamadoController extends Controller
                 'titulo' => $request->titulo,
                 'descricao' => $request->descricao,
                 'user_id' => $userId,
-                'status' => $request->status,
                 'prioridade' => $request->prioridade,
                 'categoria_id' => $request->categoria_id,
                 'departamento_id' => $request->departamento_id
