@@ -3,7 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\ChamadoController;
+use App\Http\Controllers\Chamados\ChamadoController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +26,7 @@ Route::prefix('api/chamados')->group(function () {
 
     // CRUD
     Route::get('/', [ChamadoController::class, 'getChamados'])->name('api.chamados.get');
+    Route::get('/data-tables', [ChamadoController::class, 'getDataTablesData'])->name('api.chamados.data-tables');
     Route::post('/', [ChamadoController::class, 'insertChamado'])->name('api.chamados.post');
     Route::put('/', [ChamadoController::class, 'updateChamado'])->name('api.chamados.put');
     Route::delete('/', [ChamadoController::class, 'deleteChamado'])->name('api.chamados.delete');

@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Chamados;
 
+use App\Models\Chamado;
 use Auth;
 use DB;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Log;
 
 class ChamadoController extends Controller
@@ -25,55 +27,10 @@ class ChamadoController extends Controller
 
     public function getChamados(Request $request): JsonResponse
     {
-        // dd('hello world');
-        Log::info('ChamadoController@getChamados called with request: ' . json_encode($request->all()));
         try {
-            if ($request->ajax() && $request->has('draw')) {
-                return $this->getDataTablesData($request);
-            }
+            $chamados = new Chamado();
 
-            $query = DB::table('chamados as c')
-                ->leftJoin('categorias as cat', 'c.categoria_id', '=', 'cat.id')
-                ->leftJoin('departamentos as dep', 'c.departamento_id', '=', 'dep.id')
-                ->select([
-                    'c.id',
-                    'c.titulo',
-                    'c.descricao',
-                    'c.status',
-                    'c.prioridade',
-                    'cat.nome as categoria',
-                    'dep.nome as departamento',
-                    'c.created_at as data_abertura'
-                ]);
-
-
-            if ($request->has('titulo') && !empty($request->Titulo)) {
-                $query->where('titulo', 'like', '%' . $request->Titulo . '%');
-            }
-
-            if ($request->has('departamento') && !empty($request->departamento)) {
-                $query->where('departamento', 'like', '%' . $request->departamento . '%');
-            }
-
-            if ($request->has('categoria') && !empty($request->categoria)) {
-                $query->where('categoria', 'like', '%' . $request->categoria . '%');
-            }
-
-            if ($request->has('prioridade') && !empty($request->prioridade)) {
-                $query->where('prioridade', 'like', '%' . $request->prioridade . '%');
-            }
-
-            if ($request->has('status') && !empty($request->status)) {
-                $query->where('status', '=', $request->status);
-            }
-
-            $sortBy = $request->get('SortBy', 'id');
-            $sortOrder = $request->get('SortOrder', 'asc');
-            $query->orderBy($sortBy, $sortOrder);
-
-            $chamados = $query->get();
-
-            return response()->json($chamados);
+            return response()->json($chamados->buscarChamados());
 
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -81,7 +38,7 @@ class ChamadoController extends Controller
 
     }
 
-    private function getDataTablesData(Request $request): JsonResponse
+    public function getDataTablesData(Request $request): JsonResponse
     {
         try {
             $draw = $request->get('draw');
@@ -89,44 +46,13 @@ class ChamadoController extends Controller
             $length = $request->get('length', 10);
             $searchValue = $request->get('search')['value'] ?? '';
 
-
-            $query = DB::table('chamados as c')
-                ->leftJoin('categorias as cat', 'c.categoria_id', '=', 'cat.id')
-                ->leftJoin('departamentos as dep', 'c.departamento_id', '=', 'dep.id')
-                ->select([
-                    'c.id',
-                    'c.titulo',
-                    'c.descricao',
-                    'c.status',
-                    'c.prioridade',
-                    'cat.nome as categoria',
-                    'dep.nome as departamento',
-                    'c.created_at as data_abertura'
-                ]);
-
-            if (!empty($searchValue)) {
-                $query->where(function ($q) use ($searchValue) {
-                    $q->where('titulo', 'like', "%{$searchValue}%")
-                        ->orWhere('descricao', 'like', "%{$searchValue}%")
-                        ->orWhere('status', 'like', "%{$searchValue}%")
-                        ->orWhere('prioridade', 'like', "%{$searchValue}%");
-                });
-            }
-
-            $totalRecords = DB::table('chamados')->count();
-
-            $filteredRecords = $query->count();
-
-            $chamados = $query
-                ->skip($start)
-                ->take($length)
-                ->get();
-
+            $chamadoModel = new Chamado();
+            $dataTables = $chamadoModel->buscarChamadoDataTables($draw, $start, $length, $searchValue);
             return response()->json([
                 'draw' => intval($draw),
-                'recordsTotal' => $totalRecords,
-                'recordsFiltered' => $filteredRecords,
-                'data' => $chamados->map(function ($chamado) {
+                'recordsTotal' => $dataTables['recordsTotal'],
+                'recordsFiltered' => $dataTables['recordsFiltered'],
+                'data' => $dataTables['data']->map(function ($chamado) {
                     return [
                         'id' => $chamado->id,
                         'titulo' => $chamado->titulo,
