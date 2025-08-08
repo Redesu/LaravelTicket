@@ -48,6 +48,7 @@
                             <option value="" disabled selected>Selecione a categoria</option>
                             <option value="SUPORTE">SUPORTE</option>
                             <option value="CORREÇÃO">CORREÇÃO</option>
+                            <option value="DUVIDAS">DUVIDAS</option>
                         </select>
                     </div>
                 </div>

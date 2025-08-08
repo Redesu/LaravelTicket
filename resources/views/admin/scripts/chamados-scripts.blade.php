@@ -38,7 +38,7 @@
                     name: 'data_abertura',
                     render: function (data, type, row) {
                         if (data && data !== null) {
-                            return new Date(data).toLocaleDateString('pt-BR');
+                            return new Date(data).toLocaleString('pt-BR');
                         }
                         return '';
                     }
@@ -88,11 +88,12 @@
             var id = $(this).data('id');
             if (confirm('Tem certeza que deseja excluir este chamado?')) {
                 $.ajax({
-                    url: "{{ url('api.chamados.delete') }}",
+                    url: "{{ route('api.chamados.delete') }}",
                     type: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
+                    data: { "id": id },
                     success: function (result) {
                         table.ajax.reload();
                         showAlert('Chamado excluído com sucesso', 'success');

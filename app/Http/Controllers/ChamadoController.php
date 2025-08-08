@@ -272,7 +272,7 @@ class ChamadoController extends Controller
             ]);
 
             $affected = DB::table('chamados')
-                ->where('id', $request->ID)
+                ->where('id', $request->id)
                 ->where('user_id', $userId)
                 ->delete();
 
