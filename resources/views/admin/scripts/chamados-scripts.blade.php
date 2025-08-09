@@ -101,7 +101,7 @@
                     },
                     error: function (xhr, status, error) {
                         console.log('Delete error:', xhr, status, error);
-                        showAlert('Erro ao excluir o chamado', 'danger');
+                        showAlert('Erro ao excluir o chamado', 'error');
                     }
                 });
             }
@@ -141,7 +141,7 @@
                 },
                 error: function (xhr, status, error) {
                     console.log('Export error:', xhr, status, error);
-                    showAlert('Erro ao exportar os dados', 'danger');
+                    showAlert('Erro ao exportar os dados', 'error');
                 }
             });
         });
@@ -163,7 +163,7 @@
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                 },
-                data: JSON.stringify($(this).serialize()),
+                data: $(this).serialize(),
                 success: function (response) {
                     table.ajax.reload();
                     $('#createChamadoModal').modal('hide');
@@ -180,7 +180,7 @@
                         errorDiv.html(errorMsg);
                         errorDiv.removeClass('d-none');
                     }
-                    showAlert('Erro ao criar o chamado', 'danger');
+                    showAlert('Erro ao criar o chamado', 'error');
                 },
                 complete: function () {
                     submitBtn.prop('disabled', false);
@@ -192,12 +192,13 @@
         $(document).on('click', '.edit-btn', function () {
             const id = $(this).data('id');
             const rowData = table.row($(this).closest('tr')).data();
-            console.log('Edit button clicked for ID:', id, rowData);
+            console.log('Edit button clicked for Chamado:', rowData);
 
             $('#editChamadoId').val(rowData.id);
             $('#editTitulo').val(rowData.titulo);
+            $('#editStatus').val(rowData.status);
             $('#editDescricao').val(rowData.descricao);
-            $('#editPrioridade').val(rowData.prioridade_id || rowData.prioridade);
+            $('#editPrioridade').val(rowData.prioridade);
             $('#editDepartamento').val(rowData.departamento_id || rowData.departamento);
             $('#editCategoria').val(rowData.categoria_id || rowData.categoria);
 
@@ -205,8 +206,11 @@
             $('#editChamadoForm').off('submit'); // Remove previous submit handler
         });
 
-        $('#editChamadosForm').on('submit', function (e) {
+        $(document).on('submit', '#editChamadoForm', function (e) {
             e.preventDefault();
+            console.log('Submitting edit form for Chamado ID:', $('#editChamadoId').val());
+            console.log("Form data:", $(this).serialize())
+                ;
 
             const submitBtn = $('#editSubmitBtn');
             const spinner = $('#editSpinner');
@@ -217,19 +221,22 @@
             errorDiv.addClass('d-none');
 
             $.ajax({
-                url: "{{ url('api.chamados.put', ['id' => '']) }}/" + $('#editChamadoId').val(),
+                url: "{{ route('api.chamados.put') }}",
                 method: "PUT",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                },
                 data: $(this).serialize(),
                 success: function (response) {
                     table.ajax.reload();
-                    $('#editChamadosModal').modal('hide');
+                    $('#editChamadoModal').modal('hide');
                     showAlert('Chamado atualizado com sucesso', 'success');
                 },
                 error: function (xhr, status, error) {
                     console.log('Update error:', xhr, status, error);
                     errorDiv.html(xhr.responseJSON.errors);
                     errorDiv.removeClass('d-none');
-                    showAlert('Erro ao atualizar o chamado', 'danger');
+                    showAlert('Erro ao atualizar o chamado', 'error');
                 },
                 complete: function () {
                     submitBtn.prop('disabled', false);
@@ -251,7 +258,7 @@
                     },
                     error: function (xhr, status, error) {
                         console.log('Delete error:', xhr, status, error);
-                        showAlert('Erro ao excluir o chamado', 'danger');
+                        showAlert('Erro ao excluir o chamado', 'error');
                     }
                 });
             }
@@ -269,7 +276,10 @@
 
     function showAlert(message, type) {
         if (typeof toastr !== 'undefined') {
-            toastr[type](message);
+            const validTypes = ['success', 'error', 'warning', 'info'];
+            const toastrType = validTypes.includes(type) ? type : 'info';
+
+            toastr[toastrType](message);
         } else {
             alert(message);
         }

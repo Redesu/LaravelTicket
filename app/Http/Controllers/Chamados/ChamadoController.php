@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Chamados;
 
+use App\Http\Requests\StoreChamadoRequest;
+use App\Http\Requests\UpdateChamadoRequest;
 use App\Models\Chamado;
 use Auth;
 use DB;
@@ -72,54 +74,25 @@ class ChamadoController extends Controller
         }
     }
 
-    public function insertChamado(Request $request): JsonResponse
+    public function insertChamado(StoreChamadoRequest $request): JsonResponse
     {
         try {
+            $validatedData = $request->validated();
 
-            error_log(message: `ChamadoController@insertChamado called with request: ` . json_encode($request->all()));
-            $userId = Auth::id();
-            if (!$userId) {
-                return response()->json(['error' => 'Usuário não autenticado'], 401);
-            }
-
-            $request->merge([
-                'categoria_id' => (int) $request->categoria_id,
-                'departamento_id' => (int) $request->departamento_id
-            ]);
-
-            error_log(message: `ChamadoController@insertChamado called with request: ` . json_encode($request->all()) . ` by user: ` . Auth::user()->id);
-
-            $request->validate([
-                'titulo' => 'required|string|max:255',
-                'descricao' => 'required|string|max:100',
-                'prioridade' => 'required|string|max:100',
-                'categoria_id' => 'required|integer|min:1',
-                'departamento_id' => 'required|integer|min:1'
-            ]);
-
-            $id = DB::table('chamados')->insertGetId([
-                'titulo' => $request->titulo,
-                'descricao' => $request->descricao,
-                'user_id' => $userId,
-                'prioridade' => $request->prioridade,
-                'categoria_id' => $request->categoria_id,
-                'departamento_id' => $request->departamento_id
-            ]);
-
-            $chamado = DB::table('chamados')->where('id', $id)->first();
-
+            $chamadoModel = new Chamado();
+            $chamado = $chamadoModel->criarChamado(
+                $validatedData['titulo'],
+                $validatedData['descricao'],
+                Auth::id(),
+                $validatedData['prioridade'],
+                $validatedData['categoria_id'],
+                $validatedData['departamento_id']
+            );
             return response()->json([
                 'success' => true,
                 'message' => 'Chamado criado com sucesso',
                 'data' => $chamado
             ], 201);
-
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erro de validação',
-                'errors' => $e->errors()
-            ], 422);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
@@ -129,54 +102,28 @@ class ChamadoController extends Controller
         }
     }
 
-    public function updateChamado(Request $request): JsonResponse
+    public function updateChamado(UpdateChamadoRequest $request): JsonResponse
     {
         try {
-            $userId = Auth::id();
-            if (!$userId) {
-                return response()->json(['error' => 'Usuário não autenticado'], 401);
-            }
-            $request->validate([
-                'id' => 'required|numeric|exists:chamados,id',
-                'Titulo' => 'required|string|max:255',
-                'Descricao' => 'required|string|max:100',
-                'Prioridade' => 'required|string|max:100',
-                'Status' => 'required|string|max:100',
-                'categoria_id' => 'required|string|min:1',
-                'departamento_id' => 'required|string|min:1'
-            ]);
+            $validatedData = $request->validated();
 
-            $affected = DB::table('chamados')
-                ->where('id', $request->id)
-                ->update([
-                    'titulo' => $request->Titulo,
-                    'descricao' => $request->Descricao,
-                    'prioridade' => $request->Prioridade,
-                    'status' => $request->Status,
-                    'categoria_id' => $request->categoria_id,
-                    'departamento_id' => $request->departamento_id
+            $chamadoModel = new Chamado();
+            $chamado = $chamadoModel->editarChamado(
+                $validatedData['id'],
+                $validatedData['titulo'],
+                $validatedData['descricao'],
+                $validatedData['prioridade'],
+                $validatedData['status'],
+                $validatedData['categoria_id'],
+                $validatedData['departamento_id']
+            );
 
-                ]);
-
-            if ($affected > 0) {
-                $chamado = DB::table('chamados')->where('id', $request->ID)->first();
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Chamado atualizado com sucesso',
-                    'data' => $chamado
-                ], 200);
-            } else {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Chamado não encontrado'
-                ], 404);
-            }
-        } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
-                'success' => false,
-                'message' => 'Erro de validação',
-                'errors' => $e->errors()
-            ], 422);
+                'success' => true,
+                'message' => 'Chamado atualizado com sucesso',
+                'data' => $chamado
+            ], 200);
+
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
@@ -190,9 +137,6 @@ class ChamadoController extends Controller
     {
         try {
             $userId = Auth::id();
-            if (!$userId) {
-                return response()->json(['error' => 'Usuário não autenticado'], 401);
-            }
             $request->validate([
                 'id' => 'required|numeric|exists:chamados,id'
             ]);
@@ -225,11 +169,6 @@ class ChamadoController extends Controller
     public function getChamado($id): JsonResponse
     {
         try {
-            $userId = Auth::id();
-            if (!$userId) {
-                return response()->json(['error' => 'Usuário não autenticado'], 401);
-            }
-
             $chamado = DB::table('chamados')->where('id', $id)->first();
 
             if ($chamado) {

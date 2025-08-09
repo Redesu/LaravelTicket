@@ -3,7 +3,6 @@
         <div class="modal-content">
             <form id="editChamadoForm">
                 @csrf
-                @method('PUT')
                 <input type="hidden" id="editChamadoId" name="id">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editChamadoModalLabel">Editar Chamado</h5>
@@ -15,6 +14,15 @@
                     <div class="mb-3">
                         <label for="editTitulo" class="form-label">Título</label>
                         <input type="text" class="form-control" id="editTitulo" name="titulo" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editStatus" class="form-label">Status</label>
+                        <select class="form-select" id="editStatus" name="status" disabled>
+                            <option value="Aberto">Aberto</option>
+                            <option value="Em Andamento">Em Andamento</option>
+                            <option value="Finalizado">Finalizado</option>
+                        </select>
                     </div>
 
                     <div class="mb-3">

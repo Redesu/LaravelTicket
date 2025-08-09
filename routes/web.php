@@ -22,7 +22,7 @@ Route::prefix('/auth')->group(function () {
     Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 });
 
-Route::prefix('api/chamados')->group(function () {
+Route::prefix('api/chamados')->middleware('auth')->group(function () {
 
     // CRUD
     Route::get('/', [ChamadoController::class, 'getChamados'])->name('api.chamados.get');

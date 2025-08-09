@@ -104,6 +104,58 @@ class Chamado extends Model
             'data' => $records
         ];
     }
+
+    /*$id = DB::table('chamados')->insertGetId([
+                'titulo' => $request->titulo,
+                'descricao' => $request->descricao,
+                'user_id' => $userId,
+                'prioridade' => $request->prioridade,
+                'categoria_id' => $request->categoria_id,
+                'departamento_id' => $request->departamento_id
+            ]);
+
+            $chamado = DB::table('chamados')->where('id', $id)->first();*/
+    public function criarChamado(string $titulo, string $descricao, int $userId, string $prioridade, int $categoriaId, int $departamentoId)
+    {
+        $query = DB::table('chamados')->insertGetId([
+            'titulo' => $titulo,
+            'descricao' => $descricao,
+            'user_id' => $userId,
+            'prioridade' => $prioridade,
+            'categoria_id' => $categoriaId,
+            'departamento_id' => $departamentoId,
+            'created_at' => now(),
+        ]);
+
+        $chamado = DB::table('chamados')->where('id', $query)->first();
+
+        if ($chamado === null) {
+            throw new \Exception('Chamado não encontrado após inserção.');
+        }
+        return $chamado;
+    }
+
+
+    public function editarChamado(int $id, string $titulo, string $descricao, string $prioridade, string $status, int $categoriaId, int $departamentoId)
+    {
+        $query = DB::table('chamados')
+            ->where('id', $id)
+            ->update([
+                'titulo' => $titulo,
+                'descricao' => $descricao,
+                'prioridade' => $prioridade,
+                'status' => $status,
+                'categoria_id' => $categoriaId,
+                'departamento_id' => $departamentoId,
+                'updated_at' => now(),
+            ]);
+
+        if ($query === false) {
+            throw new \Exception('Erro ao atualizar o chamado.');
+        }
+
+        return $query > 0;
+    }
 }
 
 
