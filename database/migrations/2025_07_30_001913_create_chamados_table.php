@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->string('titulo');
             $table->text('descricao');
             $table->enum('status', ['Aberto', 'Em andamento', 'Finalizado'])->default('Aberto');
-            $table->enum('prioridade', ['Baixa', 'Média', 'Alta', 'Critica'])->default('Baixa');
+            $table->enum('prioridade', ['Baixa', 'Média', 'Alta', 'Urgente'])->default('Baixa');
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('categoria_id')->constrained('categorias');
             $table->text('solucao')->nullable();
