@@ -117,6 +117,7 @@ class Chamado extends Model
             $chamado = DB::table('chamados')->where('id', $id)->first();*/
     public function criarChamado(string $titulo, string $descricao, int $userId, string $prioridade, int $categoriaId, int $departamentoId)
     {
+
         $query = DB::table('chamados')->insertGetId([
             'titulo' => $titulo,
             'descricao' => $descricao,
@@ -136,8 +137,12 @@ class Chamado extends Model
     }
 
 
-    public function editarChamado(int $id, string $titulo, string $descricao, string $prioridade, string $status, int $categoriaId, int $departamentoId)
+    public function editarChamado(int $id, string $titulo, string $descricao, string $prioridade, string $status, string $categoria, string $departamento)
     {
+        $departamentoId = DB::table('departamentos')->where('nome', $departamento)->value('id');
+
+        $categoriaId = DB::table('categorias')->where('nome', $categoria)->value('id');
+
         $query = DB::table('chamados')
             ->where('id', $id)
             ->update([

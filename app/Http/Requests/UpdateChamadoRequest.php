@@ -27,16 +27,8 @@ class UpdateChamadoRequest extends FormRequest
             'descricao' => 'required|string|max:100',
             'prioridade' => 'required|string|max:100',
             'status' => 'required|string|max:100',
-            'categoria_id' => 'required|string|min:1',
-            'departamento_id' => 'required|string|min:1'
+            'categoria' => 'required|string|min:1',
+            'departamento' => 'required|string|min:1'
         ];
-    }
-
-    protected function prepareForValidation(): void
-    {
-        $this->merge([
-            'categoria_id' => (int) $this->categoria_id,
-            'departamento_id' => (int) $this->departamento_id
-        ]);
     }
 }

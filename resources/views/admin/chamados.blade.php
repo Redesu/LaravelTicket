@@ -73,7 +73,6 @@
                     <th>Status</th>
                     <th>Prioridade</th>
                     <th>Categoria</th>
-                    <th>Departamento</th>
                     <th>Data Abertura</th>
                     <th>Ações</th>
                 </tr>

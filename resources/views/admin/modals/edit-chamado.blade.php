@@ -20,7 +20,7 @@
                         <label for="editStatus" class="form-label">Status</label>
                         <select class="form-select" id="editStatus" name="status" disabled>
                             <option value="Aberto">Aberto</option>
-                            <option value="Em Andamento">Em Andamento</option>
+                            <option value="Em andamento">Em andamento</option>
                             <option value="Finalizado">Finalizado</option>
                         </select>
                     </div>

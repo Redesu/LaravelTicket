@@ -114,8 +114,8 @@ class ChamadoController extends Controller
                 $validatedData['descricao'],
                 $validatedData['prioridade'],
                 $validatedData['status'],
-                $validatedData['categoria_id'],
-                $validatedData['departamento_id']
+                $validatedData['categoria'],
+                $validatedData['departamento']
             );
 
             return response()->json([

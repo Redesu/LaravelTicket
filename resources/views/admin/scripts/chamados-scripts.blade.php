@@ -31,9 +31,43 @@
                 { data: 'titulo', name: 'titulo' },
                 { data: 'descricao', name: 'descricao' },
                 { data: 'status', name: 'status' },
-                { data: 'prioridade', name: 'prioridade' },
+                {
+                    data: null,
+                    name: 'depar_prior',
+                    title: 'Depar/Prior',
+                    render: function (data, type, row) {
+                        const departamento = row.departamento || '';
+                        const prioridade = row.prioridade || '';
+
+                        let priorityBadgeClass = '';
+                        switch (prioridade.toLowerCase()) {
+                            case 'urgente':
+                                priorityBadgeClass = 'badge-danger';
+                                break;
+                            case 'alta':
+                                priorityBadgeClass = 'badge-warning';
+                                break;
+                            case 'média':
+                                priorityBadgeClass = 'badge-warning';
+                                break;
+                            case 'baixa':
+                                priorityBadgeClass = 'badge-secondary';
+                                break;
+                            default:
+                                priorityBadgeClass = 'badge-secondary';
+                        }
+
+                        return `
+                    <div class="d-flex align-items-center">
+                        <small class="text-muted me-2">${departamento}</small>
+                        <span class="badge ${priorityBadgeClass}">${prioridade}</span>
+                    </div>
+                `;
+                    },
+                    orderable: false,
+                    searchable: false
+                },
                 { data: 'categoria', name: 'categoria' },
-                { data: 'departamento', name: 'departamento' },
                 {
                     data: 'data_abertura',
                     name: 'data_abertura',
@@ -50,15 +84,37 @@
                     render: function (data, type, row) {
                         let actions = `<button class="btn btn-info btn-sm view-btn" data-id="${row.id}"><i class="fas fa-eye"></i> Ver</button> `;
                         if (currentUserId) {
-                            actions += `<button class="btn btn-primary btn-sm edit-btn" data-bs-toggle="modal" data-bs-target="#editChamadoModal"
-                id="edit-btn"><i class="fas fa-edit"></i> Editar</button> `;
+                            actions += `<button class="btn btn-primary btn-sm edit-btn" data-bs-toggle="modal" data-bs-target="#editChamadoModal"><i class="fas fa-edit"></i> Editar</button> `;
                             actions += `<button class="btn btn-danger btn-sm delete-btn" data-id="${row.id}"><i class="fas fa-trash"></i> Excluir</button>`;
                         }
                         return actions;
                     },
                     orderable: false,
                     searchable: false
-                }
+                },
+            ],
+            autoWidth: false,
+            columnDefs: [
+                {
+                    targets: 3,
+                    render: function (data, type, row) {
+                        let badgeClass = '';
+                        switch (data) {
+                            case 'Aberto':
+                                badgeClass = 'badge-success';
+                                break;
+                            case 'Em andamento':
+                                badgeClass = 'badge-warning';
+                                break;
+                            case 'Finalizado':
+                                badgeClass = 'badge-danger';
+                                break;
+                            default:
+                                badgeClass = 'badge-secondary';
+                        }
+                        return `<span class="badge ${badgeClass}">${data}</span>`;
+                    }
+                },
             ],
             pageLength: 15,
             lengthMenu: [[15, 25, 50, -1], [15, 25, 50, "Todos"]],
@@ -213,6 +269,7 @@
                 ;
 
             const submitBtn = $('#editSubmitBtn');
+            const status = $('#editStatus');
             const spinner = $('#editSpinner');
             const errorDiv = $('#editModalErrors');
 
@@ -220,13 +277,17 @@
             spinner.removeClass('d-none');
             errorDiv.addClass('d-none');
 
+            status.prop('disabled', false);
+            const formData = $(this).serialize();
+            status.prop('disabled', true);
+
             $.ajax({
                 url: "{{ route('api.chamados.put') }}",
                 method: "PUT",
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                 },
-                data: $(this).serialize(),
+                data: formData,
                 success: function (response) {
                     table.ajax.reload();
                     $('#editChamadoModal').modal('hide');
