@@ -105,16 +105,6 @@ class Chamado extends Model
         ];
     }
 
-    /*$id = DB::table('chamados')->insertGetId([
-                'titulo' => $request->titulo,
-                'descricao' => $request->descricao,
-                'user_id' => $userId,
-                'prioridade' => $request->prioridade,
-                'categoria_id' => $request->categoria_id,
-                'departamento_id' => $request->departamento_id
-            ]);
-
-            $chamado = DB::table('chamados')->where('id', $id)->first();*/
     public function criarChamado(string $titulo, string $descricao, int $userId, string $prioridade, int $categoriaId, int $departamentoId)
     {
 
@@ -160,6 +150,20 @@ class Chamado extends Model
         }
 
         return $query > 0;
+    }
+
+    public function deletarChamado(int $id, int $userId): int
+    {
+        $query = DB::table('chamados')
+            ->where('id', $id)
+            ->where('user_id', $userId)
+            ->delete();
+
+        if ($query === false) {
+            throw new \Exception('Erro ao deletar o chamado.');
+        }
+
+        return $query;
     }
 }
 

@@ -1,10 +1,23 @@
 @push('js')
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap4.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<!-- DataTables -->
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap4.js"></script>
+<script src="https://cdn.datatables.net/responsive/3.0.2/js/dataTables.responsive.js"></script>
+<script src="https://cdn.datatables.net/responsive/3.0.2/js/responsive.bootstrap4.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.bootstrap4.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.js"></script>
+
+<!-- For Excel export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<!-- For PDF export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 <script>
     $(document).ready(function () {
         console.log('Initializing DataTables...');
@@ -24,6 +37,11 @@
                 error: function (xhr, error, thrown) {
                     console.log('AJAX Error:', xhr, error, thrown);
                     console.log('Response Text:', xhr.responseText);
+                }
+            },
+            layout: {
+                topStart: {
+                    buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5']
                 }
             },
             columns: [
@@ -73,7 +91,14 @@
                     name: 'data_abertura',
                     render: function (data, type, row) {
                         if (data && data !== null) {
-                            return new Date(data).toLocaleString('pt-BR');
+                            console.log('Rendering date:', data);
+                            return new Date(data).toLocaleString('pt-BR', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            });
                         }
                         return '';
                     }
@@ -82,7 +107,7 @@
                     data: null,
                     name: 'actions',
                     render: function (data, type, row) {
-                        let actions = `<button class="btn btn-info btn-sm view-btn" data-id="${row.id}"><i class="fas fa-eye"></i> Ver</button> `;
+                        let actions = '';
                         if (currentUserId) {
                             actions += `<button class="btn btn-primary btn-sm edit-btn" data-bs-toggle="modal" data-bs-target="#editChamadoModal"><i class="fas fa-edit"></i> Editar</button> `;
                             actions += `<button class="btn btn-danger btn-sm delete-btn" data-id="${row.id}"><i class="fas fa-trash"></i> Excluir</button>`;
@@ -129,6 +154,18 @@
             }
         });
 
+        $('#dataTable tbody').on('click', 'tr', function (e) {
+            if ($(e.target).closest('button').length) {
+                return;
+            }
+
+            var data = table.row(this).data();
+            if (data) {
+                window.open(`/chamados/${data.id}`, '_blank');
+            }
+        });
+
+
         $('#dataTable').on('click', '.edit-btn', function () {
             var id = $(this).data('id');
             var rowData = table.row($(this).closest('tr')).data();
@@ -143,6 +180,7 @@
 
         $('#dataTable').on('click', '.delete-btn', function () {
             var id = $(this).data('id');
+            console.log('Delete button clicked for ID:', id);
             if (confirm('Tem certeza que deseja excluir este chamado?')) {
                 $.ajax({
                     url: "{{ route('api.chamados.delete') }}",
@@ -165,41 +203,7 @@
 
         $('#refreshBtn').on('click', function () {
             table.ajax.reload();
-            showAlert('Grid recarregado com sucesso', 'success');
-        });
-
-        $('#exportBtn').on('click', function () {
-            $.ajax({
-                url: "{{ route('api.chamados.get') }}",
-                method: "GET",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function (data) {
-                    let csv = 'ID;Título;Descrição;Status;Prioridade;Categoria;Departamento;Data Abertura\n';
-
-                    const records = data.data || data;
-
-                    records.forEach(function (chamado) {
-                        csv += `${chamado.id};${chamado.titulo};${chamado.descricao};${chamado.status};${chamado.prioridade};${chamado.categoria || chamado.categoria_id};${chamado.departamento || chamado.departamento_id};${chamado.data_abertura || chamado.created_at}\n`;
-                    });
-
-                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'chamados.csv';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                    showAlert('Dados exportados com sucesso', 'success');
-                },
-                error: function (xhr, status, error) {
-                    console.log('Export error:', xhr, status, error);
-                    showAlert('Erro ao exportar os dados', 'error');
-                }
-            });
+            showAlert('Chamados recarregados com sucesso', 'success');
         });
 
         $('#createChamadoForm').on('submit', function (e) {
@@ -212,6 +216,7 @@
             submitBtn.prop('disabled', true);
             spinner.removeClass('d-none');
             errorDiv.addClass('d-none');
+            console.log("Form data:", $(this).serialize())
 
             $.ajax({
                 url: "{{ route('api.chamados.post') }}",
@@ -304,25 +309,6 @@
                     spinner.addClass('d-none');
                 }
             });
-        });
-
-        $(document).on('click', '.delete-chamado', function () {
-            const userId = $(this).data('id');
-
-            if (confirm('Tem certeza que deseja excluir este chamado?')) {
-                $.ajax({
-                    url: "{{ url('api.chamados.delete') }}",
-                    method: "DELETE",
-                    success: function (response) {
-                        table.ajax.reload();
-                        showAlert('Chamado excluído com sucesso', 'success');
-                    },
-                    error: function (xhr, status, error) {
-                        console.log('Delete error:', xhr, status, error);
-                        showAlert('Erro ao excluir o chamado', 'error');
-                    }
-                });
-            }
         });
 
         $('#createChamadoModal').on('hidden.bs.modal', function () {

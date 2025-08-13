@@ -6,6 +6,26 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap4.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.4/css/buttons.dataTables.min.css">
+
+    <!-- Custom CSS -->
+    <style>
+        #dataTable tbody tr {
+            cursor: pointer;
+        }
+
+        #dataTable tbody tr:hover {
+            background-color: #f8f9fa !important;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #dataTable tbody tr button {
+            cursor: pointer;
+            position: relative;
+            z-index: 1;
+        }
+    </style>
 @endsection
 
 @section('title', 'Chamados')
@@ -40,23 +60,6 @@
             <button type="button" class="btn btn-success" id="refreshBtn">
                 <i class="fas fa-sync"></i> Recarregar
             </button>
-            <button type="button" class="btn btn-warning" id="exportBtn">
-                <i class="fas fa-download"></i> Exportar
-            </button>
-        </div>
-
-        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <img src="..." class="rounded mr-2" alt="...">
-                <strong class="mr-auto">Bootstrap</strong>
-                <small class="text-muted">just now</small>
-                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="toast-body">
-                See? Just like this.
-            </div>
         </div>
 
     </div>

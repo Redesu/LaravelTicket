@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Chamados;
 
+use App\Http\Requests\DeleteChamadoRequests;
 use App\Http\Requests\StoreChamadoRequest;
 use App\Http\Requests\UpdateChamadoRequest;
 use App\Models\Chamado;
@@ -64,7 +65,7 @@ class ChamadoController extends Controller
                         'categoria' => $chamado->categoria,
                         'departamento' => $chamado->departamento,
                         'data_abertura' => $chamado->data_abertura ?
-                            date('d/m/Y H:i', strtotime($chamado->data_abertura)) : ''
+                            date('Y-m-d H:i', strtotime($chamado->data_abertura)) : ''
                     ];
                 })
             ]);
@@ -133,20 +134,16 @@ class ChamadoController extends Controller
         }
     }
 
-    public function deleteChamado(Request $request): JsonResponse
+    public function deleteChamado(DeleteChamadoRequests $request): JsonResponse
     {
         try {
             $userId = Auth::id();
-            $request->validate([
-                'id' => 'required|numeric|exists:chamados,id'
-            ]);
+            $validatedData = $request->validated();
 
-            $affected = DB::table('chamados')
-                ->where('id', $request->id)
-                ->where('user_id', $userId)
-                ->delete();
+            $chamadoModel = new Chamado();
+            $chamado = $chamadoModel->deletarChamado($validatedData['id'], $userId);
 
-            if ($affected > 0) {
+            if ($chamado > 0) {
                 return response()->json([
                     'success' => true,
                     'message' => 'Chamado deletado com sucesso'
