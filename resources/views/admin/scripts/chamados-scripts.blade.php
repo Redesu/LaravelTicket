@@ -161,7 +161,7 @@
 
             var data = table.row(this).data();
             if (data) {
-                window.open(`/chamados/${data.id}`, '_blank');
+                window.location.href = `{{ route('admin.chamados.show', ':id') }}`.replace(':id', data.id);
             }
         });
 

@@ -36,12 +36,12 @@ class Chamado extends Model
 
     public function categoria()
     {
-        return $this->belongsTo(Categoria::class);
+        return $this->belongsTo(Categoria::class, 'categoria_id');
     }
 
     public function departamento()
     {
-        return $this->belongsTo(Departamento::class);
+        return $this->belongsTo(Departamento::class, 'departamento_id');
     }
 
     public function buscarChamados()
@@ -62,6 +62,20 @@ class Chamado extends Model
             ]);
 
         return $query->get();
+    }
+
+    public function buscarChamadoPorId(int $id)
+    {
+        return Chamado::with(['categoria', 'departamento', 'usuario'])
+            ->select([
+                'id',
+                'titulo',
+                'descricao',
+                'status',
+                'prioridade',
+                'created_at as data_abertura'
+            ])
+            ->findOrFail($id);
     }
 
     public function buscarChamadoDataTables(string $draw, int $start = 0, int $length = 10, string $searchValue = '')

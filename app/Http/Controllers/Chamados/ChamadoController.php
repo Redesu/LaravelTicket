@@ -163,23 +163,10 @@ class ChamadoController extends Controller
         }
     }
 
-    public function getChamado($id): JsonResponse
+    public function showChamado($id)
     {
-        try {
-            $chamado = DB::table('chamados')->where('id', $id)->first();
-
-            if ($chamado) {
-                return response()->json($chamado);
-            } else {
-                return response()->json(['error' => 'Chamado não encontrado'], 404);
-            }
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erro ao deletar chamado',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        $chamado = Chamado::with(['categoria', 'departamento', 'usuario'])->findOrFail($id);
+        return view('admin.chamado', compact('chamado'));
     }
 
     public function getChamadoByDepartamento($departamento): JsonResponse
