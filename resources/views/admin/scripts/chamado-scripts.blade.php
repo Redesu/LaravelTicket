@@ -22,5 +22,13 @@
             default:
                 $priorityBadge.addClass('badge-secondary');
         }
+
+        $(document).on('click', '.edit-btn', function () {
+            const id = $(this).data('id');
+            // const rowData = table.row($(this).closest('tr')).data();
+            console.log('Edit button clicked for Chamado');
+            $('#editChamadoModal').modal('show');
+            $('#editChamadoForm').off('submit'); // Remove previous submit handler
+        });
     });
 </script>

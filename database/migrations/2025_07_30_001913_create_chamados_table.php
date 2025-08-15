@@ -18,8 +18,6 @@ return new class extends Migration {
             $table->enum('prioridade', ['Baixa', 'Média', 'Alta', 'Urgente'])->default('Baixa');
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('categoria_id')->constrained('categorias');
-            $table->text('solucao')->nullable();
-            $table->text('comentarios')->nullable();
             $table->foreignId('departamento_id')->constrained('departamentos');
             $table->timestamp('data_fechamento')->nullable();
             $table->timestamps();

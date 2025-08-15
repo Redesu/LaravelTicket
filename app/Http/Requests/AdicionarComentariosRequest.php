@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateChamadoRequest extends FormRequest
+class AdicionarComentariosRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,12 +22,9 @@ class UpdateChamadoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'titulo' => 'required|string|max:255',
-            'descricao' => 'required|string|max:100',
-            'prioridade' => 'required|in:baixa,média,alta,urgente',
-            'status' => 'required|string|max:100',
-            'categoria' => 'required|string|min:1',
-            'departamento' => 'required|string|min:1'
+            'descricao' => 'required|string',
+            'tipo' => 'in:comment,edit,solution',
+            'changes' => 'nullable|json'
         ];
     }
 }

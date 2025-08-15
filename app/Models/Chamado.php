@@ -20,8 +20,6 @@ class Chamado extends Model
         'prioridade',
         'user_id',
         'categoria_id',
-        'solucao',
-        'comentarios',
         'departamento_id',
         'data_abertura',
         'data_fechamento',
@@ -34,6 +32,11 @@ class Chamado extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function comentarios()
+    {
+        return $this->hasMany(ChamadoComentario::class)->orderBy('created_at');
+    }
+
     public function categoria()
     {
         return $this->belongsTo(Categoria::class, 'categoria_id');
@@ -42,6 +45,27 @@ class Chamado extends Model
     public function departamento()
     {
         return $this->belongsTo(Departamento::class, 'departamento_id');
+    }
+
+    // Helper methods for specific comment types
+    public function getCommentsOnly()
+    {
+        return $this->comentarios()->comments()->get();
+    }
+
+    public function getEditHistory()
+    {
+        return $this->comentarios()->edits()->get();
+    }
+
+    public function getSolution()
+    {
+        return $this->comentarios()->solutions()->first();
+    }
+
+    public function hasSolution()
+    {
+        return $this->comentarios()->solutions()->exists();
     }
 
     public function buscarChamados()
@@ -141,30 +165,30 @@ class Chamado extends Model
     }
 
 
-    public function editarChamado(int $id, string $titulo, string $descricao, string $prioridade, string $status, string $categoria, string $departamento)
-    {
-        $departamentoId = DB::table('departamentos')->where('nome', $departamento)->value('id');
+    // public function editarChamado(int $id, string $titulo, string $descricao, string $prioridade, string $status, string $categoria, string $departamento)
+    // {
+    //     $departamentoId = DB::table('departamentos')->where('nome', $departamento)->value('id');
 
-        $categoriaId = DB::table('categorias')->where('nome', $categoria)->value('id');
+    //     $categoriaId = DB::table('categorias')->where('nome', $categoria)->value('id');
 
-        $query = DB::table('chamados')
-            ->where('id', $id)
-            ->update([
-                'titulo' => $titulo,
-                'descricao' => $descricao,
-                'prioridade' => $prioridade,
-                'status' => $status,
-                'categoria_id' => $categoriaId,
-                'departamento_id' => $departamentoId,
-                'updated_at' => now(),
-            ]);
+    //     $query = DB::table('chamados')
+    //         ->where('id', $id)
+    //         ->update([
+    //             'titulo' => $titulo,
+    //             'descricao' => $descricao,
+    //             'prioridade' => $prioridade,
+    //             'status' => $status,
+    //             'categoria_id' => $categoriaId,
+    //             'departamento_id' => $departamentoId,
+    //             'updated_at' => now(),
+    //         ]);
 
-        if ($query === false) {
-            throw new \Exception('Erro ao atualizar o chamado.');
-        }
+    //     if ($query === false) {
+    //         throw new \Exception('Erro ao atualizar o chamado.');
+    //     }
 
-        return $query > 0;
-    }
+    //     return $query > 0;
+    // }
 
     public function deletarChamado(int $id, int $userId): int
     {

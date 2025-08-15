@@ -3,7 +3,6 @@
         <div class="modal-content">
             <form id="editChamadoForm">
                 @csrf
-                <input type="hidden" id="editChamadoId" name="id">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editChamadoModalLabel">Editar Chamado</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

@@ -30,7 +30,9 @@ Route::prefix('api/chamados')->middleware('auth')->group(function () {
     Route::get('/', [ChamadoController::class, 'getChamados'])->name('api.chamados.get');
     Route::get('/data-tables', [ChamadoController::class, 'getDataTablesData'])->name('api.chamados.data-tables');
     Route::post('/', [ChamadoController::class, 'insertChamado'])->name('api.chamados.post');
-    Route::put('/', [ChamadoController::class, 'updateChamado'])->name('api.chamados.put');
+    Route::post('/{id}/comment', [ChamadoController::class, 'addComentario'])->name('api.chamados.addComentario');
+    Route::post('/{id}/solution', [ChamadoController::class, 'addSolution'])->name('api.chamados.addSolution');
+    Route::put('/{id}', [ChamadoController::class, 'updateChamado'])->name('api.chamados.put');
     Route::delete('/', [ChamadoController::class, 'deleteChamado'])->name('api.chamados.delete');
 
 

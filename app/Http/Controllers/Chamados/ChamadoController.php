@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Chamados;
 
+use App\Http\Requests\AdicionarComentariosRequest;
 use App\Http\Requests\DeleteChamadoRequests;
 use App\Http\Requests\StoreChamadoRequest;
 use App\Http\Requests\UpdateChamadoRequest;
 use App\Models\Chamado;
+use App\Models\ChamadoComentario;
 use Auth;
 use DB;
 use Exception;
@@ -103,25 +105,72 @@ class ChamadoController extends Controller
         }
     }
 
-    public function updateChamado(UpdateChamadoRequest $request): JsonResponse
+    public function updateChamado(UpdateChamadoRequest $request, $id): JsonResponse
     {
         try {
+
+            $chamado = Chamado::findOrFail($id);
+
+            $originalData = [
+                'titulo' => $chamado->titulo,
+                'descricao' => $chamado->descricao,
+                'prioridade' => $chamado->prioridade,
+                'status' => $chamado->status,
+                'categoria_id' => $chamado->categoria_id,
+                'departamento_id' => $chamado->departamento_id
+            ];
+
             $validatedData = $request->validated();
 
-            $chamadoModel = new Chamado();
-            $chamado = $chamadoModel->editarChamado(
-                $validatedData['id'],
-                $validatedData['titulo'],
-                $validatedData['descricao'],
-                $validatedData['prioridade'],
-                $validatedData['status'],
-                $validatedData['categoria'],
-                $validatedData['departamento']
-            );
+            $chamado->update($validatedData);
+
+            $changes = [];
+            $fieldNames = [
+                'titulo' => 'Título',
+                'descricao' => 'Descrição',
+                'prioridade' => 'Prioridade',
+                'departamento_id' => 'Departamento',
+                'categoria_id' => 'Categoria',
+                'status' => 'Status'
+            ];
+
+            foreach ($originalData as $field => $oldValue) {
+                if (isset($validatedData[$field]) && $validatedData[$field] !== $oldValue) {
+                    $changes[$fieldNames[$field]] = [
+                        'old' => $oldValue,
+                        'new' => $validatedData[$field]
+                    ];
+                }
+            }
+
+
+            if (!empty($changes)) {
+                ChamadoComentario::create([
+                    'chamado_id' => $chamado->id,
+                    'usuario_id' => Auth::id(),
+                    'descricao' => 'Chamado editado por: ' . Auth::user()->name,
+                    'tipo' => 'edit',
+                    'changes' => json_encode($changes),
+                ]);
+            }
+
+
+
+            // $chamado = $chamadoModel->editarChamado(
+            //     $validatedData['id'],
+            //     $validatedData['titulo'],
+            //     $validatedData['descricao'],
+            //     $validatedData['prioridade'],
+            //     $validatedData['status'],
+            //     $validatedData['categoria'],
+            //     $validatedData['departamento']
+            // );
 
             return response()->json([
                 'success' => true,
                 'message' => 'Chamado atualizado com sucesso',
+                'newData' => $validatedData,
+                'changes' => $changes,
                 'data' => $chamado
             ], 200);
 
@@ -162,11 +211,89 @@ class ChamadoController extends Controller
             ], 500);
         }
     }
-
     public function showChamado($id)
     {
-        $chamado = Chamado::with(['categoria', 'departamento', 'usuario'])->findOrFail($id);
+        $chamado = Chamado::with(['categoria', 'departamento', 'usuario', 'comentarios.usuario'])->findOrFail($id);
         return view('admin.chamado', compact('chamado'));
+    }
+
+    public function addComment(AdicionarComentariosRequest $request, $id): JsonResponse
+    {
+        try {
+            $validatedData = $request->validated();
+            $chamado = Chamado::findOrFail($id);
+
+            $comentario = ChamadoComentario::create([
+                'chamado_id' => $chamado->id,
+                'usuario_id' => Auth::id(),
+                'descricao' => $validatedData['descricao'],
+                'tipo' => $validatedData['tipo'] ?? 'comment',
+                'changes' => $validatedData['changes'] ?? null,
+            ]);
+
+            if ($validatedData['tipo'] === 'solution') {
+                $chamado->update(['status' => 'resolvido']);
+            }
+
+            $comentario->load('usuario');
+
+            return response()->json([
+                'success' => true,
+                'comentario' => $comentario,
+                'usuario' => [
+                    'name' => $comentario->usuario->name,
+                    'avatar' => $comentario->usuario->avatar,
+                ],
+                'created_at' => $comentario->created_at->format('d/m/Y H:i'),
+                'descricao' => $comentario->descricao,
+            ], 201);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao adicionar comentário',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
+
+    }
+
+    public function addSolution(AdicionarComentariosRequest $request, $id): JsonResponse
+    {
+        try {
+            $validatedData = $request->validated();
+            $chamado = Chamado::findOrFail($id);
+
+            if ($chamado->hasSolution()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Chamado já está resolvido.'
+                ], 400);
+            }
+
+            $solucao = ChamadoComentario::create([
+                'chamado_id' => $chamado->id,
+                'usuario_id' => Auth::id(),
+                'descricao' => $validatedData['descricao'],
+                'tipo' => 'solution',
+            ]);
+
+            $chamado->update(['status' => 'resolvido']);
+
+            $solucao->load('usuario');
+
+            return response()->json([
+                'success' => true,
+                'comentario' => $solucao,
+                'message' => 'Solução adicionada e chamado marcado como resolvido.',
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao adicionar solução',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function getChamadoByDepartamento($departamento): JsonResponse

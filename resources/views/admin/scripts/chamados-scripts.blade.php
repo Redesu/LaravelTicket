@@ -165,19 +165,6 @@
             }
         });
 
-
-        $('#dataTable').on('click', '.edit-btn', function () {
-            var id = $(this).data('id');
-            var rowData = table.row($(this).closest('tr')).data();
-            console.log('Edit button clicked for ID:', id, rowData);
-        });
-
-        $('#dataTable').on('click', '.view-btn', function () {
-            var id = $(this).data('id');
-            var rowData = table.row($(this).closest('tr')).data();
-            console.log('View button clicked for ID:', id, rowData);
-        });
-
         $('#dataTable').on('click', '.delete-btn', function () {
             var id = $(this).data('id');
             console.log('Delete button clicked for ID:', id);
@@ -270,8 +257,7 @@
         $(document).on('submit', '#editChamadoForm', function (e) {
             e.preventDefault();
             console.log('Submitting edit form for Chamado ID:', $('#editChamadoId').val());
-            console.log("Form data:", $(this).serialize())
-                ;
+            console.log("Form data:", $(this).serialize());
 
             const submitBtn = $('#editSubmitBtn');
             const status = $('#editStatus');
@@ -286,8 +272,13 @@
             const formData = $(this).serialize();
             status.prop('disabled', true);
 
+            let updateUrl = "{{ route('api.chamados.put', ':id') }}";
+            let id = $('#editChamadoId').val();
+            let finalUrl = updateUrl.replace(':id', id);
+
+
             $.ajax({
-                url: "{{ route('api.chamados.put') }}",
+                url: finalUrl,
                 method: "PUT",
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),

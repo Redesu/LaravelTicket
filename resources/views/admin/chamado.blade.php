@@ -22,40 +22,145 @@
 @section('content')
 
 <div class="container-fluid">
+    <div class="row">
 
-    <!-- Main content card -->
-    <div class="card card-primary card-outline">
-        <div class="card-header">
-            <h3 class="card-title">
-                <i class="fas fa-ticket-alt"></i>
-                Descrição do Chamado
-            </h3>
-        </div>
-        <div class="card-body">
-            <p class="lead">{{ $chamado->descricao }}</p>
-        </div>
-    </div>
+        <!-- Main content - Description Card (Center/Left) -->
+        <div class="col-md-8">
 
-    <!-- Chamado details card -->
-    <div class="card card-info card-outline">
-        <div class="card-header">
-            <h3 class="card-title">
-                <i class="fas fa-info-circle"></i>
-                Informações do Chamado
-            </h3>
-            <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                    <i class="fas fa-minus"></i>
-                </button>
+            <!-- Comments Section (Above Description) -->
+            <div id="comments-section">
+                @if($chamado->comentarios && $chamado->comentarios->count() > 0)
+                    @foreach($chamado->comentarios->sortByDesc('created_at') as $comentario)
+                        <div class="card card-widget">
+                            <div class="card-header">
+                                <div class="user-block">
+                                    <img class="img-circle"
+                                        src="{{ $comentario->usuario->avatar ?? '/themes/vivaadm/assets/images/avatar.jpg' }}"
+                                        alt="User Image">
+                                    <span class="username">
+                                        {{ $comentario->usuario->name }}
+                                        @if($comentario->tipo == 'edit')
+                                            <span class="badge badge-info ml-1">EDITADO</span>
+                                        @endif
+                                    </span>
+                                    <span class="description">{{ $comentario->created_at->format('d/m/Y H:i') }}</span>
+                                </div>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                @if($comentario->tipo == 'edit')
+                                    <div class="callout callout-info">
+                                        <h5><i class="fas fa-edit"></i> Chamado editado</h5>
+                                        <p>{{ $comentario->descricao }}</p>
+                                        @if($comentario->changes)
+                                            <small class="text-muted">
+                                                <strong>Alterações:</strong>
+                                                @foreach(json_decode($comentario->changes, true) as $field => $change)
+                                                    <br>• {{ ucfirst($field) }}: "{{ $change['old'] }}" → "{{ $change['new'] }}"
+                                                @endforeach
+                                            </small>
+                                        @endif
+                                    </div>
+                                @else
+                                    <p>{{ $comentario->descricao }}</p>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
+            </div>
+
+            <!-- Add Comment Form -->
+            <div class="card card-success card-outline collapsed-card" id="add-comment-card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-plus"></i>
+                        Adicionar Comentário
+                    </h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body" style="display: none;">
+                    <form id="add-comment-form">
+                        @csrf
+                        <div class="form-group">
+                            <textarea class="form-control" id="comment-text" rows="4"
+                                placeholder="Digite seu comentário..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-comment"></i> Adicionar Comentário
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="cancelComment()">
+                                <i class="fas fa-times"></i> Cancelar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Original Description -->
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-ticket-alt"></i>
+                        Descrição Original do Chamado
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <p class="lead">{{ $chamado->descricao }}</p>
+                    <small class="text-muted">
+                        <i class="fas fa-calendar"></i> Criado em:
+                    </small>
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="card">
+                <div class="card-body">
+                    <a href="{{ route('admin.chamados') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Voltar
+                    </a>
+                    <button type="button" class="btn btn-primary ml-2 edit-btn" data-bs-toggle="modal"
+                        data-bs-target="#editChamadoModal">
+                        <i class="fas fa-edit"></i> Editar
+                    </button>
+                    <button type="button" class="btn btn-success ml-2">
+                        <i class="fas fa-check"></i> Resolver
+                    </button>
+                    <button type="button" class="btn btn-warning ml-2" onclick="showAddComment()">
+                        <i class="fas fa-comments"></i> Adicionar Comentário
+                    </button>
+                </div>
             </div>
         </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group row">
-                        <label class="col-sm-4 col-form-label text-right font-weight-bold">Prioridade:</label>
-                        <div class="col-sm-8">
-                            <div class="form-control-plaintext">
+
+        <!-- Sidebar - Chamado Information (Right) -->
+        <div class="col-md-4">
+            <div class="card card-info card-outline">
+                <div class="card-header bg-info">
+                    <h3 class="card-title text-white">
+                        <i class="fas fa-info-circle"></i>
+                        Informações do Chamado
+                    </h3>
+                </div>
+                <div class="card-body pb-0 pt-3">
+
+                    <div class="form-group mb-3">
+                        <div class="row">
+                            <div class="col-4 text-right">
+                                <label class="control-label font-weight-bold">
+                                    <span>Prioridade</span>:
+                                </label>
+                            </div>
+                            <div class="col-8">
                                 <span id="priority-badge" class="badge badge-warning">
                                     {{ $chamado->prioridade }}
                                 </span>
@@ -63,86 +168,89 @@
                         </div>
                     </div>
 
-                    <div class="form-group row">
-                        <label class="col-sm-4 col-form-label text-right font-weight-bold">Responsável:</label>
-                        <div class="col-sm-8">
-                            <div class="form-control-plaintext">
-                                <i class="fas fa-user text-muted mr-1"></i>
-                                {{ $chamado->usuario->name ?? 'N/A' }}
+                    <div class="form-group mb-3">
+                        <div class="row">
+                            <div class="col-4 text-right">
+                                <label class="control-label font-weight-bold">
+                                    <span>Responsável</span>:
+                                </label>
+                            </div>
+                            <div class="col-8">
+                                <span class="form-control-static">
+                                    {{ $chamado->usuario->name ?? 'N/A' }}
+                                </span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="form-group row">
-                        <label class="col-sm-4 col-form-label text-right font-weight-bold">Departamento:</label>
-                        <div class="col-sm-8">
-                            <div class="form-control-plaintext">
-                                <i class="fas fa-building text-muted mr-1"></i>
-                                {{ $chamado->departamento->nome }}
+                    <div class="form-group mb-3">
+                        <div class="row">
+                            <div class="col-4 text-right">
+                                <label class="control-label font-weight-bold">
+                                    <span>Departamento</span>:
+                                </label>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="form-group row">
-                        <label class="col-sm-4 col-form-label text-right font-weight-bold">Categoria:</label>
-                        <div class="col-sm-8">
-                            <div class="form-control-plaintext">
-                                <i class="fas fa-tags text-muted mr-1"></i>
-                                {{ $chamado->categoria->nome }}
+                            <div class="col-8">
+                                <span class="form-control-static">
+                                    {{ $chamado->departamento->nome }}
+                                </span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="form-group row">
-                        <label class="col-sm-4 col-form-label text-right font-weight-bold">Criado em:</label>
-                        <div class="col-sm-8">
-                            <div class="form-control-plaintext">
-                                <i class="fas fa-calendar text-muted mr-1"></i>
-                                {{ $chamado->data_abertura ?? 'N/A' }}
+                    <div class="form-group mb-3">
+                        <div class="row">
+                            <div class="col-4 text-right">
+                                <label class="control-label font-weight-bold">
+                                    <span>Categoria</span>:
+                                </label>
+                            </div>
+                            <div class="col-8">
+                                <span class="form-control-static">
+                                    {{ $chamado->categoria->nome }}
+                                </span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="form-group row">
-                        <label class="col-sm-4 col-form-label text-right font-weight-bold">Status:</label>
-                        <div class="col-sm-8">
-                            <div class="form-control-plaintext">
+                    <div class="form-group mb-3">
+                        <div class="row">
+                            <div class="col-4 text-right">
+                                <label class="control-label font-weight-bold">
+                                    <span>Criado em</span>:
+                                </label>
+                            </div>
+                            <div class="col-8">
+                                <span class="form-control-static">
+                                    {{ $chamado->data_abertura ?? 'N/A' }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <div class="row">
+                            <div class="col-4 text-right">
+                                <label class="control-label font-weight-bold">
+                                    <span>Status</span>:
+                                </label>
+                            </div>
+                            <div class="col-8">
                                 <span class="badge badge-success">
                                     {{ $chamado->status ?? 'Aberto' }}
                                 </span>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Action buttons card -->
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-12">
-                    <a href="{{ route('admin.chamados') }}" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i> Voltar
-                    </a>
-                    <button type="button" class="btn btn-primary ml-2">
-                        <i class="fas fa-edit"></i> Editar
-                    </button>
-                    <button type="button" class="btn btn-success ml-2">
-                        <i class="fas fa-check"></i> Resolver
-                    </button>
-                    <button type="button" class="btn btn-warning ml-2">
-                        <i class="fas fa-comments"></i> Adicionar Comentário
-                    </button>
-                </div>
-            </div>
-        </div>
     </div>
-
 </div>
+
+@include('admin.modals.edit-chamado')
 
 @stop
 
