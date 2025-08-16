@@ -132,7 +132,8 @@
                         data-bs-target="#editChamadoModal">
                         <i class="fas fa-edit"></i> Editar
                     </button>
-                    <button type="button" class="btn btn-success ml-2">
+                    <button type="button" class="btn btn-success ml-2 solucao-btn" data-bs-toggle="modal"
+                        data-bs-target="#solucaoChamadoModal">
                         <i class="fas fa-check"></i> Resolver
                     </button>
                     <button type="button" class="btn btn-warning ml-2" onclick="showAddComment()">
@@ -251,15 +252,12 @@
 </div>
 
 @include('admin.modals.edit-chamado')
+@include('admin.modals.solucao-chamado')
 
 @stop
 
 
 @section('js')
-
-    <script>
-        console.log(`{{ $chamado }}`);
-    </script>
 
     @include('admin.scripts.chamado-scripts')
 

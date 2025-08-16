@@ -52,7 +52,7 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
                     <button type="submit" class="btn btn-primary" id="submitBtn">
                         <span class="spinner-border spinner-border-sm d-none" id="spinner"></span>
                         Criar chamado
