@@ -115,6 +115,7 @@ class Chamado extends Model
                 'c.prioridade',
                 'cat.nome as categoria',
                 'dep.nome as departamento',
+                'c.user_id as usuario_id',
                 'c.created_at as data_abertura'
             ]);
 

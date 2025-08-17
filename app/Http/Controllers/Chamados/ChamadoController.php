@@ -8,6 +8,7 @@ use App\Http\Requests\StoreChamadoRequest;
 use App\Http\Requests\UpdateChamadoRequest;
 use App\Models\Chamado;
 use App\Models\ChamadoComentario;
+use App\Models\User;
 use Auth;
 use DB;
 use Exception;
@@ -24,10 +25,8 @@ class ChamadoController extends Controller
      */
     public function index()
     {
-        if (!Auth::check()) {
-            return redirect()->route('login')->with('error', 'Você precisa estar logado para acessar esta página.');
-        }
-        return view('admin.chamados');
+        $users = User::all();
+        return view('admin.chamados', compact('users'));
     }
 
     public function getChamados(Request $request): JsonResponse
@@ -66,6 +65,7 @@ class ChamadoController extends Controller
                         'prioridade' => $chamado->prioridade,
                         'categoria' => $chamado->categoria,
                         'departamento' => $chamado->departamento,
+                        'usuario_id' => $chamado->usuario_id,
                         'data_abertura' => $chamado->data_abertura ?
                             date('Y-m-d H:i', strtotime($chamado->data_abertura)) : ''
                     ];
@@ -108,9 +108,7 @@ class ChamadoController extends Controller
     public function updateChamado(UpdateChamadoRequest $request, $id): JsonResponse
     {
         try {
-
-            $chamado = Chamado::findOrFail($id);
-
+            $chamado = Chamado::with(['categoria', 'departamento', 'usuario'])->findOrFail($id);
             if ($chamado->status === 'Finalizado') {
                 return response()->json([
                     'success' => false,
@@ -123,11 +121,17 @@ class ChamadoController extends Controller
                 'descricao' => $chamado->descricao,
                 'prioridade' => $chamado->prioridade,
                 'status' => $chamado->status,
-                'categoria_id' => $chamado->categoria_id,
-                'departamento_id' => $chamado->departamento_id
+                'categoria' => $chamado->categoria->nome,
+                'departamento' => $chamado->departamento->nome,
+                'user_id' => $chamado->usuario->name
             ];
 
             $validatedData = $request->validated();
+
+            if (isset($validatedData['user_id']) && $validatedData['user_id'] != $chamado->user_id) {
+                $newUser = User::find($validatedData['user_id']);
+                $validatedData['user_name'] = $newUser ? $newUser->name : 'Unknown';
+            }
 
             $chamado->update($validatedData);
 
@@ -138,18 +142,26 @@ class ChamadoController extends Controller
                 'prioridade' => 'Prioridade',
                 'departamento_id' => 'Departamento',
                 'categoria_id' => 'Categoria',
-                'status' => 'Status'
+                'status' => 'Status',
+                'user_id' => 'Usuário Responsável'
             ];
 
             foreach ($originalData as $field => $oldValue) {
-                if (isset($validatedData[$field]) && $validatedData[$field] !== $oldValue) {
-                    $changes[$fieldNames[$field]] = [
-                        'old' => $oldValue,
-                        'new' => $validatedData[$field]
-                    ];
+                if (isset($validatedData[$field]) && $validatedData[$field] != $oldValue) {
+
+                    if ($field === 'user_id') {
+                        $changes[$fieldNames[$field]] = [
+                            'old' => $oldValue,
+                            'new' => $validatedData['user_name']
+                        ];
+                    } else {
+                        $changes[$fieldNames[$field]] = [
+                            'old' => $oldValue,
+                            'new' => $validatedData[$field]
+                        ];
+                    }
                 }
             }
-
 
             if (!empty($changes)) {
                 ChamadoComentario::create([
@@ -161,18 +173,6 @@ class ChamadoController extends Controller
                 ]);
             }
 
-
-
-            // $chamado = $chamadoModel->editarChamado(
-            //     $validatedData['id'],
-            //     $validatedData['titulo'],
-            //     $validatedData['descricao'],
-            //     $validatedData['prioridade'],
-            //     $validatedData['status'],
-            //     $validatedData['categoria'],
-            //     $validatedData['departamento']
-            // );
-
             return response()->json([
                 'success' => true,
                 'message' => 'Chamado atualizado com sucesso',
@@ -180,7 +180,6 @@ class ChamadoController extends Controller
                 'changes' => $changes,
                 'data' => $chamado
             ], 200);
-
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
@@ -221,7 +220,8 @@ class ChamadoController extends Controller
     public function showChamado($id)
     {
         $chamado = Chamado::with(['categoria', 'departamento', 'usuario', 'comentarios.usuario'])->findOrFail($id);
-        return view('admin.chamado', compact('chamado'));
+        $users = User::all();
+        return view('admin.chamado', compact('chamado', 'users'));
     }
 
     public function addComment(AdicionarComentariosRequest $request, $id): JsonResponse
@@ -384,4 +384,3 @@ class ChamadoController extends Controller
         }
     }
 }
-

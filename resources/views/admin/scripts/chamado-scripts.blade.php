@@ -1,10 +1,14 @@
 @push('js')
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/js/adminlte.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jdenticon@3.3.0/dist/jdenticon.min.js" async
     integrity="sha384-LfouGM03m83ArVtne1JPk926e3SGD0Tz8XHtW2OKGsgeBU/UfR0Fa8eX+UlwSSAZ" crossorigin="anonymous">
     </script>
+
+
 
 <script>
     $(document).ready(function () {
@@ -49,6 +53,34 @@
                 break;
         }
 
+        $(document).on('click', '.reply-btn', function () {
+            showAddComment();
+        });
+
+
+        $(document).on('click', '.edit-btn', function () {
+            $('#editChamadosModal').modal('show');
+
+            $('#editChamadoId').val({{ $chamado->id }});
+            $('#editChamadosTitulo').val('{{ $chamado->titulo }}');
+            $('#editChamadosDescricao').val('{{ $chamado->descricao }}');
+            $('#editChamadosStatus').val('{{ $chamado->status }}');
+            $('#editChamadosPrioridade').val('{{ $chamado->prioridade }}');
+            $('#editChamadosDepartamento').val('{{ $chamado->departamento->nome }}');
+            $('#editChamadosCategoria').val('{{ $chamado->categoria->nome }}');
+            $('#editChamadosUsuario').val('{{ $chamado->usuario->id }}');
+            $('#editChamadoForm').off('submit');
+        });
+
+        $(document).on('click', '.solucao-btn', function () {
+            $('#solucaoChamadoModal').modal('show');
+            // $('#solucaoChamadoForm').off('submit');
+        });
+
+        $(document).on('click', '.voltar-btn', function () {
+            $('#voltarSpinner').removeClass('d-none');
+        });
+
         $('#solucaoChamadoForm').on('submit', function (e) {
             e.preventDefault();
             const descricao = $('#solucaoDescricao').val().trim();
@@ -85,6 +117,7 @@
                 }
             });
         });
+
         $(document).on('submit', '#add-comment-form', function (e) {
             e.preventDefault();
 
@@ -134,6 +167,54 @@
             });
         });
 
+        $('#editChamadosForm').on('submit', function (e) {
+            e.preventDefault();
+            console.log('Submitting edit form for Chamado ID:', {{ $chamado->id }});
+
+            const submitBtn = $('#editSubmitBtn');
+            const status = $('#editChamadosStatus');
+            const spinner = $('#editSpinner');
+            const errorDiv = $('#editChamadosModalErrors');
+
+            submitBtn.prop('disabled', true);
+            spinner.removeClass('d-none');
+            errorDiv.addClass('d-none');
+
+            const formData = $(this).serialize();
+            console.log("Form data:", $(this).serialize());
+
+            let updateUrl = "{{ route('api.chamados.put', ':id') }}";
+            let id = {{ $chamado->id }};
+            let finalUrl = updateUrl.replace(':id', id);
+            console.log("Final URL:", finalUrl);
+
+            $.ajax({
+                url: finalUrl,
+                method: "PUT",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                },
+                data: formData,
+                success: function (response) {
+                    if (typeof table !== 'undefined') {
+                        table.ajax.reload();
+                    }
+                    $('#editChamadosModal').modal('hide');
+                    showAlert('Chamado atualizado com sucesso', 'success');
+                },
+                error: function (xhr, status, error) {
+                    console.log('Update error:', xhr, status, error);
+                    errorDiv.html(xhr.responseJSON.errors);
+                    errorDiv.removeClass('d-none');
+                    showAlert('Erro ao atualizar o chamado', 'error');
+                },
+                complete: function () {
+                    submitBtn.prop('disabled', false);
+                    spinner.addClass('d-none');
+                }
+            });
+        });
+
         $('#solucaoChamadoModal').on('hidden.bs.modal', function () {
             resetModal('#solucaoChamadoForm', '#solucaoModalErrors');
         });
@@ -144,43 +225,17 @@
     });
 
     function showAddComment() {
-        const card = $('#add-comment-card');
-        if (card.hasClass('collapsed-card')) {
-            card.CardWidget('expand');
+        const cardBody = $('#add-comment-card .card-body');
+        if (cardBody.is(':hidden')) {
+            cardBody.slideDown();
         }
         $('#comment-text').focus();
     }
 
     function cancelComment() {
         $('#comment-text').val('');
-        $('#add-comment-card').CardWidget('collapse');
+        $('#add-comment-card .card-body').slideUp();
     }
-
-
-
-    $(document).on('click', '.edit-btn', function () {
-        $('#editChamadosModal').modal('show');
-
-        $('#editChamadoId').val({{ $chamado->id }});
-        $('#editChamadosTitulo').val('{{ $chamado->titulo }}');
-        $('#editChamadosDescricao').val('{{ $chamado->descricao }}');
-        $('#editChamadosStatus').val('{{ $chamado->status }}');
-        $('#editChamadosPrioridade').val('{{ $chamado->prioridade }}');
-        $('#editChamadosDepartamento').val('{{ $chamado->departamento->nome }}');
-        $('#editChamadosCategoria').val('{{ $chamado->categoria->nome }}');
-        // $('#editChamadoForm').off('submit');
-    });
-
-    $(document).on('click', '.solucao-btn', function () {
-        $('#solucaoChamadoModal').modal('show');
-        // $('#solucaoChamadoForm').off('submit');
-    });
-
-    $(document).on('click', '.voltar-btn', function () {
-        $('#voltarSpinner').removeClass('d-none');
-    });
-
-
 
 
     function showAlert(message, type) {

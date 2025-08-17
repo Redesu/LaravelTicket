@@ -70,6 +70,7 @@
                     <th>Status</th>
                     <th>Prioridade</th>
                     <th>Categoria</th>
+                    <th>Usuário</TH>
                     <th>Data Abertura</th>
                     <th>Ações</th>
                 </tr>

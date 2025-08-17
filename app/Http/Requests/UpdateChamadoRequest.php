@@ -24,10 +24,11 @@ class UpdateChamadoRequest extends FormRequest
         return [
             'titulo' => 'required|string|max:255',
             'descricao' => 'required|string|max:100',
-            'prioridade' => 'required|in:baixa,média,alta,urgente',
+            'prioridade' => 'required|in:Baixa,Média,Alta,Urgente',
             'status' => 'required|string|max:100',
             'categoria' => 'required|string|min:1',
-            'departamento' => 'required|string|min:1'
+            'departamento' => 'required|string|min:1',
+            'user_id' => 'required|integer|exists:users,id',
         ];
     }
 }

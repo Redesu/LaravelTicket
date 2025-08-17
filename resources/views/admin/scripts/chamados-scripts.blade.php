@@ -1,7 +1,3 @@
-@push('css')
-    <!-- Toastr CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-@endpush
 @push('js')
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -90,6 +86,7 @@
                     searchable: false
                 },
                 { data: 'categoria', name: 'categoria' },
+                { data: 'usuario_id', name: 'usuario_id' },
                 {
                     data: 'data_abertura',
                     name: 'data_abertura',
@@ -144,6 +141,11 @@
                         return `<span class="badge ${badgeClass}">${data}</span>`;
                     }
                 },
+                {
+                    targets: 6,
+                    visible: false,
+                    searchable: false
+                }
             ],
             pageLength: 15,
             lengthMenu: [[15, 25, 50, -1], [15, 25, 50, "Todos"]],
@@ -254,7 +256,7 @@
             $('#editChamadosPrioridade').val(rowData.prioridade);
             $('#editChamadosDepartamento').val(rowData.departamento_id || rowData.departamento);
             $('#editChamadosCategoria').val(rowData.categoria_id || rowData.categoria);
-
+            $('#editChamadosUsuario').val(rowData.usuario_id || rowData.user_id);
             $('#editChamadosModal').modal('show');
             $('#editChamadosForm').off('submit'); // Remove previous submit handler
         });

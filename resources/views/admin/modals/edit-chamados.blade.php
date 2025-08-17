@@ -18,7 +18,7 @@
 
                     <div class="mb-3">
                         <label for="editChamadosStatus" class="form-label">Status</label>
-                        <select class="form-select" id="editChamadosStatus" name="status" disabled>
+                        <select class="form-select" id="editChamadosStatus" name="status">
                             <option value="Aberto">Aberto</option>
                             <option value="Em andamento">Em andamento</option>
                             <option value="Finalizado">Finalizado</option>
@@ -57,6 +57,16 @@
                             <option value="SUPORTE">SUPORTE</option>
                             <option value="CORREÇÃO">CORREÇÃO</option>
                             <option value="DUVIDAS">DUVIDAS</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editChamadosUsuario" class="form-label">Usuário Responsável</label>
+                        <select class="form-select" id="editChamadosUsuario" name="user_id" required>
+                            <option value="" disabled selected>Selecione o usuário responsável</option>
+                            @foreach($users as $user)
+                                <option value="{{ $user->id }}">{{ $user->name }}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
