@@ -2,6 +2,9 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jdenticon@3.3.0/dist/jdenticon.min.js" async
+    integrity="sha384-LfouGM03m83ArVtne1JPk926e3SGD0Tz8XHtW2OKGsgeBU/UfR0Fa8eX+UlwSSAZ" crossorigin="anonymous">
+    </script>
 
 <script>
     $(document).ready(function () {
@@ -28,13 +31,31 @@
                 $priorityBadge.addClass('badge-secondary');
         }
 
+        const $statusBadge = $('#status-badge');
+        const status = $statusBadge.text().trim().toLowerCase();
+
+        $statusBadge.removeClass().addClass('badge'); // Reset classes
+        switch (status) {
+            case 'aberto':
+                $statusBadge.addClass('badge-success');
+                break;
+
+            case 'em andamento':
+                $statusBadge.addClass('badge-info');
+                break;
+
+            case 'finalizado':
+                $statusBadge.addClass('badge-secondary');
+                break;
+        }
+
         $('#solucaoChamadoForm').on('submit', function (e) {
             e.preventDefault();
             const descricao = $('#solucaoDescricao').val().trim();
 
             if (!descricao) {
                 showAlert('A descrição não pode estar vazia.', 'error');
-                return; // Explicitly stop submission
+                return;
             }
 
             $('#solucaoSpinner').removeClass('d-none');
@@ -48,8 +69,8 @@
                 },
                 data: {
                     descricao: descricao,
-                    chamado_id: {{ $chamado->id }}
-            },
+                    tipo: 'solution',
+                },
                 success: function (response) {
                     $('#solucaoChamadoModal').modal('hide');
                     showAlert('Solução adicionada com sucesso!', 'success');
@@ -63,6 +84,62 @@
                     $('#solucaoSubmitBtn').prop('disabled', false);
                 }
             });
+        });
+        $(document).on('submit', '#add-comment-form', function (e) {
+            e.preventDefault();
+
+            console.log('Submitting comment form');
+            console.log("Submitting with text: " + $('#comment-text').val());
+
+            const commentText = $('#comment-text').val().trim();
+            const spinner = $('#comentarioSpinner');
+            const submitBtn = $('#addCommentBtn');
+
+            if (!commentText) {
+                showAlert('O comentário não pode estar vazio.', 'error');
+                return;
+            }
+
+            submitBtn.prop('disabled', true);
+            spinner.removeClass('d-none');
+
+            if (!commentText) {
+                showAlert('O comentário não pode estar vazio.', 'error');
+                return;
+            }
+            $.ajax({
+                url: '{{ route("api.chamados.addComentario", $chamado->id) }}',
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                },
+                data: {
+                    descricao: commentText,
+                    tipo: 'comment',
+                },
+                success: function (response) {
+                    $('#comment-text').val('');
+                    $('#add-comment-card').CardWidget('collapse');
+
+                    showAlert('Comentário adicionado com sucesso!', 'success');
+                    location.reload();
+                },
+                error: function (xhr) {
+                    showAlert('Erro ao adicionar comentário: ' + xhr.responseJSON.message, 'error');
+                },
+                complete: function () {
+                    spinner.addClass('d-none');
+                    submitBtn.prop('disabled', false);
+                }
+            });
+        });
+
+        $('#solucaoChamadoModal').on('hidden.bs.modal', function () {
+            resetModal('#solucaoChamadoForm', '#solucaoModalErrors');
+        });
+
+        $('#editChamadosModal').on('hidden.bs.modal', function () {
+            resetModal('#editChamadosForm', '#editChamadosModalErrors');
         });
     });
 
@@ -79,47 +156,28 @@
         $('#add-comment-card').CardWidget('collapse');
     }
 
-    $('#add-comment-form').on('submit', function (e) {
-        e.preventDefault();
-        const commentText = $('#comment-text').val().trim();
 
-        if (!commentText) {
-            showAlert('O comentário não pode estar vazio.', 'error');
-            return;
-        }
-
-        $.ajax({
-            url: '{{ route("api.chamados.addComentario", $chamado->id) }}',
-            type: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-            },
-            data: {
-                descricao: commentText,
-                chamado_id: {{ $chamado->id }}
-             },
-            success: function (response) {
-                $('#comment-text').val('');
-                $('#add-comment-card').CardWidget('collapse');
-
-                showAlert('Comentário adicionado com sucesso!', 'success');
-
-                location.reload();
-            },
-            error: function (xhr) {
-                showAlert('Erro ao adicionar comentário: ' + xhr.responseJSON.message, 'error');
-            }
-        });
-    });
 
     $(document).on('click', '.edit-btn', function () {
-        $('#editChamadoModal').modal('show');
+        $('#editChamadosModal').modal('show');
+
+        $('#editChamadoId').val({{ $chamado->id }});
+        $('#editChamadosTitulo').val('{{ $chamado->titulo }}');
+        $('#editChamadosDescricao').val('{{ $chamado->descricao }}');
+        $('#editChamadosStatus').val('{{ $chamado->status }}');
+        $('#editChamadosPrioridade').val('{{ $chamado->prioridade }}');
+        $('#editChamadosDepartamento').val('{{ $chamado->departamento->nome }}');
+        $('#editChamadosCategoria').val('{{ $chamado->categoria->nome }}');
         // $('#editChamadoForm').off('submit');
     });
 
     $(document).on('click', '.solucao-btn', function () {
         $('#solucaoChamadoModal').modal('show');
         // $('#solucaoChamadoForm').off('submit');
+    });
+
+    $(document).on('click', '.voltar-btn', function () {
+        $('#voltarSpinner').removeClass('d-none');
     });
 
 
@@ -134,6 +192,13 @@
         } else {
             alert(message);
         }
+    }
+
+    function resetModal(formSelector, errorDivSelector) {
+        $(formSelector)[0].reset();
+        $(errorDivSelector).addClass('d-none').html('');
+        $(formSelector + ' button[type="submit"]').prop('disabled', false);
+        $(formSelector + ' .spinner-border').addClass('d-none');
     }
 
 

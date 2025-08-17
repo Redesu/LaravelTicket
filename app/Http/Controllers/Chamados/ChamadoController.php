@@ -111,6 +111,13 @@ class ChamadoController extends Controller
 
             $chamado = Chamado::findOrFail($id);
 
+            if ($chamado->status === 'Finalizado') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Chamado já está finalizado e não pode ser editado.'
+                ], 400);
+            }
+
             $originalData = [
                 'titulo' => $chamado->titulo,
                 'descricao' => $chamado->descricao,
@@ -232,7 +239,7 @@ class ChamadoController extends Controller
             ]);
 
             if ($validatedData['tipo'] === 'solution') {
-                $chamado->update(['status' => 'resolvido']);
+                $chamado->update(['status' => 'Finalizado']);
             }
 
             $comentario->load('usuario');
@@ -278,7 +285,7 @@ class ChamadoController extends Controller
                 'tipo' => 'solution',
             ]);
 
-            $chamado->update(['status' => 'resolvido']);
+            $chamado->update(['status' => 'Finalizado']);
 
             $solucao->load('usuario');
 

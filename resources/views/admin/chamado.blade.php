@@ -34,15 +34,21 @@
                         <div class="card card-widget">
                             <div class="card-header">
                                 <div class="user-block">
-                                    <img class="img-circle"
-                                        src="{{ $comentario->usuario->avatar ?? '/themes/vivaadm/assets/images/avatar.jpg' }}"
-                                        alt="User Image">
-                                    <span class="username">
-                                        {{ $comentario->usuario->name }}
-                                        @if($comentario->tipo == 'edit')
-                                            <span class="badge badge-info ml-1">EDITADO</span>
+                                    <div class="d-flex align-items-center me-1">
+                                        @if($comentario->usuario->avatar)
+                                            <img class="img-circle" src="{{ $comentario->usuario->avatar }}" alt="User Image">
+                                        @else
+                                            <svg class="img-circle" width="40" height="40"
+                                                data-jdenticon-value="{{ $comentario->usuario->name }}"></svg>
                                         @endif
-                                    </span>
+
+                                        <span class="username ms-1">
+                                            {{ $comentario->usuario->name }}
+                                            @if($comentario->tipo == 'edit')
+                                                <span class="badge badge-info ml-1">EDITADO</span>
+                                            @endif
+                                        </span>
+                                    </div>
                                     <span class="description">{{ $comentario->created_at->format('d/m/Y H:i') }}</span>
                                 </div>
                                 <div class="card-tools">
@@ -95,7 +101,8 @@
                                 placeholder="Digite seu comentário..."></textarea>
                         </div>
                         <div class="form-group">
-                            <button type="submit" class="btn btn-success">
+                            <button type="submit" class="btn btn-success" id="addCommentBtn">
+                                <span class="spinner-border spinner-border-sm d-none" id="comentarioSpinner"></span>
                                 <i class="fas fa-comment"></i> Adicionar Comentário
                             </button>
                             <button type="button" class="btn btn-secondary" onclick="cancelComment()">
@@ -125,20 +132,24 @@
             <!-- Action buttons -->
             <div class="card">
                 <div class="card-body">
-                    <a href="{{ route('admin.chamados') }}" class="btn btn-secondary">
+                    <a href="{{ route('admin.chamados') }}" class="btn btn-secondary voltar-btn" id="voltarBtn">
+                        <span class="spinner-border spinner-border-sm d-none" id="voltarSpinner"></span>
                         <i class="fas fa-arrow-left"></i> Voltar
                     </a>
-                    <button type="button" class="btn btn-primary ml-2 edit-btn" data-bs-toggle="modal"
-                        data-bs-target="#editChamadoModal">
-                        <i class="fas fa-edit"></i> Editar
-                    </button>
-                    <button type="button" class="btn btn-success ml-2 solucao-btn" data-bs-toggle="modal"
-                        data-bs-target="#solucaoChamadoModal">
-                        <i class="fas fa-check"></i> Resolver
-                    </button>
-                    <button type="button" class="btn btn-warning ml-2" onclick="showAddComment()">
-                        <i class="fas fa-comments"></i> Adicionar Comentário
-                    </button>
+                    @if($chamado->status !== 'Finalizado')
+                        <button type="button" class="btn btn-primary ml-2 edit-btn" data-bs-toggle="modal"
+                            data-bs-target="#editChamadoModal">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button type="button" class="btn btn-success ml-2 solucao-btn" data-bs-toggle="modal"
+                            data-bs-target="#solucaoChamadoModal">
+                            <i class="fas fa-check"></i> Resolver
+                        </button>
+                        <button type="button" class="btn btn-warning ml-2 adicionar-comentario-btn"
+                            onclick="showAddComment()">
+                            <i class="fas fa-comments"></i> Adicionar Comentário
+                        </button>
+                    @endif
                 </div>
             </div>
         </div>
@@ -237,8 +248,8 @@
                                 </label>
                             </div>
                             <div class="col-8">
-                                <span class="badge badge-success">
-                                    {{ $chamado->status ?? 'Aberto' }}
+                                <span id="status-badge" class="badge badge-success">
+                                    {{ $chamado->status }}
                                 </span>
                             </div>
                         </div>
@@ -251,7 +262,7 @@
     </div>
 </div>
 
-@include('admin.modals.edit-chamado')
+@include('admin.modals.edit-chamados')
 @include('admin.modals.solucao-chamado')
 
 @stop

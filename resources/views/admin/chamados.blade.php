@@ -82,7 +82,7 @@
 
     </div>
     @include('admin.modals.create-chamado')
-    @include('admin.modals.edit-chamado')
+    @include('admin.modals.edit-chamados')
 
     @stop
 

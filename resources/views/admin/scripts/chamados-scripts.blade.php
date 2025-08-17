@@ -1,3 +1,7 @@
+@push('css')
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+@endpush
 @push('js')
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -109,7 +113,7 @@
                     render: function (data, type, row) {
                         let actions = '';
                         if (currentUserId) {
-                            actions += `<button class="btn btn-primary btn-sm edit-btn" data-bs-toggle="modal" data-bs-target="#editChamadoModal"><i class="fas fa-edit"></i> Editar</button> `;
+                            actions += `<button class="btn btn-primary btn-sm edit-btn" data-bs-toggle="modal" data-bs-target="#editChamadosModal"><i class="fas fa-edit"></i> Editar</button> `;
                             actions += `<button class="btn btn-danger btn-sm delete-btn" data-id="${row.id}"><i class="fas fa-trash"></i> Excluir</button>`;
                         }
                         return actions;
@@ -132,7 +136,7 @@
                                 badgeClass = 'badge-warning';
                                 break;
                             case 'Finalizado':
-                                badgeClass = 'badge-danger';
+                                badgeClass = 'badge-secondary';
                                 break;
                             default:
                                 badgeClass = 'badge-secondary';
@@ -190,6 +194,7 @@
 
         $('#refreshBtn').on('click', function () {
             table.ajax.reload();
+            console.log("calling toastr sucess");
             showAlert('Chamados recarregados com sucesso', 'success');
         });
 
@@ -243,26 +248,26 @@
             console.log('Edit button clicked for Chamado:', rowData);
 
             $('#editChamadoId').val(rowData.id);
-            $('#editTitulo').val(rowData.titulo);
-            $('#editStatus').val(rowData.status);
-            $('#editDescricao').val(rowData.descricao);
-            $('#editPrioridade').val(rowData.prioridade);
-            $('#editDepartamento').val(rowData.departamento_id || rowData.departamento);
-            $('#editCategoria').val(rowData.categoria_id || rowData.categoria);
+            $('#editChamadosTitulo').val(rowData.titulo);
+            $('#editChamadosStatus').val(rowData.status);
+            $('#editChamadosDescricao').val(rowData.descricao);
+            $('#editChamadosPrioridade').val(rowData.prioridade);
+            $('#editChamadosDepartamento').val(rowData.departamento_id || rowData.departamento);
+            $('#editChamadosCategoria').val(rowData.categoria_id || rowData.categoria);
 
-            $('#editChamadoModal').modal('show');
-            $('#editChamadoForm').off('submit'); // Remove previous submit handler
+            $('#editChamadosModal').modal('show');
+            $('#editChamadosForm').off('submit'); // Remove previous submit handler
         });
 
-        $(document).on('submit', '#editChamadoForm', function (e) {
+        $(document).on('submit', '#editChamadosForm', function (e) {
             e.preventDefault();
             console.log('Submitting edit form for Chamado ID:', $('#editChamadoId').val());
             console.log("Form data:", $(this).serialize());
 
             const submitBtn = $('#editSubmitBtn');
-            const status = $('#editStatus');
+            const status = $('#editChamadosStatus');
             const spinner = $('#editSpinner');
-            const errorDiv = $('#editModalErrors');
+            const errorDiv = $('#editChamadosModalErrors');
 
             submitBtn.prop('disabled', true);
             spinner.removeClass('d-none');
@@ -286,7 +291,7 @@
                 data: formData,
                 success: function (response) {
                     table.ajax.reload();
-                    $('#editChamadoModal').modal('hide');
+                    $('#editChamadosModal').modal('hide');
                     showAlert('Chamado atualizado com sucesso', 'success');
                 },
                 error: function (xhr, status, error) {
@@ -306,8 +311,8 @@
             resetModal('#createChamadoForm', '#modalErrors');
         });
 
-        $('#editChamadoModal').on('hidden.bs.modal', function () {
-            resetModal('#editChamadoForm', '#editModalErrors');
+        $('#editChamadosModal').on('hidden.bs.modal', function () {
+            resetModal('#editChamadosForm', '#editModalChamadosErrors');
         });
     });
 

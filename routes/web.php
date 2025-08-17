@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->middleware('auth');
 
 Route::get('admin/dashboard', [DashboardController::class, 'showDashboard'])->name('admin.dashboard');
 Route::get('admin/chamados', [ChamadoController::class, 'index'])->name('admin.chamados');

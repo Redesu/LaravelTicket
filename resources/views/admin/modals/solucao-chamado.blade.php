@@ -12,7 +12,7 @@
                     <div id="solucaoModalErrors" class="alert alert-danger d-none"></div>
 
                     <div class="mb-3">
-                        <label for="editDescricao" class="form-label">Descrição da nota</label>
+                        <label for="solucaoDescricao" class="form-label">Descrição da nota</label>
                         <textarea class="form-control form-control-lg" id="solucaoDescricao" name="descricao"
                             rows="5"></textarea>
                     </div>
