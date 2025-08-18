@@ -50,6 +50,16 @@
                         </select>
                     </div>
 
+                    <div class="mb-3">
+                        <label for="createChamadosUsuario" class="form-label">Usuário Responsável</label>
+                        <select class="form-select" id="createChamadosUsuario" name="user_id" required>
+                            <option value="" disabled selected>Selecione o usuário responsável</option>
+                            @foreach($users as $user)
+                                <option value="{{ $user->id }}">{{ $user->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>

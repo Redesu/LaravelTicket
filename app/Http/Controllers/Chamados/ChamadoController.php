@@ -86,7 +86,7 @@ class ChamadoController extends Controller
             $chamado = $chamadoModel->criarChamado(
                 $validatedData['titulo'],
                 $validatedData['descricao'],
-                Auth::id(),
+                $validatedData['user_id'],
                 $validatedData['prioridade'],
                 $validatedData['categoria_id'],
                 $validatedData['departamento_id']
