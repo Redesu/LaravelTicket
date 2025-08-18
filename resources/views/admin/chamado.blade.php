@@ -160,6 +160,7 @@
                     <p class="lead">{{ $chamado->descricao }}</p>
                     <small class="text-muted">
                         <i class="fas fa-calendar"></i> Criado em:
+                        {{ $chamado->created_at ? $chamado->created_at->format('d/m/Y H:i') : 'N/A' }}
                     </small>
                 </div>
             </div>
@@ -269,7 +270,7 @@
                             </div>
                             <div class="col-8">
                                 <span class="form-control-static">
-                                    {{ $chamado->data_abertura ?? 'N/A' }}
+                                    {{ $chamado->created_at ? $chamado->created_at->format('d/m/Y H:i') : 'N/A' }}
                                 </span>
                             </div>
                         </div>

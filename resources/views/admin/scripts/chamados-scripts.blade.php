@@ -1,7 +1,13 @@
+@push('css')
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+@endpush
 @push('js')
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/js/adminlte.min.js"></script>
+
 
 <!-- DataTables -->
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
@@ -20,7 +26,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 <script>
     $(document).ready(function () {
-        console.log('Initializing DataTables...');
 
         const currentUserId = {{ auth()->user()->id ?? 'null'}};
 
@@ -35,8 +40,8 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 error: function (xhr, error, thrown) {
-                    console.log('AJAX Error:', xhr, error, thrown);
-                    console.log('Response Text:', xhr.responseText);
+                    showAlert(`AJAX Error: ${xhr}, ${error}, ${thrown}`, 'error');
+                    showAlert(`Response Text: ${xhr.responseText}`, 'error');
                 }
             },
             layout: {
@@ -92,7 +97,6 @@
                     name: 'data_abertura',
                     render: function (data, type, row) {
                         if (data && data !== null) {
-                            console.log('Rendering date:', data);
                             return new Date(data).toLocaleString('pt-BR', {
                                 year: 'numeric',
                                 month: '2-digit',
@@ -153,11 +157,8 @@
                 url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/pt-BR.json'
             },
             initComplete: function () {
-                console.log('DataTables initialized successfully');
+                showAlert('Chamados carregados com sucesso', 'success');
             },
-            drawCallback: function (settings) {
-                console.log('DataTables draw completed, rows:', settings.fnRecordsDisplay());
-            }
         });
 
         $('#dataTable tbody').on('click', 'tr', function (e) {
@@ -173,7 +174,6 @@
 
         $('#dataTable').on('click', '.delete-btn', function () {
             var id = $(this).data('id');
-            console.log('Delete button clicked for ID:', id);
             if (confirm('Tem certeza que deseja excluir este chamado?')) {
                 $.ajax({
                     url: "{{ route('api.chamados.delete') }}",
@@ -187,7 +187,7 @@
                         showAlert('Chamado excluído com sucesso', 'success');
                     },
                     error: function (xhr, status, error) {
-                        console.log('Delete error:', xhr, status, error);
+                        showAlert(`AJAX Error: ${xhr}, ${error}, ${status}`, 'error');
                         showAlert('Erro ao excluir o chamado', 'error');
                     }
                 });
@@ -196,7 +196,6 @@
 
         $('#refreshBtn').on('click', function () {
             table.ajax.reload();
-            console.log("calling toastr sucess");
             showAlert('Chamados recarregados com sucesso', 'success');
         });
 
@@ -210,7 +209,6 @@
             submitBtn.prop('disabled', true);
             spinner.removeClass('d-none');
             errorDiv.addClass('d-none');
-            console.log("Form data:", $(this).serialize())
 
             $.ajax({
                 url: "{{ route('api.chamados.post') }}",
@@ -225,7 +223,7 @@
                     showAlert('Chamado criado com sucesso', 'success');
                 },
                 error: function (xhr, status, error) {
-                    console.log('Create error:', xhr, status, error);
+                    showAlert(`AJAX Error: ${xhr}, ${error}, ${status}`, 'error');
                     if (xhr.responseJSON && xhr.responseJSON.errors) {
                         let errorMsg = '<ul>';
                         $.each(xhr.responseJSON.errors, function (key, value) {
@@ -247,7 +245,6 @@
         $(document).on('click', '.edit-btn', function () {
             const id = $(this).data('id');
             const rowData = table.row($(this).closest('tr')).data();
-            console.log('Edit button clicked for Chamado:', rowData);
 
             $('#editChamadoId').val(rowData.id);
             $('#editChamadosTitulo').val(rowData.titulo);
@@ -263,8 +260,6 @@
 
         $(document).on('submit', '#editChamadosForm', function (e) {
             e.preventDefault();
-            console.log('Submitting edit form for Chamado ID:', $('#editChamadoId').val());
-            console.log("Form data:", $(this).serialize());
 
             const submitBtn = $('#editSubmitBtn');
             const status = $('#editChamadosStatus');
@@ -297,7 +292,7 @@
                     showAlert('Chamado atualizado com sucesso', 'success');
                 },
                 error: function (xhr, status, error) {
-                    console.log('Update error:', xhr, status, error);
+                    showAlert(`AJAX Error: ${xhr}, ${error}, ${status}`, 'error');
                     errorDiv.html(xhr.responseJSON.errors);
                     errorDiv.removeClass('d-none');
                     showAlert('Erro ao atualizar o chamado', 'error');

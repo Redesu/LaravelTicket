@@ -15,8 +15,6 @@
         const $priorityBadge = $('#priority-badge');
         const priority = $priorityBadge.text().trim().toLowerCase();
 
-        console.log(`{{ $chamado }}`);
-
         $priorityBadge.removeClass().addClass('badge'); // Reset classes
         switch (priority.toLowerCase()) {
             case 'urgente':
@@ -106,7 +104,9 @@
                 success: function (response) {
                     $('#solucaoChamadoModal').modal('hide');
                     showAlert('Solução adicionada com sucesso!', 'success');
-                    location.reload();
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
                 },
                 error: function (xhr) {
                     $('#solucaoModalErrors').removeClass('d-none').text(xhr.responseJSON.message);
@@ -120,9 +120,6 @@
 
         $(document).on('submit', '#add-comment-form', function (e) {
             e.preventDefault();
-
-            console.log('Submitting comment form');
-            console.log("Submitting with text: " + $('#comment-text').val());
 
             const commentText = $('#comment-text').val().trim();
             const spinner = $('#comentarioSpinner');
@@ -151,14 +148,14 @@
                     tipo: 'comment',
                 },
                 success: function (response) {
-                    $('#comment-text').val('');
-                    $('#add-comment-card').CardWidget('collapse');
-
+                    cancelComment();
                     showAlert('Comentário adicionado com sucesso!', 'success');
-                    location.reload();
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
                 },
-                error: function (xhr) {
-                    showAlert('Erro ao adicionar comentário: ' + xhr.responseJSON.message, 'error');
+                error: function (xhr, status, error) {
+                    showAlert(`AJAX Error: ${xhr}, ${error}, ${status}`, 'error');
                 },
                 complete: function () {
                     spinner.addClass('d-none');
@@ -169,7 +166,6 @@
 
         $('#editChamadosForm').on('submit', function (e) {
             e.preventDefault();
-            console.log('Submitting edit form for Chamado ID:', {{ $chamado->id }});
 
             const submitBtn = $('#editSubmitBtn');
             const status = $('#editChamadosStatus');
@@ -181,12 +177,10 @@
             errorDiv.addClass('d-none');
 
             const formData = $(this).serialize();
-            console.log("Form data:", $(this).serialize());
 
             let updateUrl = "{{ route('api.chamados.put', ':id') }}";
             let id = {{ $chamado->id }};
             let finalUrl = updateUrl.replace(':id', id);
-            console.log("Final URL:", finalUrl);
 
             $.ajax({
                 url: finalUrl,
@@ -203,7 +197,7 @@
                     showAlert('Chamado atualizado com sucesso', 'success');
                 },
                 error: function (xhr, status, error) {
-                    console.log('Update error:', xhr, status, error);
+                    showAlert(`AJAX Error: ${xhr}, ${error}, ${status}`, 'error');
                     errorDiv.html(xhr.responseJSON.errors);
                     errorDiv.removeClass('d-none');
                     showAlert('Erro ao atualizar o chamado', 'error');

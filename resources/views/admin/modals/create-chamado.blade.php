@@ -33,7 +33,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="departamento" class="form-label">Departamento</label>
+                        <label for="departamento_id" class="form-label">Departamento</label>
                         <select class="form-select" id="departamento_id" name="departamento_id" required>
                             <option value="" disabled selected>Selecione o departamento</option>
                             <option value="1">Suporte</option>
@@ -42,7 +42,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="categoria" class="form-label">Categoria</label>
+                        <label for="categoria_id" class="form-label">Categoria</label>
                         <select class="form-select" id="categoria_id" name="categoria_id" required>
                             <option value="" disabled selected>Selecione a categoria</option>
                             <option value="1">Suporte</option>
