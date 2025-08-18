@@ -69,6 +69,16 @@
 
 @stop
 
+@section('auth_footer')
+<div class="text-center">
+    <p class="mb-0">
+        <a href="{{ route('register') }}" class="text-center">
+            Não registrado ainda? Clique aqui para se registrar
+        </a>
+    </p>
+</div>
+@stop
+
 @section('js')
 <script> console.log('Login page loaded'); </script>
 @stop
