@@ -257,7 +257,7 @@ return [
     */
 
     'use_route_url' => false,
-    'dashboard_url' => 'home',
+    'dashboard_url' => '/admin/dashboard',
     'logout_url' => 'auth/logout',
     'login_url' => 'auth/login',
     'register_url' => 'auth/register',
@@ -340,15 +340,21 @@ return [
             'icon' => 'fas fa-fw fa-user',
         ],
         [
-            'text' => 'Alterar Senha',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-lock',
-        ],
-        [
             'text' => 'Chamados',
             'url' => 'admin/chamados',
             'icon' => 'fas fa-fw fa-solid fa-paperclip',
         ],
+        [
+            'text' => 'Categorias',
+            'url' => 'admin/settings',
+            'icon' => 'fas fa-fw fa-solid fa-layer-group',
+        ],
+        [
+            'text' => 'Departamentos',
+            'url' => 'admin/settings',
+            'icon' => 'fas fa-fw fa-solid fa-building',
+        ],
+
 
         // [
         //     'text' => 'multilevel',

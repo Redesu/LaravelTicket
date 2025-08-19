@@ -195,6 +195,9 @@
                     }
                     $('#editChamadosModal').modal('hide');
                     showAlert('Chamado atualizado com sucesso', 'success');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
                 },
                 error: function (xhr, status, error) {
                     showAlert(`AJAX Error: ${xhr}, ${error}, ${status}`, 'error');

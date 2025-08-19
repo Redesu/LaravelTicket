@@ -47,7 +47,6 @@ class Chamado extends Model
         return $this->belongsTo(Departamento::class, 'departamento_id');
     }
 
-    // Helper methods for specific comment types
     public function getCommentsOnly()
     {
         return $this->comentarios()->comments()->get();
@@ -166,31 +165,6 @@ class Chamado extends Model
     }
 
 
-    // public function editarChamado(int $id, string $titulo, string $descricao, string $prioridade, string $status, string $categoria, string $departamento)
-    // {
-    //     $departamentoId = DB::table('departamentos')->where('nome', $departamento)->value('id');
-
-    //     $categoriaId = DB::table('categorias')->where('nome', $categoria)->value('id');
-
-    //     $query = DB::table('chamados')
-    //         ->where('id', $id)
-    //         ->update([
-    //             'titulo' => $titulo,
-    //             'descricao' => $descricao,
-    //             'prioridade' => $prioridade,
-    //             'status' => $status,
-    //             'categoria_id' => $categoriaId,
-    //             'departamento_id' => $departamentoId,
-    //             'updated_at' => now(),
-    //         ]);
-
-    //     if ($query === false) {
-    //         throw new \Exception('Erro ao atualizar o chamado.');
-    //     }
-
-    //     return $query > 0;
-    // }
-
     public function deletarChamado(int $id, int $userId): int
     {
         $query = DB::table('chamados')
@@ -203,6 +177,32 @@ class Chamado extends Model
         }
 
         return $query;
+    }
+
+    public static function buscarEstatisticar()
+    {
+        $qntdNovosChamados = DB::table('chamados')
+            ->where('created_at', '>=', 'DATE_SUB(NOW(), INTERVAL 7 DAY)')
+            ->count();
+
+        $porcentagemChamadosFechados = DB::table('chamados')
+            ->selectRaw('
+        CAST(ROUND(SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) / COUNT(*) * 100, 2) AS CHAR) as PORCENTAGEM_FECHADOS
+        ', ['Finalizado'])
+            ->value('PORCENTAGEM_FECHADOS');
+
+        $qntdChamadosUrgentes = DB::table('chamados')
+            ->where('prioridade', 'Urgente')
+            ->count();
+
+        $usuariosRegistrados = DB::table('users')->count();
+
+        return (object) [
+            'qntdNovosChamados' => strval($qntdNovosChamados),
+            'porcentagemChamadosFechados' => strval($porcentagemChamadosFechados),
+            'qntdChamadosUrgentes' => strval($qntdChamadosUrgentes),
+            'qntdUsuarios' => strval($usuariosRegistrados)
+        ];
     }
 }
 

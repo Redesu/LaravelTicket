@@ -17,3 +17,7 @@
 .badge {
     margin-right: 5px;
 }
+
+.text-white {
+    color: white !important;
+}

@@ -303,31 +303,10 @@ class ChamadoController extends Controller
         }
     }
 
-    public function getChamadoByDepartamento($departamento): JsonResponse
-    {
-        try {
-            $chamados = DB::table('chamados')
-                ->where('departamento', $departamento)
-                ->get();
-
-            return response()->json($chamados);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erro ao listar chamado',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
     public function getEstatisticas(): JsonResponse
     {
         try {
-            $stats = [
-                'total_chamados' => DB::table('chamados')->count(),
-                'departamentos' => DB::table('departamentos')->count(),
-                'mediaChamados' => DB::table('chamados')->avg('id'),
-            ];
+            $stats = Chamado::buscarEstatisticar();
             return response()->json($stats);
         } catch (Exception $e) {
             return response()->json([
