@@ -35,6 +35,22 @@
             serverSide: true,
             ajax: {
                 url: "{{ route('api.chamados.data-tables') }}",
+                data: function (d) {
+                    console.log('DataTable data function called');
+                    console.log('Status element exists:', $('#status').length > 0);
+                    console.log('Status element:', $('#status'));
+                    console.log('Status value:', $('#status').val());
+
+                    d.status = $('#status').val();
+                    d.prioridade = $('#filtrarChamadosPrioridade').val();
+                    d.user_id = $('#filtrarChamadosUsuario').val();
+                    d.departamento = $('#filtrarChamadosDepartamento').val();
+                    d.categoria = $('#filtrarChamadosCategoria').val();
+                    d.created_at_inicio = $('#created_at_inicio').val();
+                    d.created_at_fim = $('#created_at_fim').val();
+                    d.updated_at_inicio = $('#updated_at_inicio').val();
+                    d.updated_at_fim = $('#updated_at_fim').val();
+                },
                 type: "GET",
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -194,10 +210,44 @@
             }
         });
 
+
+        $(document).on('click', '.edit-btn', function () {
+            const id = $(this).data('id');
+            const rowData = table.row($(this).closest('tr')).data();
+
+            $('#editChamadoId').val(rowData.id);
+            $('#editChamadosTitulo').val(rowData.titulo);
+            $('#editChamadosStatus').val(rowData.status);
+            $('#editChamadosDescricao').val(rowData.descricao);
+            $('#editChamadosPrioridade').val(rowData.prioridade);
+            $('#editChamadosDepartamento').val(rowData.departamento_id || rowData.departamento);
+            $('#editChamadosCategoria').val(rowData.categoria_id || rowData.categoria);
+            $('#editChamadosUsuario').val(rowData.usuario_id || rowData.user_id);
+            $('#editChamadosModal').modal('show');
+            $('#editChamadosForm').off('submit'); // Remove previous submit handler
+        });
+
         $('#refreshBtn').on('click', function () {
             table.ajax.reload();
             showAlert('Chamados recarregados com sucesso', 'success');
         });
+
+        $('#clearFilters').on('click', function () {
+            $('#filtrarChamadosForm')[0].reset();
+
+            $('#filtrarChamadosForm select').each(function () {
+                $(this).val('');
+            });
+
+            $('#filtrarChamadosForm input[type="date"]').each(function () {
+                $(this).val('');
+            });
+
+            table.ajax.reload();
+
+            $('#filtrarChamadosModal').modal('hide');
+            showAlert('Filtros limpos com sucesso', 'success');
+        })
 
         $('#createChamadoForm').on('submit', function (e) {
             e.preventDefault();
@@ -240,22 +290,6 @@
                     spinner.addClass('d-none');
                 }
             });
-        });
-
-        $(document).on('click', '.edit-btn', function () {
-            const id = $(this).data('id');
-            const rowData = table.row($(this).closest('tr')).data();
-
-            $('#editChamadoId').val(rowData.id);
-            $('#editChamadosTitulo').val(rowData.titulo);
-            $('#editChamadosStatus').val(rowData.status);
-            $('#editChamadosDescricao').val(rowData.descricao);
-            $('#editChamadosPrioridade').val(rowData.prioridade);
-            $('#editChamadosDepartamento').val(rowData.departamento_id || rowData.departamento);
-            $('#editChamadosCategoria').val(rowData.categoria_id || rowData.categoria);
-            $('#editChamadosUsuario').val(rowData.usuario_id || rowData.user_id);
-            $('#editChamadosModal').modal('show');
-            $('#editChamadosForm').off('submit'); // Remove previous submit handler
         });
 
         $(document).on('submit', '#editChamadosForm', function (e) {
@@ -304,12 +338,37 @@
             });
         });
 
+        $(document).on('submit', '#filtrarChamadosForm', function (e) {
+            e.preventDefault();
+            const submitBtn = $('#filtrarSubmitBtn');
+            const spinner = $('#filtrarSpinner');
+            const errorDiv = $('#filtrarModalErrors');
+
+            submitBtn.prop('disabled', true);
+            spinner.removeClass('d-none');
+            errorDiv.addClass('d-none');
+
+            table.ajax.reload(function (json) {
+                $('#filtrarChamadosModal').modal('hide');
+
+                showAlert('Filtros aplicados com sucesso', 'success');
+
+                resetModal('#filtrarChamadosForm', '#filtrarModalErrors');
+            })
+        });
+
+
+
         $('#createChamadoModal').on('hidden.bs.modal', function () {
             resetModal('#createChamadoForm', '#modalErrors');
         });
 
         $('#editChamadosModal').on('hidden.bs.modal', function () {
             resetModal('#editChamadosForm', '#editModalChamadosErrors');
+        });
+
+        $('#filtrarChamadosModal').on('hidden.bs.modal', function () {
+            resetModal('#filtrarChamadosForm', '#filtrarModalErrors');
         });
     });
 

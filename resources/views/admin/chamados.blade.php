@@ -51,6 +51,9 @@
                 id="createTicketBtn">
                 <i class="fas fa-plus"></i> Criar Chamado
             </button>
+            <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#filtrarChamadosModal">
+                <i class="fas fa-filter"></i> Filtrar
+            </button>
             <button type="button" class="btn btn-success" id="refreshBtn">
                 <i class="fas fa-sync"></i> Recarregar
             </button>
@@ -84,6 +87,7 @@
     </div>
     @include('admin.modals.create-chamado')
     @include('admin.modals.edit-chamados')
+    @include('admin.modals.filtrar-chamados')
 
     @stop
 

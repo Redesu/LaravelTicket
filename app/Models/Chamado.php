@@ -101,7 +101,7 @@ class Chamado extends Model
             ->findOrFail($id);
     }
 
-    public function buscarChamadoDataTables(string $draw, int $start = 0, int $length = 10, string $searchValue = '')
+    public function buscarChamadoDataTables(string $draw, int $start = 0, int $length = 10, string $searchValue = '', array $filters = [])
     {
         $query = DB::table('chamados as c')
             ->leftJoin('categorias as cat', 'c.categoria_id', '=', 'cat.id')
@@ -118,29 +118,76 @@ class Chamado extends Model
                 'c.created_at as data_abertura'
             ]);
 
+        if (empty($filters['status']) || $filters['status'] !== 'Finalizado') {
+            $query->where('c.status', '!=', 'Finalizado');
+        }
+
         if (!empty($searchValue)) {
             $query->where(function ($q) use ($searchValue) {
-                $q->where('titulo', 'like', "%{$searchValue}%")
-                    ->orWhere('descricao', 'like', "%{$searchValue}%")
-                    ->orWhere('status', 'like', "%{$searchValue}%")
-                    ->orWhere('prioridade', 'like', "%{$searchValue}%");
+                $q->where('c.status', 'like', "%{$searchValue}%")
+                    ->orWhere('c.prioridade', 'like', "%{$searchValue}%")
+                    ->orWhere('dep.nome', 'like', "%{$searchValue}%")
+                    ->orWhere('cat.nome', 'like', "%{$searchValue}%")
+                    ->orWhere('c.user_id', 'like', "%{$searchValue}%")
+                    ->orWhere('c.titulo', 'like', "%{$searchValue}%");
             });
         }
 
-        $totalRecords = DB::table('chamados')->count();
+        $this->applyFiltersToQuery($query, $filters);
 
-        $filteredRecords = $query->count();
+        $recordsFiltered = clone $query;
+        $recordsFilteredCount = $recordsFiltered->count();
 
-        $records = $query
-            ->skip($start)
-            ->take($length)
-            ->get();
+        $recordsTotal = DB::table('chamados')->where('status', '!=', 'Finalizado')->count();
+
+        $query->offset($start)->limit($length);
+
+        $chamados = $query->get();
 
         return [
-            'recordsTotal' => $totalRecords,
-            'recordsFiltered' => $filteredRecords,
-            'data' => $records
+            'recordsTotal' => $recordsTotal,
+            'recordsFiltered' => $recordsFilteredCount,
+            'data' => $chamados
         ];
+    }
+
+    private function applyFiltersToQuery($query, array $filters)
+    {
+        if (!empty($filters['status'])) {
+            $query->where('c.status', $filters['status']);
+        }
+
+        if (!empty($filters['prioridade'])) {
+            $query->where('c.prioridade', $filters['prioridade']);
+        }
+
+        if (!empty($filters['user_id'])) {
+            $query->where('c.user_id', $filters['user_id']);
+        }
+
+        if (!empty($filters['departamento'])) {
+            $query->where('c.departamento_id', $filters['departamento']);
+        }
+
+        if (!empty($filters['categoria'])) {
+            $query->where('c.categoria_id', $filters['categoria']);
+        }
+
+        if (!empty($filters['created_at_inicio'])) {
+            $query->whereDate('c.created_at', '>=', $filters['created_at_inicio']);
+        }
+
+        if (!empty($filters['created_at_fim'])) {
+            $query->where('c.created_at', '<=', $filters['created_at_fim']);
+        }
+
+        if (!empty($filters['updated_at_inicio'])) {
+            $query->whereDate('c.updated_at', '>=', $filters['updated_at_inicio']);
+        }
+
+        if (!empty($filters['updated_at_fim'])) {
+            $query->where('c.updated_at', '<=', $filters['updated_at_fim']);
+        }
     }
 
     public function criarChamado(string $titulo, string $descricao, int $userId, string $prioridade, int $categoriaId, int $departamentoId)

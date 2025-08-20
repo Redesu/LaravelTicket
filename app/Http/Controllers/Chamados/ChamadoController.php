@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Chamados;
 
 use App\Http\Requests\AdicionarComentariosRequest;
+use App\Http\Requests\DataTableChamadoRequest;
 use App\Http\Requests\DeleteChamadoRequests;
 use App\Http\Requests\StoreChamadoRequest;
 use App\Http\Requests\UpdateChamadoRequest;
@@ -42,7 +43,7 @@ class ChamadoController extends Controller
 
     }
 
-    public function getDataTablesData(Request $request): JsonResponse
+    public function getDataTablesData(DataTableChamadoRequest $request): JsonResponse
     {
         try {
             $draw = $request->get('draw');
@@ -50,8 +51,10 @@ class ChamadoController extends Controller
             $length = $request->get('length', 10);
             $searchValue = $request->get('search')['value'] ?? '';
 
+            $validateFilters = $request->validated();
+
             $chamadoModel = new Chamado();
-            $dataTables = $chamadoModel->buscarChamadoDataTables($draw, $start, $length, $searchValue);
+            $dataTables = $chamadoModel->buscarChamadoDataTables($draw, $start, $length, $searchValue, $validateFilters);
             return response()->json([
                 'draw' => intval($draw),
                 'recordsTotal' => $dataTables['recordsTotal'],
