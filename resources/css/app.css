@@ -55,3 +55,20 @@ input[type="date"].form-control {
 .form-control option {
     padding: 8px;
 }
+
+div.dataTables_processing {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: 200px !important;
+    margin-left: -100px !important;
+    margin-top: -50px !important;
+    text-align: center !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid #ddd !important;
+    border-radius: 8px !important;
+    padding: 20px !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+    z-index: 1000 !important;
+    background-color: black !important;
+}

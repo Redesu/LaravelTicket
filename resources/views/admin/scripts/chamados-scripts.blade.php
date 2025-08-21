@@ -87,7 +87,7 @@
                                 priorityBadgeClass = 'badge-warning';
                                 break;
                             case 'média':
-                                priorityBadgeClass = 'badge-warning';
+                                priorityBadgeClass = 'badge-info';
                                 break;
                             case 'baixa':
                                 priorityBadgeClass = 'badge-secondary';
@@ -170,7 +170,8 @@
             pageLength: 15,
             lengthMenu: [[15, 25, 50, -1], [15, 25, 50, "Todos"]],
             language: {
-                url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/pt-BR.json'
+                url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/pt-BR.json',
+                processing: '<i class="fas fa-spinner fa-spin fa-2x"></i><br>Carregando dados...'
             },
             initComplete: function () {
                 showAlert('Chamados carregados com sucesso', 'success');

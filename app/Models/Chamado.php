@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+use App\DTOs\InsertChamadoDTO;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -190,25 +191,17 @@ class Chamado extends Model
         }
     }
 
-    public function criarChamado(string $titulo, string $descricao, int $userId, string $prioridade, int $categoriaId, int $departamentoId)
+    public function criarChamado(InsertChamadoDTO $DTO): Chamado
     {
-
-        $query = DB::table('chamados')->insertGetId([
-            'titulo' => $titulo,
-            'descricao' => $descricao,
-            'user_id' => $userId,
-            'prioridade' => $prioridade,
-            'categoria_id' => $categoriaId,
-            'departamento_id' => $departamentoId,
+        return self::create([
+            'titulo' => $DTO->getTitulo(),
+            'descricao' => $DTO->getDescricao(),
+            'user_id' => $DTO->getUserId(),
+            'prioridade' => $DTO->getPrioridade(),
+            'categoria_id' => $DTO->getCategoriaId(),
+            'departamento_id' => $DTO->getDepartamentoId(),
             'created_at' => now(),
         ]);
-
-        $chamado = DB::table('chamados')->where('id', $query)->first();
-
-        if ($chamado === null) {
-            throw new \Exception('Chamado não encontrado após inserção.');
-        }
-        return $chamado;
     }
 
 

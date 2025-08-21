@@ -24,7 +24,7 @@
                 $priorityBadge.addClass('badge-warning');
                 break;
             case 'média':
-                $priorityBadge.addClass('badge-warning');
+                $priorityBadge.addClass('badge-info');
                 break;
             case 'baixa':
                 $priorityBadge.addClass('badge-secondary');
@@ -43,7 +43,7 @@
                 break;
 
             case 'em andamento':
-                $statusBadge.addClass('badge-info');
+                $statusBadge.addClass('badge-warning');
                 break;
 
             case 'finalizado':
@@ -58,6 +58,7 @@
 
         $(document).on('click', '.edit-btn', function () {
             $('#editChamadosModal').modal('show');
+            console.log('{{ $chamado->status }}')
 
             $('#editChamadoId').val({{ $chamado->id }});
             $('#editChamadosTitulo').val('{{ $chamado->titulo }}');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Chamados;
 
+use App\DTOs\InsertChamadoDTO;
 use App\Http\Requests\AdicionarComentariosRequest;
 use App\Http\Requests\DataTableChamadoRequest;
 use App\Http\Requests\DeleteChamadoRequests;
@@ -84,16 +85,11 @@ class ChamadoController extends Controller
     {
         try {
             $validatedData = $request->validated();
+            $chamadoDTO = InsertChamadoDTO::fromValidatedInsertRequest($validatedData);
 
             $chamadoModel = new Chamado();
-            $chamado = $chamadoModel->criarChamado(
-                $validatedData['titulo'],
-                $validatedData['descricao'],
-                $validatedData['user_id'],
-                $validatedData['prioridade'],
-                $validatedData['categoria_id'],
-                $validatedData['departamento_id']
-            );
+            $chamado = $chamadoModel->criarChamado($chamadoDTO);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Chamado criado com sucesso',
