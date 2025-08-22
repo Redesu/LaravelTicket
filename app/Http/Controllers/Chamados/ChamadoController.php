@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Chamados;
 
 use App\DTOs\InsertChamadoDTO;
+use App\DTOs\UpdateChamadoDTO;
 use App\Http\Requests\AdicionarComentariosRequest;
 use App\Http\Requests\DataTableChamadoRequest;
 use App\Http\Requests\DeleteChamadoRequests;
@@ -11,6 +12,7 @@ use App\Http\Requests\UpdateChamadoRequest;
 use App\Models\Chamado;
 use App\Models\ChamadoComentario;
 use App\Models\User;
+use App\Services\ChamadoUpdateService;
 use Auth;
 use DB;
 use Exception;
@@ -21,6 +23,11 @@ use Log;
 
 class ChamadoController extends Controller
 {
+
+    public function __construct(
+        private ChamadoUpdateService $updateService
+    ) {
+    }
 
     /**
      * Display a listing of the resource.
@@ -87,8 +94,7 @@ class ChamadoController extends Controller
             $validatedData = $request->validated();
             $chamadoDTO = InsertChamadoDTO::fromValidatedInsertRequest($validatedData);
 
-            $chamadoModel = new Chamado();
-            $chamado = $chamadoModel->criarChamado($chamadoDTO);
+            $chamado = Chamado::criarChamado($chamadoDTO);
 
             return response()->json([
                 'success' => true,
@@ -107,78 +113,13 @@ class ChamadoController extends Controller
     public function updateChamado(UpdateChamadoRequest $request, $id): JsonResponse
     {
         try {
-            $chamado = Chamado::with(['categoria', 'departamento', 'usuario'])->findOrFail($id);
-            if ($chamado->status === 'Finalizado') {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Chamado já está finalizado e não pode ser editado.'
-                ], 400);
-            }
 
-            $originalData = [
-                'titulo' => $chamado->titulo,
-                'descricao' => $chamado->descricao,
-                'prioridade' => $chamado->prioridade,
-                'status' => $chamado->status,
-                'categoria' => $chamado->categoria->nome,
-                'departamento' => $chamado->departamento->nome,
-                'user_id' => $chamado->usuario->name
-            ];
+            $updateDto = UpdateChamadoDTO::fromRequest($request);
+            $result = $this->updateService->updateChamado($updateDto, $id);
 
-            $validatedData = $request->validated();
 
-            if (isset($validatedData['user_id']) && $validatedData['user_id'] != $chamado->user_id) {
-                $newUser = User::find($validatedData['user_id']);
-                $validatedData['user_name'] = $newUser ? $newUser->name : 'Unknown';
-            }
+            return $result->toJsonResponse();
 
-            $chamado->update($validatedData);
-
-            $changes = [];
-            $fieldNames = [
-                'titulo' => 'Título',
-                'descricao' => 'Descrição',
-                'prioridade' => 'Prioridade',
-                'departamento_id' => 'Departamento',
-                'categoria_id' => 'Categoria',
-                'status' => 'Status',
-                'user_id' => 'Usuário Responsável'
-            ];
-
-            foreach ($originalData as $field => $oldValue) {
-                if (isset($validatedData[$field]) && $validatedData[$field] != $oldValue) {
-
-                    if ($field === 'user_id') {
-                        $changes[$fieldNames[$field]] = [
-                            'old' => $oldValue,
-                            'new' => $validatedData['user_name']
-                        ];
-                    } else {
-                        $changes[$fieldNames[$field]] = [
-                            'old' => $oldValue,
-                            'new' => $validatedData[$field]
-                        ];
-                    }
-                }
-            }
-
-            if (!empty($changes)) {
-                ChamadoComentario::create([
-                    'chamado_id' => $chamado->id,
-                    'usuario_id' => Auth::id(),
-                    'descricao' => 'Chamado editado por: ' . Auth::user()->name,
-                    'tipo' => 'edit',
-                    'changes' => json_encode($changes),
-                ]);
-            }
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Chamado atualizado com sucesso',
-                'newData' => $validatedData,
-                'changes' => $changes,
-                'data' => $chamado
-            ], 200);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,

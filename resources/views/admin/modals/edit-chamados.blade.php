@@ -62,10 +62,11 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="editChamadosDepartamento" class="form-label">Departamento</label>
-                                <select class="form-control" id="editChamadosDepartamento" name="departamento" required>
+                                <select class="form-control" id="editChamadosDepartamento" name="departamento_id"
+                                    required>
                                     <option value="" disabled selected>Selecione o departamento</option>
-                                    <option value="SUPORTE">SUPORTE</option>
-                                    <option value="DESENVOLVIMENTO">DESENVOLVIMENTO</option>
+                                    <option value="1">SUPORTE</option>
+                                    <option value="2">DESENVOLVIMENTO</option>
                                 </select>
                             </div>
                         </div>
@@ -75,11 +76,11 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="editChamadosCategoria" class="form-label">Categoria</label>
-                                <select class="form-control" id="editChamadosCategoria" name="categoria" required>
+                                <select class="form-control" id="editChamadosCategoria" name="categoria_id" required>
                                     <option value="" disabled selected>Selecione a categoria</option>
-                                    <option value="SUPORTE">SUPORTE</option>
-                                    <option value="CORREÇÃO">CORREÇÃO</option>
-                                    <option value="DUVIDAS">DUVIDAS</option>
+                                    <option value="1">SUPORTE</option>
+                                    <option value="2">CORREÇÃO</option>
+                                    <option value="3">DUVIDAS</option>
                                 </select>
                             </div>
                         </div>

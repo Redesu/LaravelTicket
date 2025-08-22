@@ -191,7 +191,7 @@ class Chamado extends Model
         }
     }
 
-    public function criarChamado(InsertChamadoDTO $DTO): Chamado
+    public static function criarChamado(InsertChamadoDTO $DTO): Chamado
     {
         return self::create([
             'titulo' => $DTO->getTitulo(),

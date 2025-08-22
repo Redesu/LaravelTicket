@@ -65,8 +65,8 @@
             $('#editChamadosDescricao').val('{{ $chamado->descricao }}');
             $('#editChamadosStatus').val('{{ $chamado->status }}');
             $('#editChamadosPrioridade').val('{{ $chamado->prioridade }}');
-            $('#editChamadosDepartamento').val('{{ $chamado->departamento->nome }}');
-            $('#editChamadosCategoria').val('{{ $chamado->categoria->nome }}');
+            $('#editChamadosDepartamento').val('{{ $chamado->departamento->id }}');
+            $('#editChamadosCategoria').val('{{ $chamado->categoria->id }}');
             $('#editChamadosUsuario').val('{{ $chamado->usuario->id }}');
             $('#editChamadoForm').off('submit');
         });
