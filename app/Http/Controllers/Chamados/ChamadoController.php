@@ -25,7 +25,7 @@ class ChamadoController extends Controller
 {
 
     public function __construct(
-        private ChamadoUpdateService $updateService
+        private ChamadoUpdateService $updateChamadoService
     ) {
     }
 
@@ -115,7 +115,7 @@ class ChamadoController extends Controller
         try {
 
             $updateDto = UpdateChamadoDTO::fromRequest($request);
-            $result = $this->updateService->updateChamado($updateDto, $id);
+            $result = $this->updateChamadoService->updateChamado($updateDto, $id);
 
 
             return $result->toJsonResponse();
