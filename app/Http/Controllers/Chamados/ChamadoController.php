@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Chamados;
 
+use App\DTOs\DataTableRequestDTO;
 use App\DTOs\InsertChamadoDTO;
 use App\DTOs\UpdateChamadoDTO;
 use App\Http\Requests\AdicionarComentariosRequest;
@@ -12,6 +13,8 @@ use App\Http\Requests\UpdateChamadoRequest;
 use App\Models\Chamado;
 use App\Models\ChamadoComentario;
 use App\Models\User;
+use App\Services\ChamadoCreateService;
+use App\Services\ChamadoDataTableService;
 use App\Services\ChamadoUpdateService;
 use Auth;
 use DB;
@@ -25,7 +28,9 @@ class ChamadoController extends Controller
 {
 
     public function __construct(
-        private ChamadoUpdateService $updateChamadoService
+        private ChamadoUpdateService $updateChamadoService,
+        private ChamadoCreateService $createChamadoService,
+        private ChamadoDataTableService $dataTableService
     ) {
     }
 
@@ -53,39 +58,11 @@ class ChamadoController extends Controller
 
     public function getDataTablesData(DataTableChamadoRequest $request): JsonResponse
     {
-        try {
-            $draw = $request->get('draw');
-            $start = $request->get('start', 0);
-            $length = $request->get('length', 10);
-            $searchValue = $request->get('search')['value'] ?? '';
+        $dataTableRequest = DataTableRequestDTO::fromRequest($request->all());
 
-            $validateFilters = $request->validated();
+        $response = $this->dataTableService->getChamadosFromDataTable($dataTableRequest);
 
-            $chamadoModel = new Chamado();
-            $dataTables = $chamadoModel->buscarChamadoDataTables($draw, $start, $length, $searchValue, $validateFilters);
-            return response()->json([
-                'draw' => intval($draw),
-                'recordsTotal' => $dataTables['recordsTotal'],
-                'recordsFiltered' => $dataTables['recordsFiltered'],
-                'data' => $dataTables['data']->map(function ($chamado) {
-                    return [
-                        'id' => $chamado->id,
-                        'titulo' => $chamado->titulo,
-                        'descricao' => $chamado->descricao,
-                        'status' => $chamado->status,
-                        'prioridade' => $chamado->prioridade,
-                        'categoria' => $chamado->categoria,
-                        'departamento' => $chamado->departamento,
-                        'usuario_id' => $chamado->usuario_id,
-                        'data_abertura' => $chamado->data_abertura ?
-                            date('Y-m-d H:i', strtotime($chamado->data_abertura)) : ''
-                    ];
-                })
-            ]);
-
-        } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
+        return $response->toJsonResponse();
     }
 
     public function insertChamado(StoreChamadoRequest $request): JsonResponse
@@ -94,7 +71,7 @@ class ChamadoController extends Controller
             $validatedData = $request->validated();
             $chamadoDTO = InsertChamadoDTO::fromValidatedInsertRequest($validatedData);
 
-            $chamado = Chamado::criarChamado($chamadoDTO);
+            $chamado = $this->createChamadoService->criarChamado($chamadoDTO);
 
             return response()->json([
                 'success' => true,
