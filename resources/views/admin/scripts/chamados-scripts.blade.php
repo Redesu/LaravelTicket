@@ -36,11 +36,6 @@
             ajax: {
                 url: "{{ route('api.chamados.data-tables') }}",
                 data: function (d) {
-                    console.log('DataTable data function called');
-                    console.log('Status element exists:', $('#status').length > 0);
-                    console.log('Status element:', $('#status'));
-                    console.log('Status value:', $('#status').val());
-
                     d.status = $('#status').val();
                     d.prioridade = $('#filtrarChamadosPrioridade').val();
                     d.user_id = $('#filtrarChamadosUsuario').val();

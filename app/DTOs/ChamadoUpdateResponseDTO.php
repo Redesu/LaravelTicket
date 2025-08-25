@@ -4,7 +4,7 @@ namespace App\DTOs;
 use App\Models\Chamado;
 use Illuminate\Http\JsonResponse;
 
-class ChamadoUpdateResultDTO
+class ChamadoUpdateResponseDTO
 {
     public function __construct(
         private bool $success,
@@ -31,11 +31,6 @@ class ChamadoUpdateResultDTO
 
         return response()->json($response, 400);
     }
-
-
-
-
-
 
     public function isSuccess(): bool
     {

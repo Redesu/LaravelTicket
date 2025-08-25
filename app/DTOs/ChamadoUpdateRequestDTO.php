@@ -3,7 +3,7 @@ namespace App\DTOs;
 
 use App\Http\Requests\UpdateChamadoRequest;
 
-class UpdateChamadoDTO
+class ChamadoUpdateRequestDTO
 {
     public function __construct(
         private ?string $titulo = null,
@@ -22,7 +22,7 @@ class UpdateChamadoDTO
     public static function fromRequest(UpdateChamadoRequest $request): self
     {
         $validatedData = $request->validated();
-        return new UpdateChamadoDTO(
+        return new ChamadoUpdateRequestDTO(
             titulo: $validatedData['titulo'],
             descricao: $validatedData['descricao'],
             user_id: $validatedData['user_id'],

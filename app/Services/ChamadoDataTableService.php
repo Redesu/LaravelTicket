@@ -12,9 +12,8 @@ class ChamadoDataTableService
     {
         $query = $this->buildBaseQuery();
 
-        $this->applyStatusFilter($query, $request->getFilters());
+        $this->applyFilters($query, $request);
         $this->applySearch($query, $request->getSearchValue());
-        $this->applyFilters($query, $request->getFilters());
 
         $recordsFiltered = $this->getFilteredCount($query);
         $recordsTotal = $this->getTotalCount();
@@ -40,6 +39,7 @@ class ChamadoDataTableService
         return DB::table('chamados as c')
             ->leftJoin('categorias as cat', 'c.categoria_id', '=', 'cat.id')
             ->leftJoin('departamentos as dep', 'c.departamento_id', '=', 'dep.id')
+            ->whereNull('c.deleted_at')
             ->select([
                 'c.id',
                 'c.titulo',
@@ -51,13 +51,6 @@ class ChamadoDataTableService
                 'c.user_id as usuario_id',
                 'c.created_at as data_abertura'
             ]);
-    }
-
-    private function applyStatusFilter($query, array $filters): void
-    {
-        if (empty($filters['status']) || $filters['status'] !== 'Finalizado') {
-            $query->where('c.status', '!=', 'Finalizado');
-        }
     }
 
     private function applySearch($query, string $searchValue): void
@@ -76,42 +69,44 @@ class ChamadoDataTableService
         });
     }
 
-    private function applyFilters($query, array $filters): void
+    private function applyFilters($query, DataTableRequestDTO $request): void
     {
-        foreach ($filters as $key => $value) {
-            if (empty($value) || $key === 'status') {
-                continue;
-            }
+        if (!empty($request->getStatus())) {
+            $query->where('c.status', $request->getStatus());
+        } else {
+            $query->where('c.status', '!=', 'Finalizado');
+        }
 
-            switch ($key) {
-                case 'status':
-                    $query->where('c.status', $filters['status']);
-                    break;
-                case 'prioridade':
-                    $query->where('c.prioridade', $filters['prioridade']);
-                    break;
-                case 'user_id':
-                    $query->where('c.user_id', $filters['user_id']);
-                    break;
-                case 'departamento':
-                    $query->where('c.departamento_id', $filters['departamento']);
-                    break;
-                case 'categoria':
-                    $query->where('c.categoria_id', $filters['categoria']);
-                    break;
-                case 'created_at_inicio':
-                    $query->whereDate('c.created_at', '>=', $filters['created_at_inicio']);
-                    break;
-                case 'created_at_fim':
-                    $query->where('c.created_at', '<=', $filters['created_at_fim']);
-                    break;
-                case 'updated_at_inicio':
-                    $query->whereDate('c.updated_at', '>=', $filters['updated_at_inicio']);
-                    break;
-                case 'updated_at_fim':
-                    $query->where('c.updated_at', '<=', $filters['updated_at_fim']);
-                    break;
-            }
+        if (!empty($request->getPrioridade())) {
+            $query->where('c.prioridade', $request->getPrioridade());
+        }
+
+        if (!empty($request->getUsuarioId())) {
+            $query->where('c.user_id', $request->getUsuarioId());
+        }
+
+        if (!empty($request->getDepartamento())) {
+            $query->where('c.departamento_id', $request->getDepartamento());
+        }
+
+        if (!empty($request->getCategoria())) {
+            $query->where('c.categoria_id', $request->getCategoria());
+        }
+
+        if (!empty($request->getCreatedAtInicio())) {
+            $query->whereDate('c.created_at', '>=', $request->getCreatedAtInicio());
+        }
+
+        if (!empty($request->getCreatedAtFim())) {
+            $query->whereDate('c.created_at', '<=', $request->getCreatedAtFim());
+        }
+
+        if (!empty($request->getUpdatedAtInicio())) {
+            $query->whereDate('c.updated_at', '>=', $request->getUpdatedAtInicio());
+        }
+
+        if (!empty($request->getUpdatedAtFim())) {
+            $query->whereDate('c.updated_at', '<=', $request->getUpdatedAtFim());
         }
     }
 
@@ -122,7 +117,7 @@ class ChamadoDataTableService
 
     private function getTotalCount(): int
     {
-        return DB::table('chamados')->count();
+        return DB::table('chamados')->whereNull('deleted_at')->count();
     }
 
     private function applyPagination($query, int $start, int $length): void

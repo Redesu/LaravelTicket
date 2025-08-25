@@ -70,4 +70,49 @@ class DataTableRequestDTO
         return $this->filters;
 
     }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function getPrioridade(): ?string
+    {
+        return $this->prioridade;
+    }
+
+    public function getUsuarioId(): ?int
+    {
+        return $this->usuario_id;
+    }
+
+    public function getDepartamento(): ?string
+    {
+        return $this->departamento;
+    }
+
+    public function getCategoria(): ?string
+    {
+        return $this->categoria;
+    }
+
+    public function getCreatedAtInicio(): ?string
+    {
+        return $this->created_at_inicio;
+    }
+
+    public function getCreatedAtFim(): ?string
+    {
+        return $this->created_at_fim;
+    }
+
+    public function getUpdatedAtInicio(): ?string
+    {
+        return $this->updated_at_inicio;
+    }
+
+    public function getUpdatedAtFim(): ?string
+    {
+        return $this->updated_at_fim;
+    }
 }

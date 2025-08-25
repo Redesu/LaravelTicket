@@ -11,9 +11,11 @@ Route::get('/', function () {
     return view('welcome');
 })->middleware('auth');
 
-Route::get('admin/dashboard', [DashboardController::class, 'showDashboard'])->name('admin.dashboard');
-Route::get('admin/chamados', [ChamadoController::class, 'index'])->name('admin.chamados');
-Route::get('admin/chamados/{id}', [ChamadoController::class, 'showChamado'])->name('admin.chamados.show');
+Route::prefix('/admin')->middleware('auth')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'showDashboard'])->name('admin.dashboard');
+    Route::get('/chamados', [ChamadoController::class, 'index'])->name('admin.chamados');
+    Route::get('/chamados/{id}', [ChamadoController::class, 'showChamado'])->name('admin.chamados.show');
+});
 
 
 Route::prefix('/auth')->group(function () {
@@ -27,7 +29,6 @@ Route::prefix('/auth')->group(function () {
 Route::prefix('api/chamados')->middleware('auth')->group(function () {
 
     // CRUD
-    Route::get('/', [ChamadoController::class, 'getChamados'])->name('api.chamados.get');
     Route::get('/data-tables', [ChamadoController::class, 'getDataTablesData'])->name('api.chamados.data-tables');
     Route::post('/', [ChamadoController::class, 'insertChamado'])->name('api.chamados.post');
     Route::post('/{id}/comment', [ChamadoController::class, 'addComment'])->name('api.chamados.addComentario');
@@ -37,8 +38,6 @@ Route::prefix('api/chamados')->middleware('auth')->group(function () {
 
 
     // Rotas adicionais
-    Route::get('/departamento/{departamento}', [ChamadoController::class, 'getChamadoByDepartamento'])->name('api.chamados.departamento');
-    Route::get('/search/advanced', [ChamadoController::class, 'searchChamados'])->name('api.chamados.search');
     Route::get('/stats/overview', [ChamadoController::class, 'getEstatisticas'])->name('api.chamados.stats');
 
 });

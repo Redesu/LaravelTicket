@@ -1,8 +1,8 @@
 <?php
 namespace App\Services;
 
-use App\DTOs\ChamadoUpdateResultDTO;
-use App\DTOs\UpdateChamadoDTO;
+use App\DTOs\ChamadoUpdateResponseDTO;
+use App\DTOs\ChamadoUpdateRequestDTO;
 use App\Models\Chamado;
 use Auth;
 
@@ -15,13 +15,13 @@ class ChamadoUpdateService
     ) {
     }
 
-    public function updateChamado(UpdateChamadoDTO $updateDTO, int $id): ChamadoUpdateResultDTO
+    public function updateChamado(ChamadoUpdateRequestDTO $updateDTO, int $id): ChamadoUpdateResponseDTO
     {
         $chamado = Chamado::with('categoria', 'departamento', 'usuario')->findOrFail($id);
 
         $validationResult = $this->validationService->canChamadoUpdate($chamado);
         if (!$validationResult->isValid()) {
-            return new ChamadoUpdateResultDTO(
+            return new ChamadoUpdateResponseDTO(
                 success: false,
                 message: $validationResult->getMessage()
             );
@@ -37,7 +37,7 @@ class ChamadoUpdateService
             $this->auditService->logChanges($chamado->id, $changes);
         }
 
-        return new ChamadoUpdateResultDTO(
+        return new ChamadoUpdateResponseDTO(
             success: true,
             message: 'Chamado atualizado com sucesso',
             newData: $updateData,

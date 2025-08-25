@@ -68,54 +68,6 @@ class Chamado extends Model
         return $this->comentarios()->solutions()->exists();
     }
 
-    public function buscarChamados()
-    {
-
-        $query = DB::table('chamados as c')
-            ->leftJoin('categorias as cat', 'c.categoria_id', '=', 'cat.id')
-            ->leftJoin('departamentos as dep', 'c.departamento_id', '=', 'dep.id')
-            ->select([
-                'c.id',
-                'c.titulo',
-                'c.descricao',
-                'c.status',
-                'c.prioridade',
-                'cat.nome as categoria',
-                'dep.nome as departamento',
-                'c.created_at as data_abertura'
-            ]);
-
-        return $query->get();
-    }
-
-    public function buscarChamadoPorId(int $id)
-    {
-        return Chamado::with(['categoria', 'departamento', 'usuario'])
-            ->select([
-                'id',
-                'titulo',
-                'descricao',
-                'status',
-                'prioridade',
-                'created_at as data_abertura'
-            ])
-            ->findOrFail($id);
-    }
-
-    public function deletarChamado(int $id, int $userId): int
-    {
-        $query = DB::table('chamados')
-            ->where('id', $id)
-            ->where('user_id', $userId)
-            ->delete();
-
-        if ($query === false) {
-            throw new \Exception('Erro ao deletar o chamado.');
-        }
-
-        return $query;
-    }
-
     public static function buscarEstatisticar()
     {
         $qntdNovosChamados = DB::table('chamados')

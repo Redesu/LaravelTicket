@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Chamados;
 
 use App\DTOs\DataTableRequestDTO;
+use App\DTOs\DeleteChamadoRequestDTO;
 use App\DTOs\InsertChamadoDTO;
-use App\DTOs\UpdateChamadoDTO;
+use App\DTOs\ChamadoUpdateRequestDTO;
 use App\Http\Requests\AdicionarComentariosRequest;
 use App\Http\Requests\DataTableChamadoRequest;
 use App\Http\Requests\DeleteChamadoRequests;
@@ -15,6 +16,7 @@ use App\Models\ChamadoComentario;
 use App\Models\User;
 use App\Services\ChamadoCreateService;
 use App\Services\ChamadoDataTableService;
+use App\Services\ChamadoDeleteService;
 use App\Services\ChamadoUpdateService;
 use Auth;
 use DB;
@@ -30,7 +32,8 @@ class ChamadoController extends Controller
     public function __construct(
         private ChamadoUpdateService $updateChamadoService,
         private ChamadoCreateService $createChamadoService,
-        private ChamadoDataTableService $dataTableService
+        private ChamadoDataTableService $dataTableService,
+        private ChamadoDeleteService $deleteChamadoService
     ) {
     }
 
@@ -41,19 +44,6 @@ class ChamadoController extends Controller
     {
         $users = User::all();
         return view('admin.chamados', compact('users'));
-    }
-
-    public function getChamados(Request $request): JsonResponse
-    {
-        try {
-            $chamados = new Chamado();
-
-            return response()->json($chamados->buscarChamados());
-
-        } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
-
     }
 
     public function getDataTablesData(DataTableChamadoRequest $request): JsonResponse
@@ -91,7 +81,7 @@ class ChamadoController extends Controller
     {
         try {
 
-            $updateDto = UpdateChamadoDTO::fromRequest($request);
+            $updateDto = ChamadoUpdateRequestDTO::fromRequest($request);
             $result = $this->updateChamadoService->updateChamado($updateDto, $id);
 
 
@@ -108,31 +98,11 @@ class ChamadoController extends Controller
 
     public function deleteChamado(DeleteChamadoRequests $request): JsonResponse
     {
-        try {
-            $userId = Auth::id();
-            $validatedData = $request->validated();
+        $deleteDto = DeleteChamadoRequestDTO::fromRequest($request);
 
-            $chamadoModel = new Chamado();
-            $chamado = $chamadoModel->deletarChamado($validatedData['id'], $userId);
+        $result = $this->deleteChamadoService->deleteChamado($deleteDto);
 
-            if ($chamado > 0) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Chamado deletado com sucesso'
-                ], 200);
-            } else {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Chamado não encontrado'
-                ], 404);
-            }
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erro ao deletar chamado',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        return $result->toJsonResponse();
     }
     public function showChamado($id)
     {
