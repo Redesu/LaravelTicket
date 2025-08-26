@@ -39,8 +39,8 @@
                                     placeholder="Digite seu comentário..."></textarea>
                             </div>
                             <div class="form-group">
-                                <button type="submit" class="btn btn-success" id="addCommentBtn">
-                                    <span class="spinner-border spinner-border-sm d-none" id="comentarioSpinner"></span>
+                                <button type="submit" class="btn btn-success">
+                                    <span class="spinner-border spinner-border-sm"></span>
                                     <i class="fas fa-comment"></i> Enviar Comentário
                                 </button>
                                 <button type="button" class="btn btn-secondary" id="cancel-main-comment-form">

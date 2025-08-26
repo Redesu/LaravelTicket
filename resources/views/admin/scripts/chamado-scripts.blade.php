@@ -131,13 +131,13 @@
                 return;
             }
 
+            // Show loading state
             submitBtn.prop('disabled', true);
             spinner.removeClass('d-none');
 
-            if (!commentText) {
-                showAlert('O comentário não pode estar vazio.', 'error');
-                return;
-            }
+            const originalBtnText = submitBtn.html();
+            submitBtn.html('<span class="spinner-border spinner-border-sm" id="comentarioSpinner"></span> Enviando...');
+
             $.ajax({
                 url: '{{ route("api.chamados.addComentario", $chamado->id) }}',
                 type: 'POST',
@@ -156,11 +156,12 @@
                     }, 1500);
                 },
                 error: function (xhr, status, error) {
-                    showAlert(`AJAX Error: ${xhr}, ${error}, ${status}`, 'error');
+                    showAlert(`AJAX Error: ${xhr.responseText || error}`, 'error');
                 },
                 complete: function () {
                     spinner.addClass('d-none');
                     submitBtn.prop('disabled', false);
+                    submitBtn.html(originalBtnText);
                 }
             });
         });
