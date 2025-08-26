@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Chamados;
 
+use App\DTOs\AddComentarioRequestDTO;
 use App\DTOs\DataTableRequestDTO;
 use App\DTOs\DeleteChamadoRequestDTO;
 use App\DTOs\InsertChamadoDTO;
@@ -14,6 +15,7 @@ use App\Http\Requests\UpdateChamadoRequest;
 use App\Models\Chamado;
 use App\Models\ChamadoComentario;
 use App\Models\User;
+use App\Services\AddComentarioService;
 use App\Services\ChamadoCreateService;
 use App\Services\ChamadoDataTableService;
 use App\Services\ChamadoDeleteService;
@@ -33,7 +35,8 @@ class ChamadoController extends Controller
         private ChamadoUpdateService $updateChamadoService,
         private ChamadoCreateService $createChamadoService,
         private ChamadoDataTableService $dataTableService,
-        private ChamadoDeleteService $deleteChamadoService
+        private ChamadoDeleteService $deleteChamadoService,
+        private AddComentarioService $addComentarioService
     ) {
     }
 
@@ -113,42 +116,10 @@ class ChamadoController extends Controller
 
     public function addComment(AdicionarComentariosRequest $request, $id): JsonResponse
     {
-        try {
-            $validatedData = $request->validated();
-            $chamado = Chamado::findOrFail($id);
+        $addCommentDTO = AddComentarioRequestDTO::fromRequest($request);
+        $result = $this->addComentarioService->addComentario($addCommentDTO, $id);
 
-            $comentario = ChamadoComentario::create([
-                'chamado_id' => $chamado->id,
-                'usuario_id' => Auth::id(),
-                'descricao' => $validatedData['descricao'],
-                'tipo' => $validatedData['tipo'] ?? 'comment',
-                'changes' => $validatedData['changes'] ?? null,
-            ]);
-
-            if ($validatedData['tipo'] === 'solution') {
-                $chamado->update(['status' => 'Finalizado']);
-            }
-
-            $comentario->load('usuario');
-
-            return response()->json([
-                'success' => true,
-                'comentario' => $comentario,
-                'usuario' => [
-                    'name' => $comentario->usuario->name,
-                    'avatar' => $comentario->usuario->avatar,
-                ],
-                'created_at' => $comentario->created_at->format('d/m/Y H:i'),
-                'descricao' => $comentario->descricao,
-            ], 201);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erro ao adicionar comentário',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-
+        return $result->toJsonResponse();
 
     }
 

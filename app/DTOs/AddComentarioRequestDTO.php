@@ -7,7 +7,6 @@ use Auth;
 class AddComentarioRequestDTO
 {
     public function __construct(
-        private ?int $comentarioId,
         private ?int $usuario_id,
         private ?string $descricao,
         private ?string $tipo,
@@ -19,17 +18,11 @@ class AddComentarioRequestDTO
     {
         $validatedData = $request->validated();
         return new AddComentarioRequestDTO(
-            comentarioId: $validatedData['comentarioId'],
             usuario_id: Auth::id(),
             descricao: $validatedData['descricao'],
             tipo: $validatedData['tipo'] ?? 'comment',
             changes: $validatedData['changes'] ?? null,
         );
-    }
-
-    public function getComentarioId(): ?int
-    {
-        return $this->comentarioId;
     }
 
     public function getUsuarioId(): ?int
