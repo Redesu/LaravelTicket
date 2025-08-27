@@ -24,15 +24,15 @@ class AddComentarioService
             $comentario->load('usuario');
 
             return AddComentarioResponseDTO::success(
-                $this->formatComentarioData($comentario),
-                $this->formatUsuarioData($comentario->usuario),
-                $comentario->created_at->format('d/m/Y H:i'),
-                $comentario->descricao
+                comentario: $this->formatComentarioData($comentario),
+                usuario: $this->formatUsuarioData($comentario->usuario),
+                created_at: $comentario->created_at->format('d/m/Y H:i'),
+                descricao: $comentario->descricao
             );
         } catch (\Exception $e) {
             return AddComentarioResponseDTO::error(
-                'Erro ao adicionar comentário:',
-                $e->getMessage()
+                message: 'Erro ao adicionar comentário:',
+                error: $e->getMessage()
             );
         }
     }

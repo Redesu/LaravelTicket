@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Chamados;
 
 use App\DTOs\AddComentarioRequestDTO;
+use App\DTOs\AddSolutionRequestDTO;
 use App\DTOs\DataTableRequestDTO;
 use App\DTOs\DeleteChamadoRequestDTO;
 use App\DTOs\InsertChamadoDTO;
 use App\DTOs\ChamadoUpdateRequestDTO;
 use App\Http\Requests\AdicionarComentariosRequest;
+use App\Http\Requests\AdicionarSolucaoRequest;
 use App\Http\Requests\DataTableChamadoRequest;
 use App\Http\Requests\DeleteChamadoRequests;
 use App\Http\Requests\StoreChamadoRequest;
@@ -16,6 +18,7 @@ use App\Models\Chamado;
 use App\Models\ChamadoComentario;
 use App\Models\User;
 use App\Services\AddComentarioService;
+use App\Services\AddSolucaoService;
 use App\Services\ChamadoCreateService;
 use App\Services\ChamadoDataTableService;
 use App\Services\ChamadoDeleteService;
@@ -36,7 +39,8 @@ class ChamadoController extends Controller
         private ChamadoCreateService $createChamadoService,
         private ChamadoDataTableService $dataTableService,
         private ChamadoDeleteService $deleteChamadoService,
-        private AddComentarioService $addComentarioService
+        private AddComentarioService $addComentarioService,
+        private AddSolucaoService $addSolucaoService
     ) {
     }
 
@@ -123,42 +127,12 @@ class ChamadoController extends Controller
 
     }
 
-    public function addSolution(AdicionarComentariosRequest $request, $id): JsonResponse
+    public function addSolution(AdicionarSolucaoRequest $request, $id): JsonResponse
     {
-        try {
-            $validatedData = $request->validated();
-            $chamado = Chamado::findOrFail($id);
+        $addSolucaoDTO = AddSolutionRequestDTO::fromRequest($request);
+        $result = $this->addSolucaoService->addSolucao($addSolucaoDTO, $id);
 
-            if ($chamado->hasSolution()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Chamado já está resolvido.'
-                ], 400);
-            }
-
-            $solucao = ChamadoComentario::create([
-                'chamado_id' => $chamado->id,
-                'usuario_id' => Auth::id(),
-                'descricao' => $validatedData['descricao'],
-                'tipo' => 'solution',
-            ]);
-
-            $chamado->update(['status' => 'Finalizado']);
-
-            $solucao->load('usuario');
-
-            return response()->json([
-                'success' => true,
-                'comentario' => $solucao,
-                'message' => 'Solução adicionada e chamado marcado como resolvido.',
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erro ao adicionar solução',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        return $result->toJsonResponse();
     }
 
     public function getEstatisticas(): JsonResponse
