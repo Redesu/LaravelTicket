@@ -1,7 +1,9 @@
 <?php
 namespace App\DTOs;
 
-class InsertChamadoDTO
+use App\Http\Requests\StoreChamadoRequest;
+
+class InsertChamadoRequestDTO
 {
     public function __construct(
         public readonly string $titulo,
@@ -16,9 +18,10 @@ class InsertChamadoDTO
     /**
      * Create DTO from validated insert request data
      */
-    public static function fromValidatedInsertRequest(array $validatedData): InsertChamadoDTO
+    public static function fromRequest(StoreChamadoRequest $request): self
     {
-        return new InsertChamadoDTO(
+        $validatedData = $request->validated();
+        return new self(
             titulo: $validatedData['titulo'],
             descricao: $validatedData['descricao'],
             user_id: $validatedData['user_id'],

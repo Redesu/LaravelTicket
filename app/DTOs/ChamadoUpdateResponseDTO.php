@@ -7,35 +7,53 @@ use Illuminate\Http\JsonResponse;
 class ChamadoUpdateResponseDTO
 {
     public function __construct(
-        private bool $success,
-        private string $message,
-        private array $changes = [],
+        private ?bool $success,
+        private ?string $message,
+        private ?array $changes = [],
         private ?Chamado $chamado = null,
-        private array $newData = []
+        private ?array $newData = [],
+        private ?string $error = null
     ) {
     }
 
-    public function toJsonResponse(): JsonResponse
+    public static function success(Chamado $chamado, string $message, array $changes = [], array $newData = []): self
     {
-        $response = [
+        return new self(
+            success: true,
+            message: $message,
+            changes: $changes,
+            chamado: $chamado,
+            newData: $newData
+        );
+    }
+
+    public static function error(string $message, string $error): self
+    {
+        return new self(
+            success: false,
+            message: $message,
+            error: $error
+        );
+    }
+
+    public function toArray(): array
+    {
+        return [
             'success' => $this->success,
-            'message' => $this->message
+            'message' => $this->message,
+            'changes' => $this->changes,
+            'chamado' => $this->chamado,
+            'newData' => $this->newData,
+            'error' => $this->error
         ];
-
-        if ($this->success) {
-            $response['newData'] = $this->newData;
-            $response['changes'] = $this->changes;
-            $response['data'] = $this->chamado;
-            return response()->json($response, 200);
-        }
-
-        return response()->json($response, 400);
     }
 
-    public function isSuccess(): bool
+    public function toJsonResponse(int $statusCode = null): JsonResponse
     {
-        return $this->success;
+        $statusCode = $statusCode ?? ($this->success ? 201 : 500);
+        return response()->json($this->toArray(), $statusCode);
     }
+
 
     public function getMessage(): string
     {

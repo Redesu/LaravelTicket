@@ -17,32 +17,38 @@ class ChamadoUpdateService
 
     public function updateChamado(ChamadoUpdateRequestDTO $updateDTO, int $id): ChamadoUpdateResponseDTO
     {
-        $chamado = Chamado::with('categoria', 'departamento', 'usuario')->findOrFail($id);
+        try {
+            $chamado = Chamado::with('categoria', 'departamento', 'usuario')->findOrFail($id);
 
-        $validationResult = $this->validationService->canChamadoUpdate($chamado);
-        if (!$validationResult->isValid()) {
-            return new ChamadoUpdateResponseDTO(
-                success: false,
-                message: $validationResult->getMessage()
+            $validationResult = $this->validationService->canChamadoUpdate($chamado);
+            if (!$validationResult->isValid()) {
+                return new ChamadoUpdateResponseDTO(
+                    success: false,
+                    message: $validationResult->getMessage()
+                );
+            }
+
+            $changeTracker = $this->changeTrackingService->createTracker($chamado);
+
+            $updateData = $updateDTO->toArray();
+            $chamado->update($updateData);
+
+            $changes = $changeTracker->getChanges($updateData);
+            if (!empty($changes)) {
+                $this->auditService->logChanges($chamado->id, $changes);
+            }
+
+            return ChamadoUpdateResponseDTO::success(
+                message: 'Chamado atualizado com sucesso',
+                newData: $updateData,
+                changes: $changes,
+                chamado: $chamado
+            );
+        } catch (\Exception $e) {
+            return ChamadoUpdateResponseDTO::error(
+                message: 'Erro ao atualizar chamado',
+                error: $e->getMessage()
             );
         }
-
-        $changeTracker = $this->changeTrackingService->createTracker($chamado);
-
-        $updateData = $updateDTO->toArray();
-        $chamado->update($updateData);
-
-        $changes = $changeTracker->getChanges($updateData);
-        if (!empty($changes)) {
-            $this->auditService->logChanges($chamado->id, $changes);
-        }
-
-        return new ChamadoUpdateResponseDTO(
-            success: true,
-            message: 'Chamado atualizado com sucesso',
-            newData: $updateData,
-            changes: $changes,
-            chamado: $chamado
-        );
     }
 }
