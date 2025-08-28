@@ -14,7 +14,7 @@ class AddSolucaoService
         try {
             $chamado = Chamado::findOrFail($id);
 
-            if ($chamado->status === 'Finalizado') {
+            if ($chamado->hasSolution()) {
                 return AddSolutionResponseDTO::error(
                     message: 'Chamado ja foi finalizado.',
                     error: 'Chamado ja foi finalizado.'

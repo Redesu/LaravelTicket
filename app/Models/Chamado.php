@@ -67,32 +67,6 @@ class Chamado extends Model
     {
         return $this->comentarios()->solutions()->exists();
     }
-
-    public static function buscarEstatisticar()
-    {
-        $qntdNovosChamados = DB::table('chamados')
-            ->where('created_at', '>=', 'DATE_SUB(NOW(), INTERVAL 7 DAY)')
-            ->count();
-
-        $porcentagemChamadosFechados = DB::table('chamados')
-            ->selectRaw('
-        CAST(ROUND(SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) / COUNT(*) * 100, 2) AS CHAR) as PORCENTAGEM_FECHADOS
-        ', ['Finalizado'])
-            ->value('PORCENTAGEM_FECHADOS');
-
-        $qntdChamadosUrgentes = DB::table('chamados')
-            ->where('prioridade', 'Urgente')
-            ->count();
-
-        $usuariosRegistrados = DB::table('users')->count();
-
-        return (object) [
-            'qntdNovosChamados' => strval($qntdNovosChamados),
-            'porcentagemChamadosFechados' => strval($porcentagemChamadosFechados),
-            'qntdChamadosUrgentes' => strval($qntdChamadosUrgentes),
-            'qntdUsuarios' => strval($usuariosRegistrados)
-        ];
-    }
 }
 
 

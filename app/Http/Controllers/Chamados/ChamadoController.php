@@ -23,6 +23,7 @@ use App\Services\ChamadoCreateService;
 use App\Services\ChamadoDataTableService;
 use App\Services\ChamadoDeleteService;
 use App\Services\ChamadoUpdateService;
+use App\Services\EstatisticasService;
 use Auth;
 use DB;
 use Exception;
@@ -40,7 +41,8 @@ class ChamadoController extends Controller
         private ChamadoDataTableService $dataTableService,
         private ChamadoDeleteService $deleteChamadoService,
         private AddComentarioService $addComentarioService,
-        private AddSolucaoService $addSolucaoService
+        private AddSolucaoService $addSolucaoService,
+
     ) {
     }
 
@@ -111,6 +113,7 @@ class ChamadoController extends Controller
 
         return $result->toJsonResponse();
     }
+
     public function showChamado($id)
     {
         $chamado = Chamado::with(['categoria', 'departamento', 'usuario', 'comentarios.usuario'])->findOrFail($id);
@@ -133,65 +136,5 @@ class ChamadoController extends Controller
         $result = $this->addSolucaoService->addSolucao($addSolucaoDTO, $id);
 
         return $result->toJsonResponse();
-    }
-
-    public function getEstatisticas(): JsonResponse
-    {
-        try {
-            $stats = Chamado::buscarEstatisticar();
-            return response()->json($stats);
-        } catch (Exception $e) {
-            return response()->json([
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function searchChamados(Request $request): JsonResponse
-    {
-        try {
-            $query = DB::table('chamados');
-
-            if ($request->has('titulo')) {
-                $query->where('titulo', 'LIKE', '%' . $request->titulo . '%');
-            }
-
-            if ($request->has('descricao')) {
-                $query->where('descricao', 'LIKE', '%' . $request->descricao . '%');
-            }
-
-            if ($request->has('comentarios')) {
-                $query->where('comentarios', 'LIKE', '%' . $request->comentarios . '%');
-            }
-
-            if ($request->has('departamento')) {
-                $query->where('departamento', $request->departamento);
-            }
-
-            if ($request->has('status')) {
-                $query->where('status', $request->status);
-            }
-
-
-            if ($request->has('prioridade')) {
-                $query->where('prioridade', $request->titulo);
-            }
-
-            if ($request->has('from_date')) {
-                $query->where('created_at', '>=', $request->from_date);
-            }
-
-            if ($request->has('to_date')) {
-                $query->where('created_at', '<=', $request->to_date);
-            }
-
-            $chamados = $query->orderBy('titulo')->get();
-
-            return response()->json($chamados);
-        } catch (Exception $e) {
-            return response()->json([
-                'error' => $e->getMessage()
-            ], 500);
-        }
     }
 }
