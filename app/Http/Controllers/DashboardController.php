@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Chamado;
-use App\Services\EstatisticasService;
+use App\Services\Analytics\EstatisticasService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {

@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models;
-use App\DTOs\InsertChamadoRequestDTO;
+use App\DTOs\CreateChamadoRequestDTO;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;

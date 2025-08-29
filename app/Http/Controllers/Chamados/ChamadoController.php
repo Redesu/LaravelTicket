@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Chamados;
 
-use App\DTOs\AddComentarioRequestDTO;
-use App\DTOs\AddSolutionRequestDTO;
-use App\DTOs\DataTableRequestDTO;
-use App\DTOs\DeleteChamadoRequestDTO;
-use App\DTOs\InsertChamadoRequestDTO;
-use App\DTOs\ChamadoUpdateRequestDTO;
+
+use App\DTOs\Comments\Requests\CreateComentarioRequestDTO;
+use App\DTOs\ChamadoManagement\Requests\DeleteChamadoRequestDTO;
+use App\DTOs\ChamadoManagement\Requests\CreateChamadoRequestDTO;
+use App\DTOs\ChamadoManagement\Requests\UpdateChamadoRequestDTO;
+use App\DTOs\DataTable\DataTableRequestDTO;
+use App\DTOs\Solutions\Requests\CreateSolucaoRequestDTO;
 use App\Http\Requests\AdicionarComentariosRequest;
 use App\Http\Requests\AdicionarSolucaoRequest;
 use App\Http\Requests\DataTableChamadoRequest;
@@ -16,12 +17,12 @@ use App\Http\Requests\StoreChamadoRequest;
 use App\Http\Requests\UpdateChamadoRequest;
 use App\Models\Chamado;
 use App\Models\User;
-use App\Services\AddComentarioService;
-use App\Services\AddSolucaoService;
-use App\Services\ChamadoCreateService;
-use App\Services\ChamadoDataTableService;
-use App\Services\ChamadoDeleteService;
-use App\Services\ChamadoUpdateService;
+use App\Services\Comments\AddComentarioService;
+use App\Services\Solutions\AddSolucaoService;
+use App\Services\ChamadoManagement\ChamadoCreateService;
+use App\Services\ChamadoManagement\ChamadoDataTableService;
+use App\Services\ChamadoManagement\ChamadoDeleteService;
+use App\Services\ChamadoManagement\ChamadoUpdateService;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 
@@ -58,7 +59,7 @@ class ChamadoController extends Controller
 
     public function insertChamado(StoreChamadoRequest $request): JsonResponse
     {
-        $chamadoDTO = InsertChamadoRequestDTO::fromRequest($request);
+        $chamadoDTO = CreateChamadoRequestDTO::fromRequest($request);
         $result = $this->createChamadoService->criarChamado($chamadoDTO);
 
         return $result->toJsonResponse();
@@ -66,7 +67,7 @@ class ChamadoController extends Controller
 
     public function updateChamado(UpdateChamadoRequest $request, $id): JsonResponse
     {
-        $updateDto = ChamadoUpdateRequestDTO::fromRequest($request);
+        $updateDto = UpdateChamadoRequestDTO::fromRequest($request);
         $result = $this->updateChamadoService->updateChamado($updateDto, $id);
 
         return $result->toJsonResponse();
@@ -90,7 +91,7 @@ class ChamadoController extends Controller
 
     public function addComment(AdicionarComentariosRequest $request, $id): JsonResponse
     {
-        $addCommentDTO = AddComentarioRequestDTO::fromRequest($request);
+        $addCommentDTO = CreateComentarioRequestDTO::fromRequest($request);
         $result = $this->addComentarioService->addComentario($addCommentDTO, $id);
 
         return $result->toJsonResponse();
@@ -99,7 +100,7 @@ class ChamadoController extends Controller
 
     public function addSolution(AdicionarSolucaoRequest $request, $id): JsonResponse
     {
-        $addSolucaoDTO = AddSolutionRequestDTO::fromRequest($request);
+        $addSolucaoDTO = CreateSolucaoRequestDTO::fromRequest($request);
         $result = $this->addSolucaoService->addSolucao($addSolucaoDTO, $id);
 
         return $result->toJsonResponse();
