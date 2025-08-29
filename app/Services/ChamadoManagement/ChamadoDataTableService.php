@@ -4,10 +4,15 @@ namespace App\Services\ChamadoManagement;
 use App\DTOs\ChamadoManagement\Data\ChamadoDataTableRowDTO;
 use App\DTOs\DataTable\DataTableRequestDTO;
 use App\DTOs\DataTable\DataTableResponseDTO;
+use App\Services\Utilities\NameResolutionService;
 use DB;
 
 class ChamadoDataTableService
 {
+    public function __construct(
+        private NameResolutionService $nameResolutionService
+    ) {
+    }
     public function getChamadosFromDataTable(DataTableRequestDTO $request): DataTableResponseDTO
     {
         $query = $this->buildBaseQuery();
@@ -86,11 +91,13 @@ class ChamadoDataTableService
         }
 
         if (!empty($request->getDepartamento())) {
-            $query->where('c.departamento_id', $request->getDepartamento());
+            $departamentoId = $this->nameResolutionService->getDepartamentoIdByName($request->getDepartamento());
+            $query->where('c.departamento_id', $departamentoId);
         }
 
         if (!empty($request->getCategoria())) {
-            $query->where('c.categoria_id', $request->getCategoria());
+            $categoriaId = $this->nameResolutionService->getCategoriaIdByName($request->getCategoria());
+            $query->where('c.categoria_id', $categoriaId);
         }
 
         if (!empty($request->getCreatedAtInicio())) {

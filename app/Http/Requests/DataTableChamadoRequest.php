@@ -30,11 +30,11 @@ class DataTableChamadoRequest extends FormRequest
             'search.value' => ['nullable', 'string', 'max:255'],
 
             // filter parameters
-            'status' => ['nullable', 'string', 'in:Aberto,Em andamento,Finalizado'],
-            'prioridade' => ['nullable', 'string', 'in:Baixa,Média,Alta,Urgente'],
+            'status' => ['nullable', 'string', 'exists:chamados,status'],
+            'prioridade' => ['nullable', 'string', 'exists:chamados,prioridade'],
             'user_id' => ['nullable', 'integer', 'exists:users,id'],
-            'departamento' => ['nullable', 'string', 'in:SUPORTE,DESENVOLVIMENTO'],
-            'categoria' => ['nullable', 'string', 'in:SUPORTE,CORREÇÃO,DUVIDAS'],
+            'departamento' => ['nullable', 'string', 'exists:departamentos,nome'],
+            'categoria' => ['nullable', 'string', 'exists:categorias,nome'],
             'created_at_inicio' => ['nullable', 'date'],
             'created_at_fim' => ['nullable', 'date'],
             'updated_at_inicio' => ['nullable', 'date'],

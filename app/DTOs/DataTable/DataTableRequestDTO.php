@@ -11,7 +11,7 @@ class DataTableRequestDTO
         public readonly ?array $filters,
         public readonly ?string $status = null,
         public readonly ?string $prioridade = null,
-        public readonly ?int $usuario_id = null,
+        public readonly ?int $user_id = null,
         public readonly ?string $departamento = null,
         public readonly ?string $categoria = null,
         public readonly ?string $created_at_inicio = null,
@@ -31,7 +31,7 @@ class DataTableRequestDTO
             filters: $requestData['filters'] ?? [],
             status: $requestData['status'] ?? null,
             prioridade: $requestData['prioridade'] ?? null,
-            usuario_id: $requestData['usuario_id'] ?? null,
+            user_id: $requestData['user_id'] ?? null,
             departamento: $requestData['departamento'] ?? null,
             categoria: $requestData['categoria'] ?? null,
             created_at_inicio: $requestData['created_at_inicio'] ?? null,
@@ -80,7 +80,7 @@ class DataTableRequestDTO
 
     public function getUsuarioId(): ?int
     {
-        return $this->usuario_id;
+        return $this->user_id;
     }
 
     public function getDepartamento(): ?string
