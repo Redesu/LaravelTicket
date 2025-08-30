@@ -51,8 +51,7 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 error: function (xhr, error, thrown) {
-                    showAlert(`AJAX Error: ${xhr}, ${error}, ${thrown}`, 'error');
-                    showAlert(`Response Text: ${xhr.responseText}`, 'error');
+                    showAlert(`Erro ao obter os chamados`, 'error');
                 }
             },
             layout: {
@@ -196,7 +195,6 @@
                         showAlert('Chamado excluído com sucesso', 'success');
                     },
                     error: function (xhr, status, error) {
-                        showAlert(`AJAX Error: ${xhr}, ${error}, ${status}`, 'error');
                         showAlert('Erro ao excluir o chamado', 'error');
                     }
                 });
@@ -247,11 +245,9 @@
 
             const submitBtn = $('#submitBtn');
             const spinner = $('#spinner');
-            const errorDiv = $('#modalErrors');
 
             submitBtn.prop('disabled', true);
             spinner.removeClass('d-none');
-            errorDiv.addClass('d-none');
 
             $.ajax({
                 url: "{{ route('api.chamados.post') }}",
@@ -266,16 +262,6 @@
                     showAlert('Chamado criado com sucesso', 'success');
                 },
                 error: function (xhr, status, error) {
-                    showAlert(`AJAX Error: ${xhr}, ${error}, ${status}`, 'error');
-                    if (xhr.responseJSON && xhr.responseJSON.errors) {
-                        let errorMsg = '<ul>';
-                        $.each(xhr.responseJSON.errors, function (key, value) {
-                            errorMsg += '<li>' + value + '</li>';
-                        });
-                        errorMsg += '</ul>';
-                        errorDiv.html(errorMsg);
-                        errorDiv.removeClass('d-none');
-                    }
                     showAlert('Erro ao criar o chamado', 'error');
                 },
                 complete: function () {
@@ -291,11 +277,9 @@
             const submitBtn = $('#editSubmitBtn');
             const status = $('#editChamadosStatus');
             const spinner = $('#editSpinner');
-            const errorDiv = $('#editChamadosModalErrors');
 
             submitBtn.prop('disabled', true);
             spinner.removeClass('d-none');
-            errorDiv.addClass('d-none');
 
             status.prop('disabled', false);
             const formData = $(this).serialize();
@@ -319,9 +303,6 @@
                     showAlert('Chamado atualizado com sucesso', 'success');
                 },
                 error: function (xhr, status, error) {
-                    showAlert(`AJAX Error: ${xhr}, ${error}, ${status}`, 'error');
-                    errorDiv.html(xhr.responseJSON.errors);
-                    errorDiv.removeClass('d-none');
                     showAlert('Erro ao atualizar o chamado', 'error');
                 },
                 complete: function () {
@@ -335,33 +316,31 @@
             e.preventDefault();
             const submitBtn = $('#filtrarSubmitBtn');
             const spinner = $('#filtrarSpinner');
-            const errorDiv = $('#filtrarModalErrors');
 
             submitBtn.prop('disabled', true);
             spinner.removeClass('d-none');
-            errorDiv.addClass('d-none');
 
             table.ajax.reload(function (json) {
                 $('#filtrarChamadosModal').modal('hide');
 
                 showAlert('Filtros aplicados com sucesso', 'success');
 
-                resetModal('#filtrarChamadosForm', '#filtrarModalErrors');
+                resetModal('#filtrarChamadosForm');
             })
         });
 
 
 
         $('#createChamadoModal').on('hidden.bs.modal', function () {
-            resetModal('#createChamadoForm', '#modalErrors');
+            resetModal('#createChamadoForm');
         });
 
         $('#editChamadosModal').on('hidden.bs.modal', function () {
-            resetModal('#editChamadosForm', '#editModalChamadosErrors');
+            resetModal('#editChamadosForm');
         });
 
         $('#filtrarChamadosModal').on('hidden.bs.modal', function () {
-            resetModal('#filtrarChamadosForm', '#filtrarModalErrors');
+            resetModal('#filtrarChamadosForm');
         });
     });
 
@@ -377,9 +356,8 @@
         }
     }
 
-    function resetModal(formSelector, errorDivSelector) {
+    function resetModal(formSelector) {
         $(formSelector)[0].reset();
-        $(errorDivSelector).addClass('d-none').html('');
         $(formSelector + ' button[type="submit"]').prop('disabled', false);
         $(formSelector + ' .spinner-border').addClass('d-none');
     }

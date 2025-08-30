@@ -5,6 +5,7 @@ namespace App\Services\ChamadoManagement;
 use App\DTOs\ChamadoManagement\Requests\CreateChamadoRequestDTO;
 use App\DTOs\ChamadoManagement\Responses\CreateChamadoResponseDTO;
 use App\Models\Chamado;
+use Log;
 
 class ChamadoCreateService
 {
@@ -33,9 +34,10 @@ class ChamadoCreateService
                 message: 'Chamado criado com sucesso!'
             );
         } catch (\Exception $e) {
+            Log::error('Error ao criar chamado: ' . $e->getMessage());
             return CreateChamadoResponseDTO::error(
                 message: 'Erro ao criar chamado',
-                error: $e->getMessage()
+                error: 'Ocorreu um erro ao criar o chamado. Por favor, tente novamente.'
             );
         }
     }

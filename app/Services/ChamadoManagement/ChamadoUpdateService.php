@@ -8,6 +8,7 @@ use App\Services\ChamadoManagement\Validation\ChamadoValidationService;
 use App\Services\ChamadoTracking\ChamadoAuditService;
 use App\Services\ChamadoTracking\ChamadoChangeTrackingService;
 use Auth;
+use Log;
 
 class ChamadoUpdateService
 {
@@ -48,9 +49,10 @@ class ChamadoUpdateService
                 chamado: $chamado
             );
         } catch (\Exception $e) {
+            Log::error('Erro ao atualizar chamado: ' . $e->getMessage());
             return UpdateChamadoResponseDTO::error(
                 message: 'Erro ao atualizar chamado',
-                error: $e->getMessage()
+                error: 'Ocorreu um erro ao atualizar o chamado.'
             );
         }
     }

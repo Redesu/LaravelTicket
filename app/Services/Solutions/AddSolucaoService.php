@@ -5,6 +5,7 @@ use App\DTOs\Solutions\Requests\CreateSolucaoRequestDTO;
 use App\DTOs\Solutions\Responses\CreateSolucaoResponseDTO;
 use App\Models\Chamado;
 use App\Models\ChamadoComentario;
+use Log;
 
 
 class AddSolucaoService
@@ -36,9 +37,10 @@ class AddSolucaoService
                 message: 'Solução adicionada e chamado marcado como resolvido.',
             );
         } catch (\Exception $e) {
+            Log::error('Erro ao adicionar solução: ' . $e->getMessage());
             return CreateSolucaoResponseDTO::error(
                 message: 'Erro ao adicionar solução',
-                error: $e->getMessage()
+                error: 'Ocorreu um erro ao adicionar a solução.'
             );
         }
     }

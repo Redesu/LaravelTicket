@@ -9,7 +9,6 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div id="solucaoModalErrors" class="alert alert-danger d-none"></div>
 
                     <div class="mb-3">
                         <label for="solucaoDescricao" class="form-label">Descrição da nota</label>

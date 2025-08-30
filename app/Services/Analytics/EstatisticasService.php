@@ -3,6 +3,7 @@ namespace App\Services\Analytics;
 
 use App\DTOs\Analytics\GetEstatisticasResponseDTO;
 use DB;
+use Log;
 
 class EstatisticasService
 {
@@ -21,6 +22,7 @@ class EstatisticasService
                 qntdUsuarios: $usuariosRegistrados
             );
         } catch (\Exception $e) {
+            Log::error('Error ao obter estatisticas: ' . $e->getMessage());
             return GetEstatisticasResponseDTO::error(
                 message: 'Não foi possível obter as estatísticas.',
                 error: $e->getMessage()

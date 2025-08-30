@@ -4,6 +4,7 @@ namespace App\Services\ChamadoManagement;
 use App\DTOs\ChamadoManagement\Requests\DeleteChamadoRequestDTO;
 use App\DTOs\ChamadoManagement\Responses\DeleteChamadoResponseDTO;
 use DB;
+use Log;
 
 class ChamadoDeleteService
 {
@@ -29,6 +30,7 @@ class ChamadoDeleteService
 
             return DeleteChamadoResponseDTO::success($request->getChamadoId());
         } catch (\Exception $e) {
+            Log::error('Error ao excluir chamado: ' . $e->getMessage());
             return DeleteChamadoResponseDTO::error($e->getMessage());
         }
     }

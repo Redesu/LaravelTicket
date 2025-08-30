@@ -5,6 +5,7 @@ use App\DTOs\Comments\Requests\CreateComentarioRequestDTO;
 use App\DTOs\Comments\Responses\CreateComentarioResponseDTO;
 use App\Models\Chamado;
 use App\Models\ChamadoComentario;
+use Log;
 
 class AddComentarioService
 {
@@ -30,9 +31,10 @@ class AddComentarioService
                 descricao: $comentario->descricao
             );
         } catch (\Exception $e) {
+            Log::error('Error ao adicionar comentário: ' . $e->getMessage());
             return CreateComentarioResponseDTO::error(
                 message: 'Erro ao adicionar comentário:',
-                error: $e->getMessage()
+                error: 'Não foi possivel adicionar o comentário'
             );
         }
     }

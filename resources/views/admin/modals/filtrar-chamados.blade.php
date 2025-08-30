@@ -13,7 +13,6 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div id="filtrarChamadosModalErrors" class="alert alert-danger d-none"></div>
 
                     <div class="row">
                         <div class="col-md-6">

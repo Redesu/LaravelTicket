@@ -110,7 +110,7 @@
                     }, 1500);
                 },
                 error: function (xhr) {
-                    $('#solucaoModalErrors').removeClass('d-none').text(xhr.responseJSON.message);
+                    showAlert('Ocorreu um erro ao adicionar a solução.', 'error');
                 },
                 complete: function () {
                     $('#solucaoSpinner').addClass('d-none');
@@ -156,7 +156,8 @@
                     }, 1500);
                 },
                 error: function (xhr, status, error) {
-                    showAlert(`AJAX Error: ${xhr.responseText || error}`, 'error');
+                    spinner.addClass('d-none');
+                    showAlert('Erro ao adicionar comentário', 'error');
                 },
                 complete: function () {
                     spinner.addClass('d-none');
@@ -172,11 +173,9 @@
             const submitBtn = $('#editSubmitBtn');
             const status = $('#editChamadosStatus');
             const spinner = $('#editSpinner');
-            const errorDiv = $('#editChamadosModalErrors');
 
             submitBtn.prop('disabled', true);
             spinner.removeClass('d-none');
-            errorDiv.addClass('d-none');
 
             const formData = $(this).serialize();
 
@@ -202,10 +201,7 @@
                     }, 1500);
                 },
                 error: function (xhr, status, error) {
-                    showAlert(`AJAX Error: ${xhr}, ${error}, ${status}`, 'error');
-                    errorDiv.html(xhr.responseJSON.errors);
-                    errorDiv.removeClass('d-none');
-                    showAlert('Erro ao atualizar o chamado', 'error');
+                    showAlert(`Ocorreu um erro ao atualizar o chamado`, 'error');
                 },
                 complete: function () {
                     submitBtn.prop('disabled', false);
@@ -248,9 +244,8 @@
         }
     }
 
-    function resetModal(formSelector, errorDivSelector) {
+    function resetModal(formSelector) {
         $(formSelector)[0].reset();
-        $(errorDivSelector).addClass('d-none').html('');
         $(formSelector + ' button[type="submit"]').prop('disabled', false);
         $(formSelector + ' .spinner-border').addClass('d-none');
     }
