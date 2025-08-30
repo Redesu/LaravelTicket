@@ -26,8 +26,8 @@ class UpdateChamadoRequest extends FormRequest
             'descricao' => 'required|string|max:100',
             'prioridade' => 'required|in:Baixa,Média,Alta,Urgente',
             'status' => 'required|string|max:100',
-            'categoria_id' => 'required|integer|exists:categorias,id',
-            'departamento_id' => 'required|integer|exists:departamentos,id',
+            'categoria_nome' => 'required|string|exists:categorias,nome',
+            'departamento_nome' => 'required|string|exists:departamentos,nome',
             'user_id' => 'required|integer|exists:users,id',
         ];
     }

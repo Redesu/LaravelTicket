@@ -165,29 +165,6 @@
                 </div>
             </div>
 
-            <!-- Action buttons -->
-            <div class="card">
-                <div class="card-body">
-                    <a href="{{ route('admin.chamados') }}" class="btn btn-secondary voltar-btn" id="voltarBtn">
-                        <span class="spinner-border spinner-border-sm d-none" id="voltarSpinner"></span>
-                        <i class="fas fa-arrow-left"></i> Voltar
-                    </a>
-                    @if($chamado->status !== 'Finalizado')
-                        <button type="button" class="btn btn-primary ml-2 edit-btn" data-bs-toggle="modal"
-                            data-bs-target="#editChamadosModal">
-                            <i class="fas fa-edit"></i> Editar
-                        </button>
-                        <button type="button" class="btn btn-success ml-2 solucao-btn" data-bs-toggle="modal"
-                            data-bs-target="#solucaoChamadoModal">
-                            <i class="fas fa-check"></i> Resolver
-                        </button>
-                        <button type="button" class="btn btn-warning ml-2 adicionar-comentario-btn"
-                            onclick="showAddComment()">
-                            <i class="fas fa-comments"></i> Adicionar Comentário
-                        </button>
-                    @endif
-                </div>
-            </div>
         </div>
 
         <!-- Sidebar - Chamado Information (Right) -->
@@ -298,10 +275,41 @@
     </div>
 </div>
 
+<div class="fab-backdrop" id="fabBackdrop"></div>
+<div class="fab-container" id="fabContainer">
+    <div class="fab-actions">
+        <a href="{{ route('admin.chamados') }}" class="fab-action back" data-tooltip="Voltar">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        @if($chamado->status !== 'Finalizado')
+            <button class="fab-action edit edit-btn" data-tooltip="Editar" data-bs-toggle="modal"
+                data-bs-target="#editChamadosModal">
+                <i class="fas fa-edit"></i>
+            </button>
+            <button class="fab-action resolve solucao-btn" data-tooltip="Resolver" data-bs-toggle="modal"
+                data-bs-target="#solucaoChamadoModal">
+                <i class="fas fa-check"></i>
+            </button>
+            <button class="fab-action comment adicionar-comentario-btn" data-tooltip="Comentar" onclick="showAddComment()">
+                <i class="fas fa-comments"></i>
+            </button>
+        @endif
+    </div>
+    <button class="fab-main pulse" id="fabMain">
+        <i class="fas fa-plus"></i>
+    </button>
+</div>
+
 @include('admin.modals.edit-chamados')
 @include('admin.modals.solucao-chamado')
 
 @stop
+
+@section('css')
+
+    @include('admin.css.chamado-css')
+
+@endsection
 
 
 @section('js')

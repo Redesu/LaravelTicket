@@ -17,6 +17,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
+                                <input type="hidden" id="editChamadoId" name="id">
                                 <label for="editChamadosTitulo" class="form-label">Título</label>
                                 <input type="text" class="form-control" id="editChamadosTitulo" name="titulo" required>
                             </div>
@@ -61,11 +62,12 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="editChamadosDepartamento" class="form-label">Departamento</label>
-                                <select class="form-control" id="editChamadosDepartamento" name="departamento_id"
+                                <select class="form-control" id="editChamadosDepartamento" name="departamento_nome"
                                     required>
                                     <option value="" disabled selected>Selecione o departamento</option>
-                                    <option value="1">SUPORTE</option>
-                                    <option value="2">DESENVOLVIMENTO</option>
+                                    @foreach ($departamentos as $departamento)
+                                        <option value="{{ $departamento->nome }}">{{ $departamento->nome }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -75,11 +77,11 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="editChamadosCategoria" class="form-label">Categoria</label>
-                                <select class="form-control" id="editChamadosCategoria" name="categoria_id" required>
+                                <select class="form-control" id="editChamadosCategoria" name="categoria_nome" required>
                                     <option value="" disabled selected>Selecione a categoria</option>
-                                    <option value="1">SUPORTE</option>
-                                    <option value="2">CORREÇÃO</option>
-                                    <option value="3">DUVIDAS</option>
+                                    @foreach($categorias as $categoria)
+                                        <option value="{{ $categoria->nome }}">{{ $categoria->nome }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>

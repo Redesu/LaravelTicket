@@ -15,7 +15,9 @@ use App\Http\Requests\DataTableChamadoRequest;
 use App\Http\Requests\DeleteChamadoRequests;
 use App\Http\Requests\StoreChamadoRequest;
 use App\Http\Requests\UpdateChamadoRequest;
+use App\Models\Categoria;
 use App\Models\Chamado;
+use App\Models\Departamento;
 use App\Models\User;
 use App\Services\Comments\AddComentarioService;
 use App\Services\Solutions\AddSolucaoService;
@@ -46,7 +48,9 @@ class ChamadoController extends Controller
     public function index()
     {
         $users = User::all();
-        return view('admin.chamados', compact('users'));
+        $departamentos = Departamento::all();
+        $categorias = Categoria::all();
+        return view('admin.chamados', compact('users', 'departamentos', 'categorias'));
     }
 
     public function getDataTablesData(DataTableChamadoRequest $request): JsonResponse
@@ -86,7 +90,9 @@ class ChamadoController extends Controller
     {
         $chamado = Chamado::with(['categoria', 'departamento', 'usuario', 'comentarios.usuario'])->findOrFail($id);
         $users = User::all();
-        return view('admin.chamado', compact('chamado', 'users'));
+        $categorias = Categoria::all();
+        $departamentos = Departamento::all();
+        return view('admin.chamado', compact('chamado', 'users', 'categorias', 'departamentos'));
     }
 
     public function addComment(AdicionarComentariosRequest $request, $id): JsonResponse

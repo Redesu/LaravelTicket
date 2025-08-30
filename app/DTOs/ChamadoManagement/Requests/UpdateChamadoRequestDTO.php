@@ -10,8 +10,8 @@ class UpdateChamadoRequestDTO
         private ?string $descricao = null,
         private ?string $prioridade = null,
         private ?string $status = null,
-        private ?int $categoria_id = null,
-        private ?int $departamento_id = null,
+        private ?string $categoria_nome = null,
+        private ?string $departamento_nome = null,
         private ?int $user_id = null
     ) {
     }
@@ -28,8 +28,8 @@ class UpdateChamadoRequestDTO
             user_id: $validatedData['user_id'],
             status: $validatedData['status'],
             prioridade: $validatedData['prioridade'],
-            categoria_id: $validatedData['categoria_id'],
-            departamento_id: $validatedData['departamento_id']
+            categoria_nome: $validatedData['categoria_nome'],
+            departamento_nome: $validatedData['departamento_nome']
         );
     }
 
@@ -44,8 +44,8 @@ class UpdateChamadoRequestDTO
             'user_id' => $this->user_id,
             'status' => $this->status,
             'prioridade' => $this->prioridade,
-            'categoria_id' => $this->categoria_id,
-            'departamento_id' => $this->departamento_id,
+            'categoria_nome' => $this->categoria_nome,
+            'departamento_nome' => $this->departamento_nome,
         ];
     }
 
@@ -73,14 +73,14 @@ class UpdateChamadoRequestDTO
         return $this->prioridade;
     }
 
-    public function getCategoriaId(): ?int
+    public function getCategoria(): ?int
     {
-        return $this->categoria_id;
+        return $this->categoria_nome;
     }
 
-    public function getDepartamentoId(): ?int
+    public function getDepartamento(): ?int
     {
-        return $this->departamento_id;
+        return $this->departamento_nome;
     }
 
 }

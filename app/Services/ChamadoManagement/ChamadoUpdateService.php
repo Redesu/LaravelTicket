@@ -7,6 +7,7 @@ use App\Models\Chamado;
 use App\Services\ChamadoManagement\Validation\ChamadoValidationService;
 use App\Services\ChamadoTracking\ChamadoAuditService;
 use App\Services\ChamadoTracking\ChamadoChangeTrackingService;
+use App\Services\Utilities\NameResolutionService;
 use Auth;
 use Log;
 
@@ -15,7 +16,8 @@ class ChamadoUpdateService
     public function __construct(
         private ChamadoValidationService $validationService,
         private ChamadoChangeTrackingService $changeTrackingService,
-        private ChamadoAuditService $auditService
+        private ChamadoAuditService $auditService,
+        private NameResolutionService $nameResolutionService
     ) {
     }
 
@@ -34,7 +36,7 @@ class ChamadoUpdateService
 
             $changeTracker = $this->changeTrackingService->createTracker($chamado);
 
-            $updateData = $updateDTO->toArray();
+            $updateData = $this->nameResolutionService->transformUpdateData($updateDTO->toArray());
             $chamado->update($updateData);
 
             $changes = $changeTracker->getChanges($updateData);

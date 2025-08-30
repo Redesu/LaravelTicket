@@ -191,4 +191,29 @@ class NameResolutionService
         $this->nameToIdCache = [];
         $this->idToNameCache = [];
     }
+
+    public function transformUpdateData(array $data): array
+    {
+        $transformed = $data;
+
+        if (isset($data['categoria_nome']) && $data['categoria_nome'] !== null) {
+            $categoriaId = $this->getCategoriaIdByName($data['categoria_nome']);
+            if ($categoriaId === null) {
+                throw new \InvalidArgumentException('Categoria não encontrada: ' . $data['categoria_nome']);
+            }
+            $transformed['categoria_id'] = $categoriaId;
+            unset($transformed['categoria_nome']);
+        }
+
+        if (isset($data['departamento_nome']) && $data['departamento_nome'] !== null) {
+            $departamentoId = $this->getDepartamentoIdByName($data['departamento_nome']);
+            if ($departamentoId === null) {
+                throw new \InvalidArgumentException('Departamento não encontrado: ' . $data['departamento_nome']);
+            }
+            $transformed['departamento_id'] = $departamentoId;
+            unset($transformed['departamento_nome']);
+        }
+
+        return array_filter($transformed, fn($value) => $value !== null);
+    }
 }
