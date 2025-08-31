@@ -1,4 +1,4 @@
-@push('css')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 <style>
     /* Floating Action Button Styles */
     .fab-container {
@@ -145,6 +145,18 @@
         background: linear-gradient(45deg, #ffc107, #e0a800);
     }
 
+    .fab-action.create {
+        background: linear-gradient(45deg, #007bff, #0056b3);
+    }
+
+    .fab-action.filter {
+        background: linear-gradient(45deg, #17a2b8, #138496);
+    }
+
+    .fab-action.sync {
+        background: linear-gradient(45deg, #28a745, #1e7e34);
+    }
+
     /* Animation States */
     .fab-container.active .fab-action {
         opacity: 1;
@@ -235,5 +247,21 @@
             font-size: 12px;
             padding: 6px 10px;
         }
+    }
+
+    #dataTable tbody tr {
+        cursor: pointer;
+    }
+
+    #dataTable tbody tr:hover {
+        background-color: #f8f9fa !important;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    #dataTable tbody tr button {
+        cursor: pointer;
+        position: relative;
+        z-index: 1;
     }
 </style>

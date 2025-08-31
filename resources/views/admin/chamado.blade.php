@@ -165,6 +165,16 @@
                 </div>
             </div>
 
+            <!-- Action buttons -->
+            <div class="card">
+                <div class="card-body">
+                    <a class="btn btn-secondary voltar-btn" id="voltarBtn" onclick="goBack()">
+                        <span class="spinner-border spinner-border-sm d-none" id="voltarSpinner"></span>
+                        <i class="fas fa-arrow-left"></i> Voltar
+                    </a>
+                </div>
+            </div>
+
         </div>
 
         <!-- Sidebar - Chamado Information (Right) -->
@@ -203,6 +213,21 @@
                             <div class="col-8">
                                 <span class="form-control-static">
                                     {{ $chamado->usuario->name ?? 'N/A' }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <div class="row">
+                            <div class="col-4 text-right">
+                                <label class="control-label font-weight-bold">
+                                    <span>Criador por</span>:
+                                </label>
+                            </div>
+                            <div class="col-8">
+                                <span class="form-control-static">
+                                    {{ $chamado->creator->name ?? 'N/A' }}
                                 </span>
                             </div>
                         </div>

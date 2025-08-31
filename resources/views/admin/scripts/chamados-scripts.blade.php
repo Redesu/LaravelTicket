@@ -1,7 +1,3 @@
-@push('css')
-    <!-- Toastr CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-@endpush
 @push('js')
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -164,7 +160,7 @@
             pageLength: 15,
             lengthMenu: [[15, 25, 50, -1], [15, 25, 50, "Todos"]],
             language: {
-                url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/pt-BR.json',
+                url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/pt-BR.json',
                 processing: '<i class="fas fa-spinner fa-spin fa-2x"></i><br>Carregando dados...'
             },
         });
@@ -218,12 +214,9 @@
             $('#editChamadosForm').off('submit'); // Remove previous submit handler
         });
 
-        $('#refreshBtn').on('click', function () {
-            table.ajax.reload();
-            showAlert('Chamados recarregados com sucesso', 'success');
-        });
-
         $('#clearFilters').on('click', function () {
+            $(this).blur();
+
             $('#filtrarChamadosForm')[0].reset();
 
             $('#filtrarChamadosForm select').each(function () {
@@ -344,6 +337,16 @@
         });
     });
 
+    function refreshTable() {
+        // Get existing DataTable instance
+        const table = $('#dataTable').DataTable();
+        if (table) {
+            table.ajax.reload();
+            showAlert('Chamados recarregados com sucesso', 'success');
+        } else {
+            showAlert('Erro ao recarregar tabela', 'error');
+        }
+    }
 
     function showAlert(message, type) {
         if (typeof toastr !== 'undefined') {
@@ -361,5 +364,88 @@
         $(formSelector + ' button[type="submit"]').prop('disabled', false);
         $(formSelector + ' .spinner-border').addClass('d-none');
     }
+
+
+
+    class FloatingActionButton {
+        constructor() {
+            this.fabContainer = document.getElementById('fabContainer');
+            this.fabMain = document.getElementById('fabMain');
+            this.fabBackdrop = document.getElementById('fabBackdrop');
+            this.isOpen = false;
+
+            this.init();
+        }
+
+        init() {
+            // Main button click
+            this.fabMain.addEventListener('click', () => this.toggle());
+
+            // Backdrop click to close
+            this.fabBackdrop.addEventListener('click', () => this.close());
+
+            // Close on escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && this.isOpen) {
+                    this.close();
+                }
+            });
+
+            // Remove pulse after first interaction
+            this.fabMain.addEventListener('click', () => {
+                this.fabMain.classList.remove('pulse');
+            }, { once: true });
+
+            // Close when clicking action buttons
+            const actionButtons = document.querySelectorAll('.fab-action');
+            actionButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    setTimeout(() => this.close(), 100);
+                });
+            });
+        }
+
+        toggle() {
+            this.isOpen ? this.close() : this.open();
+        }
+
+        open() {
+            this.isOpen = true;
+            this.fabContainer.classList.add('active');
+            this.fabMain.classList.add('active');
+            this.fabBackdrop.classList.add('active');
+
+            // Add slight vibration effect (if supported)
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+        }
+
+        close() {
+            this.isOpen = false;
+            this.fabContainer.classList.remove('active');
+            this.fabMain.classList.remove('active');
+            this.fabBackdrop.classList.remove('active');
+        }
+    }
+
+    // Initialize FAB when DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+        new FloatingActionButton();
+    });
+
+    // Add scroll effect
+    let scrollTimeout;
+    window.addEventListener('scroll', () => {
+        const fab = document.getElementById('fabMain');
+        if (fab) {
+            fab.style.transform = 'scale(0.9)';
+
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                fab.style.transform = '';
+            }, 150);
+        }
+    });
 
 </script>

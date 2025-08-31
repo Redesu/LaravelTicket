@@ -20,6 +20,7 @@ class Chamado extends Model
         'status',
         'prioridade',
         'user_id',
+        'created_by',
         'categoria_id',
         'departamento_id',
         'data_abertura',
@@ -31,6 +32,11 @@ class Chamado extends Model
     public function usuario()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function comentarios()

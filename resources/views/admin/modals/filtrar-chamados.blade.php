@@ -101,7 +101,7 @@
                                     <i class="far fa-calendar"></i> Criado a partir de
                                 </label>
                                 <input type="date" class="form-control" id="created_at_inicio" name="created_at_inicio"
-                                    value="created_at_inicio">
+                                    value="">
                             </div>
                         </div>
 
@@ -112,7 +112,7 @@
                                     <i class="far fa-calendar"></i> Criado até
                                 </label>
                                 <input type="date" class="form-control" id="created_at_fim" name="created_at_fim"
-                                    value="created_at_fim">
+                                    value="">
                             </div>
                         </div>
                     </div>
@@ -132,7 +132,7 @@
                                     <i class="far fa-clock"></i> Atualizado a partir de
                                 </label>
                                 <input type="date" class="form-control" id="updated_at_inicio" name="updated_at_inicio"
-                                    value="updated_at_inicio">
+                                    value="">
                             </div>
                         </div>
 
@@ -143,7 +143,7 @@
                                     <i class="far fa-clock"></i> Atualizado até
                                 </label>
                                 <input type="date" class="form-control" id="updated_at_fim" name="updated_at_fim"
-                                    value="updated_at_fim">
+                                    value="">
                             </div>
                         </div>
                     </div>

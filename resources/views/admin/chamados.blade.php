@@ -2,24 +2,7 @@
 
 
 @section('css')
-    <!-- Custom CSS -->
-    <style>
-        #dataTable tbody tr {
-            cursor: pointer;
-        }
-
-        #dataTable tbody tr:hover {
-            background-color: #f8f9fa !important;
-            transform: translateY(-1px);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        #dataTable tbody tr button {
-            cursor: pointer;
-            position: relative;
-            z-index: 1;
-        }
-    </style>
+    @include('admin.css.chamado-css')
 @endsection
 
 @section('title', 'Chamados')
@@ -54,7 +37,7 @@
             <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#filtrarChamadosModal">
                 <i class="fas fa-filter"></i> Filtrar
             </button>
-            <button type="button" class="btn btn-success" id="refreshBtn">
+            <button type="button" class="btn btn-success" onclick="refreshTable()">
                 <i class="fas fa-sync"></i> Recarregar
             </button>
         </div>
@@ -84,6 +67,26 @@
         </table>
 
 
+    </div>
+
+    <div class="fab-backdrop" id="fabBackdrop"></div>
+    <div class="fab-container" id="fabContainer">
+        <div class="fab-actions">
+            <button class="fab-action create" data-tooltip="Novo Chamado" data-bs-toggle="modal"
+                data-bs-target="#createChamadoModal" id="createTicketBtn">
+                <i class="fas fa-plus"></i>
+            </button>
+            <button class="fab-action filter solucao-btn" data-tooltip="Filtrar" data-bs-toggle="modal"
+                data-bs-target="#filtrarChamadosModal">
+                <i class="fas fa-filter"></i>
+            </button>
+            <button class="fab-action sync btn-success" data-tooltip="Recarregar" onclick="refreshTable()">
+                <i class="fas fa-sync"></i>
+            </button>
+        </div>
+        <button class="fab-main pulse" id="fabMain">
+            <i class="fas fa-plus"></i>
+        </button>
     </div>
     @include('admin.modals.create-chamado')
     @include('admin.modals.edit-chamados')

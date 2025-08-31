@@ -88,7 +88,7 @@ class ChamadoController extends Controller
 
     public function showChamado($id)
     {
-        $chamado = Chamado::with(['categoria', 'departamento', 'usuario', 'comentarios.usuario'])->findOrFail($id);
+        $chamado = Chamado::with(['categoria', 'departamento', 'usuario', 'creator', 'comentarios.usuario'])->findOrFail($id);
         $users = User::all();
         $categorias = Categoria::all();
         $departamentos = Departamento::all();

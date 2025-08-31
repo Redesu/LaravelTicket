@@ -250,6 +250,10 @@
         $(formSelector + ' .spinner-border').addClass('d-none');
     }
 
+    function goBack() {
+        window.history.back();
+    }
+
 
     class FloatingActionButton {
         constructor() {

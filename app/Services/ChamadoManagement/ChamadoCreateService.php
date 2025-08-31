@@ -16,6 +16,7 @@ class ChamadoCreateService
                 'titulo' => $DTO->getTitulo(),
                 'descricao' => $DTO->getDescricao(),
                 'user_id' => $DTO->getUserId(),
+                'created_by' => auth()->user()->id,
                 'prioridade' => $DTO->getPrioridade(),
                 'categoria_id' => $DTO->getCategoriaId(),
                 'departamento_id' => $DTO->getDepartamentoId(),
