@@ -191,7 +191,14 @@
                         showAlert('Chamado excluído com sucesso', 'success');
                     },
                     error: function (xhr, status, error) {
-                        showAlert('Erro ao excluir o chamado', 'error');
+                        var response = xhr.responseJSON;
+                        var errorMessage = 'Erro ao excluir o chamado';
+
+                        if (response && response.message) {
+                            errorMessage = response.message;
+                        }
+
+                        showAlert(errorMessage, 'error');
                     }
                 });
             }

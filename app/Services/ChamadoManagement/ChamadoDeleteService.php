@@ -22,7 +22,7 @@ class ChamadoDeleteService
                 return DeleteChamadoResponseDTO::error('Você não tem permissão para excluir este chamado');
             }
 
-            $deleted = $this->performSoftDelete($request->getChamadoId(), $request->getUserId());
+            $deleted = $this->performSoftDelete($request->getChamadoId(), $chamado->created_by);
 
             if (!$deleted) {
                 return DeleteChamadoResponseDTO::error('Erro ao excluir o chamado');
@@ -46,14 +46,14 @@ class ChamadoDeleteService
 
     public function isUserAuthorized(object $chamado, int $user_id): bool
     {
-        return $chamado->user_id === $user_id;
+        return $chamado->created_by === $user_id;
     }
 
-    public function performSoftDelete(int $chamadoId, int $user_id): bool
+    public function performSoftDelete(int $chamadoId, int $created_by): bool
     {
         $affectedRows = DB::table('chamados')
             ->where('id', $chamadoId)
-            ->where('user_id', $user_id)
+            ->where('created_by', $created_by)
             ->whereNull('deleted_at')
             ->update([
                 'updated_at' => now(),
