@@ -2,6 +2,7 @@
 
 
 @section('css')
+    @include('admin.css.chamado-css')
 @endsection
 
 @section('title', 'Departamentos')
@@ -79,6 +80,5 @@
     @stop
 
     @section('js')
-
-
+    @include('admin.scripts.departamentos-scripts')
     @stop

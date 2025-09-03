@@ -45,7 +45,7 @@ class ChamadoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function showChamados()
     {
         $users = User::all();
         $departamentos = Departamento::all();
@@ -53,7 +53,7 @@ class ChamadoController extends Controller
         return view('admin.chamados', compact('users', 'departamentos', 'categorias'));
     }
 
-    public function getDataTablesData(DataTableChamadoRequest $request): JsonResponse
+    public function getChamadosDataTablesData(DataTableChamadoRequest $request): JsonResponse
     {
         $dataTableRequest = DataTableRequestDTO::fromRequest($request->all());
         $response = $this->dataTableService->getChamadosFromDataTable($dataTableRequest);

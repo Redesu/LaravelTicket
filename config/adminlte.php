@@ -346,12 +346,12 @@ return [
         ],
         [
             'text' => 'Categorias',
-            'url' => 'admin/settings',
+            'url' => 'admin/categorias',
             'icon' => 'fas fa-fw fa-solid fa-layer-group',
         ],
         [
             'text' => 'Departamentos',
-            'url' => 'admin/settings',
+            'url' => 'admin/departamentos',
             'icon' => 'fas fa-fw fa-solid fa-building',
         ],
 
