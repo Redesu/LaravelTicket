@@ -14,9 +14,9 @@ class CategoriasSeeder extends Seeder
     public function run(): void
     {
         DB::table("categorias")->insert([
-            ['nome' => 'SUPORTE'],
-            ['nome' => 'DUVIDAS'],
-            ['nome' => 'CORREÇÃO'],
+            ['nome' => 'SUPORTE', 'created_at' => now()],
+            ['nome' => 'DUVIDAS', 'created_at' => now()],
+            ['nome' => 'CORREÇÃO', 'created_at' => now()],
         ]);
     }
 }

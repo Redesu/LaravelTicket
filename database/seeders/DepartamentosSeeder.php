@@ -14,8 +14,8 @@ class DepartamentosSeeder extends Seeder
     public function run(): void
     {
         DB::table('departamentos')->insert([
-            ['nome' => 'SUPORTE', 'descricao' => 'departamento do suporte'],
-            ['nome' => 'DESENVOLVIMENTO', 'descricao' => 'departamento do desenvolvimento'],
+            ['nome' => 'SUPORTE', 'descricao' => 'departamento do suporte', 'created_at' => now()],
+            ['nome' => 'DESENVOLVIMENTO', 'descricao' => 'departamento do desenvolvimento', 'created_at' => now()],
         ]);
     }
 }
