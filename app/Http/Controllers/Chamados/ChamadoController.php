@@ -7,7 +7,7 @@ use App\DTOs\Comments\Requests\CreateComentarioRequestDTO;
 use App\DTOs\ChamadoManagement\Requests\DeleteChamadoRequestDTO;
 use App\DTOs\ChamadoManagement\Requests\CreateChamadoRequestDTO;
 use App\DTOs\ChamadoManagement\Requests\UpdateChamadoRequestDTO;
-use App\DTOs\DataTable\DataTableRequestDTO;
+use App\DTOs\DataTable\DataTableChamadoRequestDTO;
 use App\DTOs\Solutions\Requests\CreateSolucaoRequestDTO;
 use App\Http\Requests\AdicionarComentariosRequest;
 use App\Http\Requests\AdicionarSolucaoRequest;
@@ -55,7 +55,7 @@ class ChamadoController extends Controller
 
     public function getChamadosDataTablesData(DataTableChamadoRequest $request): JsonResponse
     {
-        $dataTableRequest = DataTableRequestDTO::fromRequest($request->all());
+        $dataTableRequest = DataTableChamadoRequestDTO::fromRequest($request->all());
         $response = $this->dataTableService->getChamadosFromDataTable($dataTableRequest);
 
         return $response->toJsonResponse();

@@ -8,16 +8,6 @@ class DataTableRequestDTO
         public readonly int $start,
         public readonly int $length,
         public readonly ?string $searchValue,
-        public readonly ?array $filters,
-        public readonly ?string $status = null,
-        public readonly ?string $prioridade = null,
-        public readonly ?int $user_id = null,
-        public readonly ?string $departamento = null,
-        public readonly ?string $categoria = null,
-        public readonly ?string $created_at_inicio = null,
-        public readonly ?string $created_at_fim = null,
-        public readonly ?string $updated_at_inicio = null,
-        public readonly ?string $updated_at_fim = null
     ) {
     }
 
@@ -28,16 +18,6 @@ class DataTableRequestDTO
             start: $requestData['start'] ?? 0,
             length: $requestData['length'] ?? 10,
             searchValue: $requestData['search']['value'] ?? '',
-            filters: $requestData['filters'] ?? [],
-            status: $requestData['status'] ?? null,
-            prioridade: $requestData['prioridade'] ?? null,
-            user_id: $requestData['user_id'] ?? null,
-            departamento: $requestData['departamento'] ?? null,
-            categoria: $requestData['categoria'] ?? null,
-            created_at_inicio: $requestData['created_at_inicio'] ?? null,
-            created_at_fim: $requestData['created_at_fim'] ?? null,
-            updated_at_inicio: $requestData['updated_at_inicio'] ?? null,
-            updated_at_fim: $requestData['updated_at_fim'] ?? null,
         );
     }
 
@@ -62,54 +42,4 @@ class DataTableRequestDTO
         return $this->searchValue;
     }
 
-    public function getFilters(): ?array
-    {
-        return $this->filters;
-
-    }
-
-    public function getStatus(): ?string
-    {
-        return $this->status;
-    }
-
-    public function getPrioridade(): ?string
-    {
-        return $this->prioridade;
-    }
-
-    public function getUsuarioId(): ?int
-    {
-        return $this->user_id;
-    }
-
-    public function getDepartamento(): ?string
-    {
-        return $this->departamento;
-    }
-
-    public function getCategoria(): ?string
-    {
-        return $this->categoria;
-    }
-
-    public function getCreatedAtInicio(): ?string
-    {
-        return $this->created_at_inicio;
-    }
-
-    public function getCreatedAtFim(): ?string
-    {
-        return $this->created_at_fim;
-    }
-
-    public function getUpdatedAtInicio(): ?string
-    {
-        return $this->updated_at_inicio;
-    }
-
-    public function getUpdatedAtFim(): ?string
-    {
-        return $this->updated_at_fim;
-    }
 }

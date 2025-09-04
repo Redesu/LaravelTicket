@@ -2,7 +2,7 @@
 namespace App\Services\ChamadoManagement;
 
 use App\DTOs\ChamadoManagement\Data\ChamadoDataTableRowDTO;
-use App\DTOs\DataTable\DataTableRequestDTO;
+use App\DTOs\DataTable\DataTableChamadoRequestDTO;
 use App\DTOs\DataTable\DataTableResponseDTO;
 use App\Services\Utilities\NameResolutionService;
 use DB;
@@ -13,7 +13,7 @@ class ChamadoDataTableService
         private NameResolutionService $nameResolutionService
     ) {
     }
-    public function getChamadosFromDataTable(DataTableRequestDTO $request): DataTableResponseDTO
+    public function getChamadosFromDataTable(DataTableChamadoRequestDTO $request): DataTableResponseDTO
     {
         $query = $this->buildBaseQuery();
 
@@ -74,7 +74,7 @@ class ChamadoDataTableService
         });
     }
 
-    private function applyFilters($query, DataTableRequestDTO $request): void
+    private function applyFilters($query, DataTableChamadoRequestDTO $request): void
     {
         if (!empty($request->getStatus())) {
             $query->where('c.status', $request->getStatus());
