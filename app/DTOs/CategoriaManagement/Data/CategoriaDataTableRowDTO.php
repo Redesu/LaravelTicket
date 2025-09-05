@@ -1,5 +1,5 @@
 <?php
-namespace App\DTOs\ChamadoManagement\Data;
+namespace App\DTOs\CategoriaManagement\Data;
 
 class CategoriaDataTableRowDTO
 {

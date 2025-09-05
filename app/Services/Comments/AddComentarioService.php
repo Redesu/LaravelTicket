@@ -14,6 +14,13 @@ class AddComentarioService
         try {
             $chamado = Chamado::findOrFail($id);
 
+            if ($chamado->hasSolution()) {
+                return CreateComentarioResponseDTO::error(
+                    message: 'Erro ao adicionar comentário:',
+                    error: 'Não é possivel adicionar comentários em chamados fechados'
+                );
+            }
+
             $comentario = ChamadoComentario::create([
                 'chamado_id' => $chamado->id,
                 'usuario_id' => $request->getUsuarioId(),

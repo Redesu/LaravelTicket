@@ -1,10 +1,9 @@
 <?php
 namespace App\Services\CategoriaManagement;
 
-use App\DTOs\ChamadoManagement\Data\CategoriaDataTableRowDTO;
+use App\DTOs\CategoriaManagement\Data\CategoriaDataTableRowDTO;
 use App\DTOs\DataTable\DataTableRequestDTO;
 use App\DTOs\DataTable\DataTableResponseDTO;
-use App\Http\Requests\DataTableCategoriaRequest;
 use DB;
 
 class CategoriaDataTableService
