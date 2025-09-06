@@ -88,14 +88,14 @@
             <i class="fas fa-plus"></i>
         </button>
     </div>
-    @include('admin.modals.create-chamado')
-    @include('admin.modals.edit-chamados')
-    @include('admin.modals.filtrar-chamados')
+    @include('admin.modals.chamados-modals.create-chamado')
+    @include('admin.modals.chamados-modals.edit-chamados')
+    @include('admin.modals.chamados-modals.filtrar-chamados')
 
     @stop
 
     @section('js')
 
-    @include('admin.scripts.chamados-scripts')
+    @include('admin.scripts.chamados-scripts.chamados-scripts')
 
     @stop

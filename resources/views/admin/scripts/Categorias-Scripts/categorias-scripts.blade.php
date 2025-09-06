@@ -68,7 +68,7 @@
                     name: 'actions',
                     render: function (data, type, row) {
                         let actions = '';
-                        actions += `<button class="btn btn-primary btn-sm edit-btn" data-bs-toggle="modal" data-bs-target="#editChamadosModal"><i class="fas fa-edit"></i> Editar</button> `;
+                        actions += `<button class="btn btn-primary btn-sm edit-btn" data-id="${row.id}" data-bs-toggle="modal" data-bs-target="#editCategoriaModal"><i class="fas fa-edit"></i> Editar</button> `;
                         actions += `<button class="btn btn-danger btn-sm delete-btn" data-id="${row.id}"><i class="fas fa-trash"></i> Excluir</button>`;
                         return actions;
                     },
@@ -83,6 +83,51 @@
                 url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/pt-BR.json',
                 processing: '<i class="fas fa-spinner fa-spin fa-2x"></i><br>Carregando dados...'
             },
+        });
+
+        $('#dataTable').on('click', '.delete-btn', function () {
+            var id = $(this).data('id');
+            if (confirm('Tem certeza que deseja excluir este chamado?')) {
+                $.ajax({
+                    url: "{{ route('api.categorias.delete') }}",
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: { "id": id },
+                    success: function (result) {
+                        table.ajax.reload();
+                        showAlert('Chamado excluído com sucesso', 'success');
+                    },
+                    error: function (xhr, status, error) {
+                        var response = xhr.responseJSON;
+                        var errorMessage = 'Erro ao excluir o chamado';
+
+                        if (response && response.message) {
+                            errorMessage = response.message;
+                        }
+
+                        showAlert(errorMessage, 'error');
+                    }
+                });
+            }
+        });
+
+        $(document).on('click', '.edit-btn', function () {
+            const id = $(this).data('id');
+            const rowData = table.row($(this).closest('tr')).data();
+
+            $('#editCategoriaId').val(rowData.id);
+            $('#categoriaNome').val(rowData.nome);
+            $('#editCategoriaModal').modal('show');
+        });
+
+        $('#createCategoriaModal').on('hidden.bs.modal', function () {
+            resetModal('#createCategoriaForm');
+        });
+
+        $('#editCategoriaModal').on('hidden.bs.modal', function () {
+            resetModal('#editCategoriaForm');
         });
     });
 
@@ -187,6 +232,12 @@
         } else {
             alert(message);
         }
+    }
+
+    function resetModal(formSelector) {
+        $(formSelector)[0].reset();
+        $(formSelector + ' button[type="submit"]').prop('disabled', false);
+        $(formSelector + ' .spinner-border').addClass('d-none');
     }
 
 </script>

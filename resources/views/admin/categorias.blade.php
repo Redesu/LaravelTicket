@@ -30,7 +30,7 @@
 
     <div class="row mb-3">
         <div class="col-12">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createChamadoModal"
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createCategoriaModal"
                 id="createCategoriaBtn">
                 <i class="fas fa-plus"></i> Criar Categoria
             </button>
@@ -63,8 +63,8 @@
     <div class="fab-backdrop" id="fabBackdrop"></div>
     <div class="fab-container" id="fabContainer">
         <div class="fab-actions">
-            <button class="fab-action create" data-tooltip="Nova Categoria" data-bs-toggle="modal" data-bs-target="#"
-                id="createCategoriaBtn">
+            <button class="fab-action create" data-tooltip="Nova Categoria" data-bs-toggle="modal"
+                data-bs-target="#createCategoriaModal" id="createCategoriaBtn">
                 <i class="fas fa-plus"></i>
             </button>
             <button class="fab-action sync btn-success" data-tooltip="Recarregar" onclick="refreshTable()">
@@ -75,9 +75,11 @@
             <i class="fas fa-plus"></i>
         </button>
     </div>
+</div>
+@include('admin.modals.categorias-modals.create-categoria')
+@include('admin.modals.categorias-modals.edit-categoria')
+@stop
 
-    @stop
-
-    @section('js')
-    @include('admin.scripts.categorias-scripts')
-    @stop
+@section('js')
+@include('admin.scripts.categorias-scripts.categorias-scripts')
+@stop

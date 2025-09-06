@@ -325,8 +325,8 @@
     </button>
 </div>
 
-@include('admin.modals.edit-chamados')
-@include('admin.modals.solucao-chamado')
+@include('admin.modals.chamados-modals.edit-chamados')
+@include('admin.modals.chamado-modals.solucao-chamado')
 
 @stop
 
@@ -339,6 +339,6 @@
 
 @section('js')
 
-    @include('admin.scripts.chamado-scripts')
+    @include('admin.scripts.chamado-scripts.chamado-scripts')
 
 @endsection
