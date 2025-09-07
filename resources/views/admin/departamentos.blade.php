@@ -51,6 +51,7 @@
                     <th>Nome</th>
                     <th>Descrição</th>
                     <th>Criado em</th>
+                    <th>Ações</th>
                 </tr>
             </thead>
             <tbody>
