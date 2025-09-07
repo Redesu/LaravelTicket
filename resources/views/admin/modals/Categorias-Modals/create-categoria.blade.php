@@ -21,19 +21,18 @@
                                 <input type="text" class="form-control" id="nome" name="nome" required>
                             </div>
                         </div>
+                    </div>
 
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                            <i class="fas fa-times"></i> Fechar
-                        </button>
-                        <button type="submit" class="btn btn-primary" id="submitBtn">
-                            <span class="spinner-border spinner-border-sm d-none" id="spinner"></span>
-                            <i class="fas fa-plus-circle"></i> Criar categoria
-                        </button>
-                    </div>
+                </div>
+                <div class="modal-footer"> <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times"></i> Fechar
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <span class="spinner-border spinner-border-sm d-none" id="spinner"></span>
+                        <i class="fas fa-plus-circle"></i> Criar categoria
+                    </button>
+                </div>
             </form>
         </div>
     </div>
-</div>
 </div>
