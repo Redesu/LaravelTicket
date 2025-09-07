@@ -50,6 +50,7 @@
                     <th>ID</th>
                     <th>Nome</th>
                     <th>Criado em</th>
+                    <th>Ações</th>
                 </tr>
             </thead>
             <tbody>

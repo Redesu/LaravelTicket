@@ -97,11 +97,11 @@
                     data: { "id": id },
                     success: function (result) {
                         table.ajax.reload();
-                        showAlert('Chamado excluído com sucesso', 'success');
+                        showAlert('Categoria excluída com sucesso', 'success');
                     },
                     error: function (xhr, status, error) {
                         var response = xhr.responseJSON;
-                        var errorMessage = 'Erro ao excluir o chamado';
+                        var errorMessage = 'Erro ao excluir a categoria';
 
                         if (response && response.message) {
                             errorMessage = response.message;
@@ -120,6 +120,72 @@
             $('#editCategoriaId').val(rowData.id);
             $('#categoriaNome').val(rowData.nome);
             $('#editCategoriaModal').modal('show');
+        });
+
+        $('#createCategoriaForm').on('submit', function (e) {
+            e.preventDefault();
+
+            const submitBtn = $('#submitBtn');
+            const spinner = $('#spinner');
+
+            submitBtn.prop('disabled', true);
+            spinner.removeClass('d-none');
+
+            $.ajax({
+                url: "{{ route('api.categorias.post') }}",
+                method: "POST",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: $(this).serialize(),
+                success: function (response) {
+                    table.ajax.reload();
+                    $('#createCategoriaModal').modal('hide');
+                    showAlert('Categoria criada com sucesso', 'success');
+                },
+                error: function (xhr, status, error) {
+                    showAlert('Erro ao criar a categoria', 'error');
+                },
+                complete: function () {
+                    submitBtn.prop('disabled', false);
+                    spinner.addClass('d-none');
+                }
+            })
+        });
+
+        $('#editCategoriaForm').on('submit', function (e) {
+            e.preventDefault();
+
+            const submitBtn = $('#editSubmitBtn');
+            const spinner = $('#editSpinner');
+
+            submitBtn.prop('disabled', true);
+            spinner.removeClass('d-none');
+
+            let updateUrl = "{{ route('api.categorias.put', ':id') }}";
+            let id = $('#editCategoriaId').val();
+            let finalUrl = updateUrl.replace(':id', id);
+
+            $.ajax({
+                url: finalUrl,
+                method: "PUT",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                },
+                data: $(this).serialize(),
+                success: function (response) {
+                    table.ajax.reload();
+                    $('#editCategoriaModal').modal('hide');
+                    showAlert('Categoria atualizada com sucesso', 'success');
+                },
+                error: function (xhr, status, error) {
+                    showAlert('Erro ao atualizar a categoria', 'error');
+                },
+                complete: function () {
+                    submitBtn.prop('disabled', false);
+                    spinner.addClass('d-none');
+                }
+            });
         });
 
         $('#createCategoriaModal').on('hidden.bs.modal', function () {
