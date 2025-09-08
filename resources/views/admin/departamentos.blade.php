@@ -30,8 +30,8 @@
 
     <div class="row mb-3">
         <div class="col-12">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#"
-                id="createDepartamentoBtn">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                data-bs-target="#createDepartamentoModal" id="createDepartamentoBtn">
                 <i class="fas fa-plus"></i> Criar Departamento
             </button>
             <button type="button" class="btn btn-success" onclick="refreshTable()">
@@ -65,8 +65,8 @@
     <div class="fab-backdrop" id="fabBackdrop"></div>
     <div class="fab-container" id="fabContainer">
         <div class="fab-actions">
-            <button class="fab-action create" data-tooltip="Novo Departamento" data-bs-toggle="modal" data-bs-target="#"
-                id="createDepartamentoBtn">
+            <button class="fab-action create" data-tooltip="Novo Departamento" data-bs-toggle="modal"
+                data-bs-target="#createDepartamentoModal" id="createDepartamentoBtn">
                 <i class="fas fa-plus"></i>
             </button>
             <button class="fab-action sync btn-success" data-tooltip="Recarregar" onclick="refreshTable()">
@@ -77,9 +77,11 @@
             <i class="fas fa-plus"></i>
         </button>
     </div>
+    @include('admin.modals.departamentos-modals.create-departamento')
+    @include('admin.modals.departamentos-modals.edit-departamento')
 
     @stop
 
     @section('js')
-    @include('admin.scripts.departamentos-scripts')
+    @include('admin.scripts.departamentos-scripts.departamentos-scripts')
     @stop

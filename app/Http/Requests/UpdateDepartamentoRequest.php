@@ -22,8 +22,8 @@ class UpdateDepartamentoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nome' => 'sometimes|required|string|max:255|max:255',
-            'description' => 'nullable|string|max:500',
+            'nome' => 'sometimes|required|string|max:255|max:255|exists:departamentos,nome',
+            'descricao' => 'nullable|string|max:500',
         ];
     }
 }

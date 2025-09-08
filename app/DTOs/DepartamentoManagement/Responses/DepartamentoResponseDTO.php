@@ -1,6 +1,8 @@
 <?php
 namespace App\DTOs\DepartamentoManagement\Responses;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
+
 class DepartamentoResponseDTO
 {
     public function __construct(

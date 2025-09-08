@@ -16,7 +16,7 @@ class DepartamentoDataRableRowDTO
         return new self(
             id: $row->id,
             nome: $row->nome,
-            descricao: $row->descricao,
+            descricao: $row->descricao ? $row->descricao : null,
             criado_em: $row->criado_em ? $row->criado_em : null
         );
     }
