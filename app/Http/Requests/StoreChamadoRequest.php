@@ -28,6 +28,7 @@ class StoreChamadoRequest extends FormRequest
             'categoria_id' => 'required|integer|min:1',
             'departamento_id' => 'required|integer|min:1',
             'user_id' => 'required|integer|exists:users,id',
+            'anexos' => 'sometimes|array',
         ];
     }
 

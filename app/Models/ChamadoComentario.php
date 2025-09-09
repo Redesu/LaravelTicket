@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class ChamadoComentario extends Model
 {
@@ -26,6 +27,11 @@ class ChamadoComentario extends Model
     public function usuario()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function anexavel(): MorphMany
+    {
+        return $this->morphMany(Anexo::class, 'anexavel');
     }
 
     public function scopeComments($query)

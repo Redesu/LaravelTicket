@@ -4,6 +4,7 @@ namespace App\Models;
 use App\DTOs\CreateChamadoRequestDTO;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use DB;
 
@@ -42,6 +43,11 @@ class Chamado extends Model
     public function comentarios()
     {
         return $this->hasMany(ChamadoComentario::class)->orderBy('created_at');
+    }
+
+    public function anexos(): MorphMany
+    {
+        return $this->morphMany(Anexo::class, 'anexavel');
     }
 
     public function categoria()

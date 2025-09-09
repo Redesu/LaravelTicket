@@ -11,7 +11,8 @@ class CreateChamadoRequestDTO
         public readonly int $user_id,
         public readonly string $prioridade,
         public readonly int $categoria_id,
-        public readonly int $departamento_id
+        public readonly int $departamento_id,
+        public readonly ?array $anexos = null,
     ) {
     }
 
@@ -27,7 +28,8 @@ class CreateChamadoRequestDTO
             user_id: $validatedData['user_id'],
             prioridade: $validatedData['prioridade'],
             categoria_id: $validatedData['categoria_id'],
-            departamento_id: $validatedData['departamento_id']
+            departamento_id: $validatedData['departamento_id'],
+            anexos: $validatedData['anexos'] ?? null,
         );
     }
 
@@ -44,6 +46,7 @@ class CreateChamadoRequestDTO
             'prioridade' => $this->prioridade,
             'categoria_id' => $this->categoria_id,
             'departamento_id' => $this->departamento_id,
+            'anexos' => $this->anexos,
         ];
     }
 
@@ -79,5 +82,10 @@ class CreateChamadoRequestDTO
     public function getDepartamentoId(): int
     {
         return $this->departamento_id;
+    }
+
+    public function getAnexos(): ?array
+    {
+        return $this->anexos;
     }
 }
