@@ -5,12 +5,23 @@ use App\DTOs\Comments\Requests\CreateComentarioRequestDTO;
 use App\DTOs\Comments\Responses\CreateComentarioResponseDTO;
 use App\Models\Chamado;
 use App\Models\ChamadoComentario;
+use App\Services\Anexos\ProcessAnexosService;
+use Carbon\Exceptions\InvalidTypeException;
+use DB;
+use Dotenv\Exception\InvalidFileException;
+use Exception;
 use Log;
 
 class AddComentarioService
 {
+    public function __construct(
+        private ProcessAnexosService $processAnexosService
+    ) {
+    }
+
     public function addComentario(CreateComentarioRequestDTO $request, int $id): CreateComentarioResponseDTO
     {
+        DB::beginTransaction();
         try {
             $chamado = Chamado::findOrFail($id);
 
@@ -29,7 +40,12 @@ class AddComentarioService
                 'changes' => $request->getChanges(),
             ]);
 
+            if ($request->getAnexos()) {
+                $this->processAnexosService->processAnexos($request->getAnexos(), $comentario);
+            }
+
             $comentario->load('usuario');
+            DB::commit();
 
             return CreateComentarioResponseDTO::success(
                 comentario: $this->formatComentarioData($comentario),
@@ -37,7 +53,22 @@ class AddComentarioService
                 created_at: $comentario->created_at->format('d/m/Y H:i'),
                 descricao: $comentario->descricao
             );
-        } catch (\Exception $e) {
+        } catch (InvalidFileException $e) {
+            DB::rollBack();
+            Log::warning('Arquivo inválido ao criar comentário: ' . $e->getMessage());
+            return CreateComentarioResponseDTO::error(
+                message: 'Arquivo Inválido',
+                error: $e->getMessage()
+            );
+        } catch (InvalidTypeException $e) {
+            DB::rollBack();
+            Log::warning('Tipo de arquivo inválido ao criar comentário: ' . $e->getMessage());
+            return CreateComentarioResponseDTO::error(
+                message: 'Tipo de arquivo Inválido ao criar comentario',
+                error: $e->getMessage()
+            );
+        } catch (Exception $e) {
+            DB::rollBack();
             Log::error('Error ao adicionar comentário: ' . $e->getMessage());
             return CreateComentarioResponseDTO::error(
                 message: 'Erro ao adicionar comentário:',

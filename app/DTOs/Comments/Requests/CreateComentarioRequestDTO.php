@@ -10,7 +10,8 @@ class CreateComentarioRequestDTO
         private ?int $usuario_id,
         private ?string $descricao,
         private ?string $tipo,
-        private ?string $changes
+        private ?string $changes,
+        private ?array $anexos = null,
     ) {
     }
 
@@ -22,6 +23,7 @@ class CreateComentarioRequestDTO
             descricao: $validatedData['descricao'],
             tipo: $validatedData['tipo'] ?? 'comment',
             changes: $validatedData['changes'] ?? null,
+            anexos: $validatedData['anexos'] ?? null,
         );
     }
 
@@ -43,6 +45,11 @@ class CreateComentarioRequestDTO
     public function getChanges(): ?string
     {
         return $this->changes;
+    }
+
+    public function getAnexos(): ?array
+    {
+        return $this->anexos;
     }
 
 }
