@@ -264,4 +264,26 @@
         position: relative;
         z-index: 1;
     }
+
+    .drop-zone {
+        border: 2px dashed #ccc;
+        border-radius: 0.25rem;
+        padding: 30px;
+        text-align: center;
+        color: #555;
+        transition: all 0.2s ease-in-out;
+        cursor: pointer;
+    }
+
+    .drop-zone--over {
+        border-color: #007bff;
+        /* Bootstrap primary color */
+        background-color: #f0f8ff;
+        /* A light blue */
+    }
+
+    /* Hide the default file input, the drop-zone will trigger it */
+    .drop-zone .custom-file-input {
+        display: none;
+    }
 </style>

@@ -2,7 +2,7 @@
     aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form id="createChamadoForm">
+            <form id="createChamadoForm" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-header bg-primary">
                     <h4 class="modal-title text-white" id="createChamadoModalLabel">
@@ -51,8 +51,9 @@
                                 <label for="departamento_id" class="form-label">Departamento</label>
                                 <select class="form-control" id="departamento_id" name="departamento_id" required>
                                     <option value="" disabled selected>Selecione o departamento</option>
-                                    <option value="1">Suporte</option>
-                                    <option value="2">Desenvolvimento</option>
+                                    @foreach($departamentos as $departamento)
+                                        <option value="{{ $departamento->id }}">{{ $departamento->nome }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -62,8 +63,9 @@
                                 <label for="categoria_id" class="form-label">Categoria</label>
                                 <select class="form-control" id="categoria_id" name="categoria_id" required>
                                     <option value="" disabled selected>Selecione a categoria</option>
-                                    <option value="1">Suporte</option>
-                                    <option value="2">Correção</option>
+                                    @foreach($categorias as $categoria)
+                                        <option value="{{ $categoria->id }}">{{ $categoria->nme }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -82,6 +84,22 @@
                             </div>
                         </div>
                         <div class="col-md-6"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="anexo">Anexo (Opcional)</label>
+                                <div class="drop-zone" id="anexoDropZone">
+                                    <span class="drop-zone-text">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        Arraste e solte o arquivo aqui ou clique para selecionar
+                                    </span>
+                                    <input type="file" class="custom-file-input" id="anexo" name="anexo">
+                                </div>
+                                <div class="invalid-feedback d-block" id="anexo-feedback"></div>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
