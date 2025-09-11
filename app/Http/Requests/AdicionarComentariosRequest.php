@@ -26,7 +26,7 @@ class AdicionarComentariosRequest extends FormRequest
             'tipo' => 'in:comment,edit,solution',
             'changes' => 'nullable|json',
             'anexos' => 'nullable|array',
-            'anexos.*' => 'file|max:153600|mimes:jpeg,png,pdf,zip,rar|mimetypes:application/pdf,image/jpeg,image/png,application/zip,application/x-rar-compressed',
+            'anexos.*' => 'file|max:153600|mimes:jpeg,png,pdf,zip,rar,mp4|mimetypes:application/pdf,image/jpeg,image/png,application/zip,application/x-rar-compressed,video/mp4',
         ];
     }
 
@@ -40,8 +40,8 @@ class AdicionarComentariosRequest extends FormRequest
             'anexos.array' => 'O campo anexos deve ser um array de arquivos.',
             'anexos.*.file' => 'Cada anexo deve ser um arquivo válido.',
             'anexos.*.max' => 'Cada anexo não pode exceder 150MB.',
-            'anexos.*.mimes' => 'Os anexos devem ser do tipo: jpeg, png, pdf, zip, rar.',
-            'anexos.*.mimetypes' => 'Os anexos devem ser do tipo: application/pdf, image/jpeg, image/png, application/zip, application/x-rar-compressed.',
+            'anexos.*.mimes' => 'Os anexos devem ser do tipo: jpeg, png, pdf, zip, rar, mp4.',
+            'anexos.*.mimetypes' => 'Os anexos devem ser do tipo: application/pdf, image/jpeg, image/png, application/zip, application/x-rar-compressed, video/mp4.',
         ];
     }
 }

@@ -10,6 +10,7 @@ class CreateSolucaoRequestDTO
         private ?int $usuario_id,
         private ?string $descricao,
         private ?string $tipo,
+        private ?array $anexos = null
     ) {
     }
 
@@ -19,7 +20,8 @@ class CreateSolucaoRequestDTO
         return new CreateSolucaoRequestDTO(
             usuario_id: Auth::id(),
             descricao: $validatedData['descricao'],
-            tipo: 'solution'
+            tipo: 'solution',
+            anexos: $validatedData['anexos'] ?? null
         );
     }
 
@@ -36,6 +38,11 @@ class CreateSolucaoRequestDTO
     public function getTipo(): ?string
     {
         return $this->tipo;
+    }
+
+    public function getAnexos(): ?array
+    {
+        return $this->anexos;
     }
 
 }
