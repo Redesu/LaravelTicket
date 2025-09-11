@@ -222,6 +222,99 @@
             $('#editChamadosForm').off('submit'); // Remove previous submit handler
         });
 
+        $('#createChamadoModal').on('shown.bs.modal', function () {
+            const dropZone = $('#anexoDropZone');
+            const fileInput = $('#anexo');
+            let dragCounter = 0;
+
+            dropZone.off('click.fileUpload dragenter.fileUpload dragover.fileUpload dragleave.fileUpload drop.fileUpload');
+            fileInput.off('change.fileUpload');
+            $(document).off('click.removeFile');
+
+            dropZone.on('click.fileUpload', function (e) {
+                if (e.target !== fileInput[0]) {
+                    fileInput.click();
+                }
+            });
+
+            fileInput.on('change.fileUpload', function () {
+                handleFileSelect(this.files);
+            });
+
+            dropZone.on('dragenter.fileUpload', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dragCounter++;
+
+                if (dragCounter === 1) {
+                    $(this).addClass('drag-over');
+
+                    if (navigator.vibrate) {
+                        navigator.vibrate(50);
+                    }
+                }
+            });
+
+            dropZone.on('dragover.fileUpload', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+
+            dropZone.on('dragleave.fileUpload', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dragCounter--;
+
+                if (dragCounter === 0) {
+                    $(this).removeClass('drag-over');
+                }
+            });
+
+            dropZone.on('drop.fileUpload', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dragCounter = 0;
+                $(this).removeClass('drag-over');
+
+                const files = e.originalEvent.dataTransfer.files;
+                if (files.length > 0) {
+                    const dt = new DataTransfer();
+                    Array.from(files).forEach(file => {
+                        dt.items.add(file);
+                    });
+                    fileInput[0].files = dt.files;
+
+                    if (navigator.vibrate) {
+                        navigator.vibrate([100, 50, 100]);
+                    }
+
+                    handleFileSelect(files);
+                }
+            });
+
+            $(document).on('click.removeFile', '.remove-file', function () {
+                const $fileItem = $(this).closest('.selected-file-item');
+                const indexToRemove = parseInt($(this).data('index'));
+                const currentFiles = Array.from(fileInput[0].files);
+
+                $fileItem.animate({
+                    opacity: 0,
+                    transform: 'translateX(100px)'
+                }, 300, function () {
+
+                    const dt = new DataTransfer();
+                    currentFiles.forEach((file, index) => {
+                        if (index !== indexToRemove) {
+                            dt.items.add(file);
+                        }
+                    });
+
+                    fileInput[0].files = dt.files;
+                    handleFileSelect(fileInput[0].files);
+                });
+            });
+        });
+
         $('#clearFilters').on('click', function () {
             $(this).blur();
 
@@ -250,13 +343,17 @@
             submitBtn.prop('disabled', true);
             spinner.removeClass('d-none');
 
+            const formData = new FormData(this);
+
             $.ajax({
                 url: "{{ route('api.chamados.post') }}",
                 method: "POST",
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                 },
-                data: $(this).serialize(),
+                data: formData,
+                processData: false,
+                contentType: false,
                 success: function (response) {
                     table.ajax.reload();
                     $('#createChamadoModal').modal('hide');
@@ -333,6 +430,18 @@
 
 
         $('#createChamadoModal').on('hidden.bs.modal', function () {
+            const dropZone = $('#anexoDropZone');
+            const fileInput = $('#anexo');
+
+            dropZone.off('.fileUpload');
+            fileInput.off('.fileUpload');
+            $(document).off('click.removeFile');
+
+            dropZone.removeClass('has-files drag-over');
+            $('#dropZoneText').html('<i class="fas fa-cloud-upload-alt"></i> Arraste e solte os arquivos aqui ou clique para selecionar');
+            $('#anexo-feedback').hide();
+            $('#selectedFilesContainer').hide();
+            $('#selectedFilesList').empty();
             resetModal('#createChamadoForm');
         });
 
@@ -344,6 +453,116 @@
             resetModal('#filtrarChamadosForm');
         });
     });
+
+    function handleFileSelect(files) {
+        const dropZoneText = $('#dropZoneText');
+        const dropZone = $('#anexoDropZone');
+        const selectedFilesContainer = $('#selectedFilesContainer');
+        const selectedFilesList = $('#selectedFilesList');
+
+        if (files.length > 0) {
+            const validTypes = ['image/jpeg', 'image/png', 'application/pdf', 'application/zip', 'application/x-rar-compressed', 'video/mp4'];
+            const maxSize = 150 * 1024 * 1024; // 150MB
+            const validFiles = [];
+            const invalidFiles = [];
+
+            Array.from(files).forEach(file => {
+                if (!validTypes.includes(file.type)) {
+                    invalidFiles.push(`${file.name} - tipo inválido`);
+                } else if (file.size > maxSize) {
+                    invalidFiles.push(`${file.name} - muito grande (${(file.size / (1024 * 1024)).toFixed(1)}MB)`);
+                } else {
+                    validFiles.push(file);
+                }
+            });
+
+            if (invalidFiles.length > 0) {
+                showAlert(`Arquivos inválidos: ${invalidFiles.join(', ')}. Tipos permitidos: JPG, PNG, PDF, ZIP, RAR, MP4 (máx 150MB cada).`, 'error');
+            }
+
+            if (validFiles.length > 0) {
+                dropZone.addClass('has-files');
+
+                if (validFiles.length === 1) {
+                    dropZoneText.html(`<i class="fas fa-check-circle"></i> ${validFiles[0].name}`);
+                } else {
+                    dropZoneText.html(`<i class="fas fa-check-circle"></i> ${validFiles.length} arquivos selecionados`);
+                }
+
+                selectedFilesList.empty();
+                validFiles.forEach((file, index) => {
+                    const fileSize = (file.size / (1024 * 1024)).toFixed(1);
+                    const fileIcon = getFileIcon(file.type);
+                    const fileItem = $(`
+                    <div class="selected-file-item d-flex justify-content-between align-items-center p-2 mb-1 bg-light rounded" style="opacity: 0; transform: translateY(20px);">
+                        <span class="file-info">
+                            <i class="${fileIcon} mr-2" style="color: ${getFileColor(file.type)};"></i>
+                            <strong>${file.name}</strong> 
+                            <small class="text-muted">(${fileSize}MB)</small>
+                        </span>
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-file" data-index="${index}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `);
+
+                    selectedFilesList.append(fileItem);
+
+                    setTimeout(() => {
+                        fileItem.animate({
+                            opacity: 1,
+                            transform: 'translateY(0)'
+                        }, 300);
+                    }, index * 100);
+                });
+
+                selectedFilesContainer.slideDown(400);
+                showAlert(`${validFiles.length} arquivo(s) válido(s) selecionado(s)`, 'success');
+            } else {
+                dropZone.removeClass('has-files');
+                dropZoneText.html('<i class="fas fa-cloud-upload-alt"></i> Arraste e solte os arquivos aqui ou clique para selecionar');
+                selectedFilesContainer.slideUp(400);
+            }
+        } else {
+            dropZone.removeClass('has-files');
+            dropZoneText.html('<i class="fas fa-cloud-upload-alt"></i> Arraste e solte os arquivos aqui ou clique para selecionar');
+            selectedFilesContainer.slideUp(400);
+        }
+    }
+
+    function getFileIcon(fileType) {
+        switch (fileType) {
+            case 'application/pdf':
+                return 'fas fa-file-pdf';
+            case 'image/jpeg':
+            case 'image/png':
+                return 'fas fa-file-image';
+            case 'application/zip':
+            case 'application/x-rar-compressed':
+                return 'fas fa-file-archive';
+            case 'video/mp4':
+                return 'fas fa-file-video';
+            default:
+                return 'fas fa-file';
+        }
+    }
+
+    function getFileColor(fileType) {
+        switch (fileType) {
+            case 'application/pdf':
+                return '#dc3545';
+            case 'image/jpeg':
+            case 'image/png':
+                return '#28a745';
+            case 'application/zip':
+            case 'application/x-rar-compressed':
+                return '#ffc107';
+            case 'video/mp4':
+                return '#6f42c1';
+            default:
+                return '#6c757d';
+        }
+    }
 
     function refreshTable() {
         // Get existing DataTable instance

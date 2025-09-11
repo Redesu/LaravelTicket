@@ -1,3 +1,4 @@
+<!-- Replace the existing modal with this updated version -->
 <div class="modal fade" id="createChamadoModal" tabindex="-1" aria-labelledby="createChamadoModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -8,12 +9,11 @@
                     <h4 class="modal-title text-white" id="createChamadoModalLabel">
                         <i class="fas fa-plus-circle"></i> Criar um novo chamado
                     </h4>
-                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Fechar">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <!-- Updated for Bootstrap 5 -->
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
-
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -64,7 +64,7 @@
                                 <select class="form-control" id="categoria_id" name="categoria_id" required>
                                     <option value="" disabled selected>Selecione a categoria</option>
                                     @foreach($categorias as $categoria)
-                                        <option value="{{ $categoria->id }}">{{ $categoria->nme }}</option>
+                                        <option value="{{ $categoria->id }}">{{ $categoria->nome }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -89,22 +89,26 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="form-group">
-                                <label for="anexo">Anexo (Opcional)</label>
+                                <label for="anexo">Anexo (Opcional - Múltiplos arquivos permitidos)</label>
                                 <div class="drop-zone" id="anexoDropZone">
-                                    <span class="drop-zone-text">
+                                    <span class="drop-zone-text" id="dropZoneText">
                                         <i class="fas fa-cloud-upload-alt"></i>
-                                        Arraste e solte o arquivo aqui ou clique para selecionar
+                                        Arraste e solte os arquivos aqui ou clique para selecionar
                                     </span>
-                                    <input type="file" class="custom-file-input" id="anexo" name="anexo">
+                                    <input type="file" class="d-none" id="anexo" name="anexo[]" multiple
+                                        accept=".jpg,.jpeg,.png,.pdf,.zip,.rar,.mp4">
                                 </div>
-                                <div class="invalid-feedback d-block" id="anexo-feedback"></div>
+                                <div class="invalid-feedback d-block" id="anexo-feedback" style="display: none;"></div>
+                                <div id="selectedFilesContainer" class="mt-2" style="display: none;">
+                                    <small class="text-muted">Arquivos selecionados:</small>
+                                    <div id="selectedFilesList"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-times"></i> Fechar
                     </button>
                     <button type="submit" class="btn btn-primary" id="submitBtn">

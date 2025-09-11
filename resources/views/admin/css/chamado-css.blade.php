@@ -265,25 +265,269 @@
         z-index: 1;
     }
 
+    /* Enhanced Drop Zone with Glow Effects */
     .drop-zone {
         border: 2px dashed #ccc;
-        border-radius: 0.25rem;
-        padding: 30px;
+        border-radius: 12px;
+        padding: 40px 20px;
         text-align: center;
-        color: #555;
-        transition: all 0.2s ease-in-out;
         cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        min-height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
     }
 
-    .drop-zone--over {
+    /* Subtle hover effect */
+    .drop-zone:hover {
         border-color: #007bff;
-        /* Bootstrap primary color */
-        background-color: #f0f8ff;
-        /* A light blue */
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 123, 255, 0.15);
     }
 
-    /* Hide the default file input, the drop-zone will trigger it */
-    .drop-zone .custom-file-input {
-        display: none;
+    /* Dramatic drag-over effect with glow */
+    .drop-zone.drag-over {
+        border-color: #28a745;
+        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        transform: scale(1.05) translateY(-3px);
+        box-shadow:
+            0 0 30px rgba(40, 167, 69, 0.4),
+            0 0 60px rgba(40, 167, 69, 0.2),
+            0 15px 35px rgba(0, 0, 0, 0.1);
+        animation: pulseGlow 1.5s ease-in-out infinite;
+    }
+
+    /* Pulsing glow animation */
+    @keyframes pulseGlow {
+
+        0%,
+        100% {
+            box-shadow:
+                0 0 30px rgba(40, 167, 69, 0.4),
+                0 0 60px rgba(40, 167, 69, 0.2),
+                0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        50% {
+            box-shadow:
+                0 0 40px rgba(40, 167, 69, 0.6),
+                0 0 80px rgba(40, 167, 69, 0.3),
+                0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+    }
+
+    /* Shimmer effect on drag over */
+    .drop-zone.drag-over::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(45deg,
+                transparent 30%,
+                rgba(40, 167, 69, 0.3) 50%,
+                transparent 70%);
+        border-radius: 12px;
+        animation: shimmer 2s linear infinite;
+        z-index: -1;
+    }
+
+    @keyframes shimmer {
+        0% {
+            transform: translateX(-100%);
+        }
+
+        100% {
+            transform: translateX(100%);
+        }
+    }
+
+    /* Enhanced text styling */
+    .drop-zone-text {
+        color: #6c757d;
+        font-size: 16px;
+        font-weight: 500;
+        pointer-events: none;
+        text-align: center;
+        transition: all 0.3s ease;
+        z-index: 1;
+        position: relative;
+    }
+
+    .drop-zone:hover .drop-zone-text {
+        color: #007bff;
+        transform: translateY(-2px);
+    }
+
+    .drop-zone.drag-over .drop-zone-text {
+        color: #28a745;
+        font-weight: 600;
+        transform: scale(1.1) translateY(-3px);
+        text-shadow: 0 2px 10px rgba(40, 167, 69, 0.3);
+    }
+
+    .drop-zone-text i {
+        font-size: 32px;
+        display: block;
+        margin-bottom: 12px;
+        color: #007bff;
+        transition: all 0.3s ease;
+    }
+
+    .drop-zone:hover .drop-zone-text i {
+        color: #0056b3;
+        transform: scale(1.1) rotateY(10deg);
+    }
+
+    .drop-zone.drag-over .drop-zone-text i {
+        color: #28a745;
+        transform: scale(1.2) rotateY(0deg);
+        animation: bounce 0.6s ease-in-out;
+        filter: drop-shadow(0 4px 8px rgba(40, 167, 69, 0.4));
+    }
+
+    @keyframes bounce {
+
+        0%,
+        20%,
+        53%,
+        80%,
+        100% {
+            transform: scale(1.2) translateY(0);
+        }
+
+        40%,
+        43% {
+            transform: scale(1.2) translateY(-8px);
+        }
+
+        70% {
+            transform: scale(1.2) translateY(-4px);
+        }
+
+        90% {
+            transform: scale(1.2) translateY(-2px);
+        }
+    }
+
+    /* File list styling */
+    .selected-file-item {
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+    }
+
+    .selected-file-item:hover {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+        border-color: #dee2e6;
+        transform: translateX(5px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .file-info {
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .file-info strong {
+        color: #495057;
+        transition: color 0.2s ease;
+    }
+
+    .selected-file-item:hover .file-info strong {
+        color: #007bff;
+    }
+
+    .remove-file {
+        opacity: 0.6;
+        transition: all 0.2s ease;
+        border-radius: 50%;
+    }
+
+    .remove-file:hover {
+        opacity: 1;
+        background-color: #dc3545 !important;
+        border-color: #dc3545 !important;
+        transform: scale(1.1);
+        box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+    }
+
+    #selectedFilesContainer {
+        max-height: 250px;
+        overflow-y: auto;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 0.75rem;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        transition: all 0.3s ease;
+    }
+
+    #selectedFilesContainer:hover {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Success state for when files are selected */
+    .drop-zone.has-files {
+        border-color: #28a745;
+        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        box-shadow: 0 4px 20px rgba(40, 167, 69, 0.1);
+    }
+
+    .drop-zone.has-files .drop-zone-text {
+        color: #28a745;
+    }
+
+    .drop-zone.has-files .drop-zone-text i {
+        color: #28a745;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .drop-zone {
+            padding: 30px 15px;
+            min-height: 100px;
+        }
+
+        .drop-zone-text i {
+            font-size: 28px;
+        }
+
+        .drop-zone-text {
+            font-size: 14px;
+        }
+
+        .selected-file-item {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .selected-file-item .remove-file {
+            align-self: flex-end;
+            margin-top: 8px;
+        }
+    }
+
+    /* Custom scrollbar for file list */
+    #selectedFilesContainer::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #selectedFilesContainer::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+
+    #selectedFilesContainer::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+    }
+
+    #selectedFilesContainer::-webkit-scrollbar-thumb:hover {
+        background: #a1a1a1;
     }
 </style>

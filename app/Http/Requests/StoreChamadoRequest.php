@@ -29,7 +29,7 @@ class StoreChamadoRequest extends FormRequest
             'departamento_id' => 'required|integer|min:1',
             'user_id' => 'required|integer|exists:users,id',
             'anexos' => 'nullable|array',
-            'anexos.*' => 'file|max:153600|mimes:jpeg,png,pdf,zip,rar|mimetypes:application/pdf,image/jpeg,image/png,application/zip,application/x-rar-compressed',
+            'anexos.*' => 'file|max:153600|mimes:jpeg,png,pdf,zip,rar,mp4|mimetypes:application/pdf,image/jpeg,image/png,application/zip,application/x-rar-compressed,video/mp4',
         ];
     }
 
@@ -57,8 +57,8 @@ class StoreChamadoRequest extends FormRequest
             'anexos.array' => 'O campo anexos deve ser um array de arquivos.',
             'anexos.*.file' => 'Cada anexo deve ser um arquivo válido.',
             'anexos.*.max' => 'Cada anexo não pode exceder 150MB.',
-            'anexos.*.mimes' => 'Os anexos devem ser do tipo: jpeg, png, pdf, zip, rar.',
-            'anexos.*.mimetypes' => 'Os anexos devem ser do tipo: application/pdf, image/jpeg, image/png, application/zip, application/x-rar-compressed.',
+            'anexos.*.mimes' => 'Os anexos devem ser do tipo: jpeg, png, pdf, zip, rar, mp4.',
+            'anexos.*.mimetypes' => 'Os anexos devem ser do tipo: application/pdf, image/jpeg, image/png, application/zip, application/x-rar-compressed, video/mp4.',
         ];
     }
 

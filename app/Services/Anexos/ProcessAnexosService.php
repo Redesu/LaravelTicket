@@ -16,7 +16,7 @@ class ProcessAnexosService
     }
     private function validateFile(UploadedFile $file): void
     {
-        $allowedMimeTypes = ['image/jpeg', 'image/png', 'application/pdf', 'application/zip', 'aplicattion/rar'];
+        $allowedMimeTypes = ['image/jpeg', 'image/png', 'application/pdf', 'application/zip', 'aplicattion/rar', 'video/mp4'];
         $maxFileSize = 150 * 1024 * 1024; // 150MB
 
         if (!$file->isValid()) {
