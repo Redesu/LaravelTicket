@@ -26,7 +26,7 @@ class AdicionarComentariosRequest extends FormRequest
             'tipo' => 'in:comment,edit,solution',
             'changes' => 'nullable|json',
             'anexos' => 'nullable|array',
-            'anexos.*' => 'file|max:153600|mimes:jpeg,png,pdf,zip,rar|mimetypes:application/pdf,image/jpeg,image/png,application/zip,application/x-rar-compressed,video/mp4',
+            'anexos.*' => 'file|max:153600|mimes:jpeg,png,pdf,zip,rar,mp4|mimetypes:application/pdf,image/jpeg,image/png,application/zip,application/x-rar-compressed,video/mp4',
         ];
     }
 

@@ -22,7 +22,22 @@ class AdicionarSolucaoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'descricao' => 'required|string'
+            'descricao' => 'required|string',
+            'anexos' => 'nullable|array',
+            'anexos.*' => 'file|max:153600|mimes:jpeg,png,pdf,zip,rar,mp4|mimetypes:application/pdf,image/jpeg,image/png,application/zip,application/x-rar-compressed,video/mp4',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'descricao.required' => 'O campo descrição é obrigatório.',
+            'descricao.string' => 'O campo descrição deve ser uma string.',
+            'anexos.array' => 'O campo anexos deve ser um array de arquivos.',
+            'anexos.*.file' => 'Cada anexo deve ser um arquivo válido.',
+            'anexos.*.max' => 'Cada anexo não pode exceder 150MB.',
+            'anexos.*.mimes' => 'Os anexos devem ser do tipo: jpeg, png, pdf, zip, rar, mp4.',
+            'anexos.*.mimetypes' => 'Os anexos devem ser do tipo: application/pdf, image/jpeg, image/png, application/zip, application/x-rar-compressed, video/mp4.',
         ];
     }
 }
