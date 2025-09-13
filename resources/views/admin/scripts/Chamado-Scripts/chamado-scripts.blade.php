@@ -255,5 +255,77 @@
         window.history.back();
     }
 
+    function getFileIcon(fileExtension) {
+        const iconMap = {
+            'pdf': 'fa-file-pdf text-danger',
+            'doc': 'fa-file-word text-primary',
+            'docx': 'fa-file-word text-primary',
+            'xls': 'fa-file-excel text-success',
+            'xlsx': 'fa-file-excel text-success',
+            'ppt': 'fa-file-powerpoint text-warning',
+            'pptx': 'fa-file-powerpoint text-warning',
+            'jpg': 'fa-file-image text-info',
+            'jpeg': 'fa-file-image text-info',
+            'png': 'fa-file-image text-info',
+            'gif': 'fa-file-image text-info',
+            'bmp': 'fa-file-image text-info',
+            'svg': 'fa-file-image text-info',
+            'txt': 'fa-file-alt text-secondary',
+            'zip': 'fa-file-archive text-warning',
+            'rar': 'fa-file-archive text-warning',
+            '7z': 'fa-file-archive text-warning',
+            'tar': 'fa-file-archive text-warning',
+            'mp4': 'fa-file-video text-info',
+            'avi': 'fa-file-video text-info',
+            'mov': 'fa-file-video text-info',
+            'mp3': 'fa-file-audio text-success',
+            'wav': 'fa-file-audio text-success',
+            'css': 'fa-file-code text-info',
+            'js': 'fa-file-code text-warning',
+            'html': 'fa-file-code text-danger',
+            'php': 'fa-file-code text-purple',
+            'json': 'fa-file-code text-success'
+        };
+
+        return iconMap[fileExtension.toLowerCase()] || 'fa-file text-secondary';
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes == 0) return '0 Bytes';
+
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+
+    function initializeFileDisplay() {
+        document.querySelectorAll('.file-icon').forEach(function (icon) {
+            const fileType = icon.getAttribute('data-file-type');
+            const iconClasses = getFileIcon(fileType);
+
+            icon.className = icon.className.replace(/fa-file[\w-]*/g, '').trim();
+            icon.className += ' ' + iconClasses;
+        });
+
+        // Update file sizes
+        document.querySelectorAll('.file-size').forEach(function (sizeElement) {
+            const bytes = parseInt(sizeElement.getAttribute('data-size'));
+            sizeElement.textContent = formatFileSize(bytes);
+        });
+    }
+
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function () {
+        initializeFileDisplay();
+    });
+
+    // Also initialize when new comments are loaded via AJAX (if applicable)
+    function reinitializeFileDisplay() {
+        initializeFileDisplay();
+    }
+
 
 </script>

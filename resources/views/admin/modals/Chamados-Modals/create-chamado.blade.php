@@ -95,7 +95,7 @@
                                         <i class="fas fa-cloud-upload-alt"></i>
                                         Arraste e solte os arquivos aqui ou clique para selecionar
                                     </span>
-                                    <input type="file" class="d-none" id="anexo" name="anexo[]" multiple
+                                    <input type="file" class="d-none" id="anexo" name="anexos[]" multiple
                                         accept=".jpg,.jpeg,.png,.pdf,.zip,.rar,.mp4">
                                 </div>
                                 <div class="invalid-feedback d-block" id="anexo-feedback" style="display: none;"></div>

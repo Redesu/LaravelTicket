@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Anexos\AnexoController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -62,6 +63,10 @@ Route::prefix('api/departamentos')->middleware('auth')->group(function () {
     Route::post('/', [DepartamentoController::class, 'insertDepartamento'])->name('api.departamentos.post');
     Route::put('/{id}', [DepartamentoController::class, 'updateDepartamento'])->name('api.departamentos.put');
     Route::delete('/', [DepartamentoController::class, 'deleteDepartamento'])->name('api.departamentos.delete');
+});
+
+Route::prefix('anexos')->middleware('auth')->group(function () {
+    Route::get('/{id}/download', [AnexoController::class, 'download'])->name('api.anexos.download');
 });
 
 

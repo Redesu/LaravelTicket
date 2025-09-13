@@ -137,6 +137,41 @@
                                 @else
                                     <p>{{ $comentario->descricao }}</p>
                                 @endif
+
+                                {{-- Display Anexos for this comment --}}
+                                @if($comentario->anexos && $comentario->anexos->count() > 0)
+                                    <div class="mt-3">
+                                        <h6><i class="fas fa-paperclip"></i> Arquivos anexados:</h6>
+                                        <div class="row">
+                                            @foreach($comentario->anexos as $anexo)
+                                                <div class="col-md-6 col-lg-4 mb-2">
+                                                    <div class="card card-outline">
+                                                        <div class="card-body p-2">
+                                                            <div class="d-flex align-items-center">
+                                                                <i class="fas fa-file file-icon"
+                                                                    data-file-type="{{ strtolower(pathinfo($anexo->nome_original, PATHINFO_EXTENSION)) }}"></i>
+                                                                <div class="flex-grow-1 ml-2">
+                                                                    <small
+                                                                        class="font-weight-bold d-block">{{ $anexo->nome_original }}</small>
+                                                                    <small class="text-muted">
+                                                                        <span class="file-size"
+                                                                            data-size="{{ $anexo->tamanho }}"></span> •
+                                                                        {{ $anexo->uploader->name ?? 'N/A' }} •
+                                                                        {{ $anexo->created_at->format('d/m/Y H:i') }}
+                                                                    </small>
+                                                                </div>
+                                                                <a href="{{ route('api.anexos.download', $anexo->id) }}"
+                                                                    class="btn btn-sm btn-outline-primary ml-2" title="Download">
+                                                                    <i class="fas fa-download"></i>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
                             <div class="card-footer">
                                 <button type="button" class="btn btn-default btn-sm reply-btn"
@@ -162,6 +197,39 @@
                         <i class="fas fa-calendar"></i> Criado em:
                         {{ $chamado->created_at ? $chamado->created_at->format('d/m/Y H:i') : 'N/A' }}
                     </small>
+
+                    @if($chamado->anexos && $chamado->anexos->count() > 0)
+                        <div class="mt-3">
+                            <h6><i class="fas fa-paperclip"></i> Arquivos anexados ao chamado:</h6>
+                            <div class="row">
+                                @foreach($chamado->anexos as $anexo)
+                                    <div class="col-md-6 col-lg-4 mb-2">
+                                        <div class="card card-outline">
+                                            <div class="card-body p-2">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-file file-icon"
+                                                        data-file-type="{{ strtolower(pathinfo($anexo->nome_original, PATHINFO_EXTENSION)) }}"></i>
+                                                    <div class="flex-grow-1 ml-2">
+                                                        <small
+                                                            class="font-weight-bold d-block">{{ $anexo->nome_original }}</small>
+                                                        <small class="text-muted">
+                                                            <span class="file-size" data-size="{{ $anexo->tamanho }}"></span> •
+                                                            {{ $anexo->uploader->name ?? 'N/A' }} •
+                                                            {{ $anexo->created_at->format('d/m/Y H:i') }}
+                                                        </small>
+                                                    </div>
+                                                    <a href="{{ route('api.anexos.download', $anexo->id) }}"
+                                                        class="btn btn-sm btn-outline-primary ml-2" title="Download">
+                                                        <i class="fas fa-download"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
 

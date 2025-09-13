@@ -344,6 +344,7 @@
             spinner.removeClass('d-none');
 
             const formData = new FormData(this);
+            console.log(formData.values());
 
             $.ajax({
                 url: "{{ route('api.chamados.post') }}",
@@ -361,6 +362,7 @@
                 },
                 error: function (xhr, status, error) {
                     showAlert('Erro ao criar o chamado', 'error');
+                    console.log(xhr.responseText);
                 },
                 complete: function () {
                     submitBtn.prop('disabled', false);
