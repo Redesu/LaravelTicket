@@ -72,6 +72,25 @@
                                     placeholder="Digite seu comentário..."></textarea>
                             </div>
                             <div class="form-group">
+                                <div class="col-8">
+                                    <div class="form-group">
+                                        <label for="anexo">Anexo (Opcional - Múltiplos arquivos permitidos)</label>
+                                        <div class="drop-zone" id="anexoDropZone">
+                                            <span class="drop-zone-text" id="dropZoneText">
+                                                <i class="fas fa-cloud-upload-alt"></i>
+                                                Arraste e solte os arquivos aqui ou clique para selecionar
+                                            </span>
+                                            <input type="file" class="d-none" id="anexo" name="anexos[]" multiple
+                                                accept=".jpg,.jpeg,.png,.pdf,.zip,.rar,.mp4">
+                                        </div>
+                                        <div class="invalid-feedback d-block" id="anexo-feedback"
+                                            style="display: none;"></div>
+                                        <div id="selectedFilesContainer" class="mt-2" style="display: none;">
+                                            <small class="text-muted">Arquivos selecionados:</small>
+                                            <div id="selectedFilesList"></div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <button type="submit" class="btn btn-success" id="addCommentBtn">
                                     <span class="spinner-border spinner-border-sm d-none" id="comentarioSpinner"></span>
                                     <i class="fas fa-comment"></i> Adicionar Comentário
@@ -218,10 +237,11 @@
                                                             {{ $anexo->created_at->format('d/m/Y H:i') }}
                                                         </small>
                                                     </div>
-                                                    <a href="{{ route('api.anexos.download', $anexo->id) }}"
-                                                        class="btn btn-sm btn-outline-primary ml-2" title="Download">
+                                                    <button class="btn btn-sm btn-outline-primary ml-2 download-btn"
+                                                        data-anexo-id="{{ $anexo->id }}"
+                                                        data-filename="{{ $anexo->nome_original }}" title="Download">
                                                         <i class="fas fa-download"></i>
-                                                    </a>
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>

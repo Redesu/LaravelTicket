@@ -29,7 +29,7 @@ class ChamadoComentario extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function anexavel(): MorphMany
+    public function anexos(): MorphMany
     {
         return $this->morphMany(Anexo::class, 'anexavel');
     }

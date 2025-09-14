@@ -124,6 +124,7 @@
             e.preventDefault();
 
             const commentText = $('#comment-text').val().trim();
+            const fileInput = $('#anexo')[0];
             const spinner = $('#comentarioSpinner');
             const submitBtn = $('#addCommentBtn');
 
@@ -139,16 +140,29 @@
             const originalBtnText = submitBtn.html();
             submitBtn.html('<span class="spinner-border spinner-border-sm" id="comentarioSpinner"></span> Enviando...');
 
+            // create formData object
+
+            const formData = new FormData();
+            formData.append('descricao', commentText);
+            formData.append('tipo', 'comment');
+            formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+
+            if (fileInput.files.length > 0) {
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    formData.append('anexos[]', fileInput.files[i]);
+                }
+            }
+            console.log(formData);
+
             $.ajax({
                 url: '{{ route("api.chamados.addComentario", $chamado->id) }}',
                 type: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                 },
-                data: {
-                    descricao: commentText,
-                    tipo: 'comment',
-                },
+                data: formData,
+                processData: false,
+                contentType: false,
                 success: function (response) {
                     cancelComment();
                     showAlert('Comentário adicionado com sucesso!', 'success');
@@ -164,6 +178,63 @@
                     spinner.addClass('d-none');
                     submitBtn.prop('disabled', false);
                     submitBtn.html(originalBtnText);
+                }
+            });
+        });
+
+        $(document).on('click', '.download-btn', function (e) {
+            e.preventDefault();
+
+            const anexoId = $(this).data('anexo-id') ?? null;
+            const filename = $(this).data('filename');
+            const button = $(this);
+            const originalHtml = button.html();
+
+            // Show loading state
+            button.prop('disabled', true);
+            button.html('<i class="fas fa-spinner fa-spin"></i>');
+
+            $.ajax({
+                url: `{{ route('api.anexos.download', ':anexoId') }}`,
+                type: 'GET',
+                xhrFields: {
+                    responseType: 'blob' // Important for file downloads
+                },
+                success: function (data, status, xhr) {
+                    // Create blob link to download
+                    const blob = new Blob([data]);
+                    const link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = filename;
+
+                    // Trigger download
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    // Clean up
+                    window.URL.revokeObjectURL(link.href);
+                },
+                error: function (xhr, status, error) {
+                    let errorMessage = 'Erro ao baixar o arquivo';
+
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    } else if (xhr.responseText) {
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+                            errorMessage = response.message || errorMessage;
+                        } catch (e) {
+                            // If response is not JSON, use default message
+                        }
+                    }
+
+                    showAlert(errorMessage, 'error');
+                },
+                complete: function () {
+                    // Restore button state
+                    button.prop('disabled', false);
+                    button.html(originalHtml);
                 }
             });
         });
@@ -210,6 +281,100 @@
                 }
             });
         });
+
+        $('#add-comment-card').on('click', function () {
+            const dropZone = $('#anexoDropZone');
+            const fileInput = $('#anexo');
+            let dragCounter = 0;
+
+            dropZone.off('click.fileUpload dragenter.fileUpload dragover.fileUpload dragleave.fileUpload drop.fileUpload');
+            fileInput.off('change.fileUpload');
+            $(document).off('click.removeFile');
+
+            dropZone.on('click.fileUpload', function (e) {
+                if (e.target !== fileInput[0]) {
+                    fileInput.click();
+                }
+            });
+
+            fileInput.on('change.fileUpload', function () {
+                handleFileSelect(this.files);
+            });
+
+            dropZone.on('dragenter.fileUpload', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dragCounter++;
+
+                if (dragCounter === 1) {
+                    $(this).addClass('drag-over');
+
+                    if (navigator.vibrate) {
+                        navigator.vibrate(50);
+                    }
+                }
+            });
+
+            dropZone.on('dragover.fileUpload', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+
+            dropZone.on('dragleave.fileUpload', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dragCounter--;
+
+                if (dragCounter === 0) {
+                    $(this).removeClass('drag-over');
+                }
+            });
+
+            dropZone.on('drop.fileUpload', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dragCounter = 0;
+                $(this).removeClass('drag-over');
+
+                const files = e.originalEvent.dataTransfer.files;
+                if (files.length > 0) {
+                    const dt = new DataTransfer();
+                    Array.from(files).forEach(file => {
+                        dt.items.add(file);
+                    });
+                    fileInput[0].files = dt.files;
+
+                    if (navigator.vibrate) {
+                        navigator.vibrate([100, 50, 100]);
+                    }
+
+                    handleFileSelect(files);
+                }
+            });
+
+            $(document).on('click.removeFile', '.remove-file', function () {
+                const $fileItem = $(this).closest('.selected-file-item');
+                const indexToRemove = parseInt($(this).data('index'));
+                const currentFiles = Array.from(fileInput[0].files);
+
+                $fileItem.animate({
+                    opacity: 0,
+                    transform: 'translateX(100px)'
+                }, 300, function () {
+
+                    const dt = new DataTransfer();
+                    currentFiles.forEach((file, index) => {
+                        if (index !== indexToRemove) {
+                            dt.items.add(file);
+                        }
+                    });
+
+                    fileInput[0].files = dt.files;
+                    handleFileSelect(fileInput[0].files);
+                });
+            });
+        });
+
 
         $('#solucaoChamadoModal').on('hidden.bs.modal', function () {
             resetModal('#solucaoChamadoForm', '#solucaoModalErrors');
@@ -258,33 +423,12 @@
     function getFileIcon(fileExtension) {
         const iconMap = {
             'pdf': 'fa-file-pdf text-danger',
-            'doc': 'fa-file-word text-primary',
-            'docx': 'fa-file-word text-primary',
-            'xls': 'fa-file-excel text-success',
-            'xlsx': 'fa-file-excel text-success',
-            'ppt': 'fa-file-powerpoint text-warning',
-            'pptx': 'fa-file-powerpoint text-warning',
             'jpg': 'fa-file-image text-info',
             'jpeg': 'fa-file-image text-info',
             'png': 'fa-file-image text-info',
-            'gif': 'fa-file-image text-info',
-            'bmp': 'fa-file-image text-info',
-            'svg': 'fa-file-image text-info',
-            'txt': 'fa-file-alt text-secondary',
             'zip': 'fa-file-archive text-warning',
             'rar': 'fa-file-archive text-warning',
-            '7z': 'fa-file-archive text-warning',
-            'tar': 'fa-file-archive text-warning',
             'mp4': 'fa-file-video text-info',
-            'avi': 'fa-file-video text-info',
-            'mov': 'fa-file-video text-info',
-            'mp3': 'fa-file-audio text-success',
-            'wav': 'fa-file-audio text-success',
-            'css': 'fa-file-code text-info',
-            'js': 'fa-file-code text-warning',
-            'html': 'fa-file-code text-danger',
-            'php': 'fa-file-code text-purple',
-            'json': 'fa-file-code text-success'
         };
 
         return iconMap[fileExtension.toLowerCase()] || 'fa-file text-secondary';
@@ -325,6 +469,102 @@
     // Also initialize when new comments are loaded via AJAX (if applicable)
     function reinitializeFileDisplay() {
         initializeFileDisplay();
+    }
+
+    function handleFileSelect(files) {
+        const dropZoneText = $('#dropZoneText');
+        const dropZone = $('#anexoDropZone');
+        const selectedFilesContainer = $('#selectedFilesContainer');
+        const selectedFilesList = $('#selectedFilesList');
+
+        if (files.length > 0) {
+            const validTypes = ['image/jpeg', 'image/png', 'application/pdf', 'application/zip', 'application/x-rar-compressed', 'video/mp4'];
+            const maxSize = 150 * 1024 * 1024; // 150MB
+            const validFiles = [];
+            const invalidFiles = [];
+
+            Array.from(files).forEach(file => {
+                if (!validTypes.includes(file.type)) {
+                    invalidFiles.push(`${file.name} - tipo inválido`);
+                } else if (file.size > maxSize) {
+                    invalidFiles.push(`${file.name} - muito grande (${(file.size / (1024 * 1024)).toFixed(1)}MB)`);
+                } else {
+                    validFiles.push(file);
+                }
+            });
+
+            if (invalidFiles.length > 0) {
+                showAlert(`Arquivos inválidos: ${invalidFiles.join(', ')}. Tipos permitidos: JPG, PNG, PDF, ZIP, RAR, MP4 (máx 150MB cada).`, 'error');
+            }
+
+            if (validFiles.length > 0) {
+                dropZone.addClass('has-files');
+
+                if (validFiles.length === 1) {
+                    dropZoneText.html(`<i class="fas fa-check-circle"></i> ${validFiles[0].name}`);
+                } else {
+                    dropZoneText.html(`<i class="fas fa-check-circle"></i> ${validFiles.length} arquivos selecionados`);
+                }
+
+                selectedFilesList.empty();
+                validFiles.forEach((file, index) => {
+                    const fileSize = (file.size / (1024 * 1024)).toFixed(1);
+                    const fileExtension = file.name.split('.').pop();
+                    console.log(fileExtension);
+                    const fileIcon = getFileIcon(fileExtension);
+                    console.log(fileIcon);
+                    const fileItem = $(`
+                    <div class="selected-file-item d-flex justify-content-between align-items-center p-2 mb-1 bg-light rounded" style="opacity: 0; transform: translateY(20px);">
+                        <span class="file-info">
+                            <i class="fas ${fileIcon} mr-2" style="color: ${getFileColor(file.type)};"></i>
+                            <strong>${file.name}</strong> 
+                            <small class="text-muted">(${fileSize}MB)</small>
+                        </span>
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-file" data-index="${index}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `);
+
+                    selectedFilesList.append(fileItem);
+
+                    setTimeout(() => {
+                        fileItem.animate({
+                            opacity: 1,
+                            transform: 'translateY(0)'
+                        }, 300);
+                    }, index * 100);
+                });
+
+                selectedFilesContainer.slideDown(400);
+                showAlert(`${validFiles.length} arquivo(s) válido(s) selecionado(s)`, 'success');
+            } else {
+                dropZone.removeClass('has-files');
+                dropZoneText.html('<i class="fas fa-cloud-upload-alt"></i> Arraste e solte os arquivos aqui ou clique para selecionar');
+                selectedFilesContainer.slideUp(400);
+            }
+        } else {
+            dropZone.removeClass('has-files');
+            dropZoneText.html('<i class="fas fa-cloud-upload-alt"></i> Arraste e solte os arquivos aqui ou clique para selecionar');
+            selectedFilesContainer.slideUp(400);
+        }
+    }
+
+    function getFileColor(fileType) {
+        switch (fileType) {
+            case 'application/pdf':
+                return '#dc3545';
+            case 'image/jpeg':
+            case 'image/png':
+                return '#28a745';
+            case 'application/zip':
+            case 'application/x-rar-compressed':
+                return '#ffc107';
+            case 'video/mp4':
+                return '#6f42c1';
+            default:
+                return '#6c757d';
+        }
     }
 
 
