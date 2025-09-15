@@ -72,6 +72,101 @@
             $('#editChamadoForm').off('submit');
         });
 
+        $('#solucaoChamadoModal').on('shown.bs.modal', function () {
+            const dropZone = $('#solucaoAnexoDropZone');
+            const fileInput = $('#solucaoAnexo');
+            let dragCounter = 0;
+
+            dropZone.off('click.fileUpload dragenter.fileUpload dragover.fileUpload dragleave.fileUpload drop.fileUpload');
+            fileInput.off('change.fileUpload');
+            $(document).off('click.removeFile');
+
+            dropZone.on('click.fileUpload', function (e) {
+                if (e.target !== fileInput[0]) {
+                    fileInput.click();
+                }
+            });
+
+            fileInput.on('change.fileUpload', function () {
+                handleFileSelect(this.files);
+            });
+
+            dropZone.on('dragenter.fileUpload', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dragCounter++;
+
+                if (dragCounter === 1) {
+                    $(this).addClass('drag-over');
+
+                    if (navigator.vibrate) {
+                        navigator.vibrate(50);
+                    }
+                }
+            });
+
+            dropZone.on('dragover.fileUpload', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+
+            dropZone.on('dragleave.fileUpload', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dragCounter--;
+
+                if (dragCounter === 0) {
+                    $(this).removeClass('drag-over');
+                }
+            });
+
+            dropZone.on('drop.fileUpload', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dragCounter = 0;
+                $(this).removeClass('drag-over');
+
+                const files = e.originalEvent.dataTransfer.files;
+                if (files.length > 0) {
+                    const dt = new DataTransfer();
+                    Array.from(files).forEach(file => {
+                        dt.items.add(file);
+                    });
+                    fileInput[0].files = dt.files;
+
+                    if (navigator.vibrate) {
+                        navigator.vibrate([100, 50, 100]);
+                    }
+
+                    handleFileSelect(files);
+                }
+            });
+
+            $(document).on('click.removeFile', '.remove-file', function () {
+                const $fileItem = $(this).closest('.selected-file-item');
+                const indexToRemove = parseInt($(this).data('index'));
+                const currentFiles = Array.from(fileInput[0].files);
+
+                $fileItem.animate({
+                    opacity: 0,
+                    transform: 'translateX(100px)'
+                }, 300, function () {
+
+                    const dt = new DataTransfer();
+                    currentFiles.forEach((file, index) => {
+                        if (index !== indexToRemove) {
+                            dt.items.add(file);
+                        }
+                    });
+
+                    fileInput[0].files = dt.files;
+                    handleFileSelect(fileInput[0].files);
+                });
+            });
+        });
+
+
+
         $(document).on('click', '.solucao-btn', function () {
             $('#solucaoChamadoModal').modal('show');
             // $('#solucaoChamadoForm').off('submit');
@@ -195,7 +290,7 @@
             button.html('<i class="fas fa-spinner fa-spin"></i>');
 
             $.ajax({
-                url: `{{ route('api.anexos.download', ':anexoId') }}`,
+                url: `{{ route('api.anexos.download', ':anexoId') }}`.replace(':anexoId', anexoId),
                 type: 'GET',
                 xhrFields: {
                     responseType: 'blob' // Important for file downloads
@@ -377,6 +472,18 @@
 
 
         $('#solucaoChamadoModal').on('hidden.bs.modal', function () {
+            const dropZone = $('#anexoDropZone');
+            const fileInput = $('#anexo');
+
+            dropZone.off('.fileUpload');
+            fileInput.off('.fileUpload');
+            $(document).off('click.removeFile');
+
+            dropZone.removeClass('has-files drag-over');
+            $('#solucaoDropZoneText').html('<i class="fas fa-cloud-upload-alt"></i> Arraste e solte os arquivos aqui ou clique para selecionar');
+            $('#anexo-feedback').hide();
+            $('#selectedFilesContainer').hide();
+            $('#selectedFilesList').empty();
             resetModal('#solucaoChamadoForm', '#solucaoModalErrors');
         });
 
