@@ -1,7 +1,6 @@
 @push('js')
 
 <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/js/adminlte.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script src="{{ asset('js/FloatingActionButton.js') }}"></script>
@@ -9,14 +8,12 @@
     integrity="sha384-LfouGM03m83ArVtne1JPk926e3SGD0Tz8XHtW2OKGsgeBU/UfR0Fa8eX+UlwSSAZ" crossorigin="anonymous">
     </script>
 
-
-
 <script>
     $(document).ready(function () {
         const $priorityBadge = $('#priority-badge');
         const priority = $priorityBadge.text().trim().toLowerCase();
 
-        $priorityBadge.removeClass().addClass('badge'); // Reset classes
+        $priorityBadge.removeClass().addClass('badge');
         switch (priority.toLowerCase()) {
             case 'urgente':
                 $priorityBadge.addClass('badge-danger');
@@ -36,8 +33,8 @@
 
         const $statusBadge = $('#status-badge');
         const status = $statusBadge.text().trim().toLowerCase();
-
-        $statusBadge.removeClass().addClass('badge'); // Reset classes
+        //
+        $statusBadge.removeClass().addClass('badge');
         switch (status) {
             case 'aberto':
                 $statusBadge.addClass('badge-success');
@@ -56,7 +53,6 @@
             showAddComment();
         });
 
-
         $(document).on('click', '.edit-btn', function () {
             $('#editChamadosModal').modal('show');
             console.log('{{ $chamado->status }}')
@@ -73,44 +69,45 @@
         });
 
         $('#solucaoChamadoModal').on('shown.bs.modal', function () {
-            const dropZone = $('#solucaoAnexoDropZone');
-            const fileInput = $('#solucaoAnexo');
+            const $modal = $(this);
+            const $dropZone = $modal.find('.drop-zone');
+            const $fileInput = $modal.find('.file-input');
             let dragCounter = 0;
 
-            dropZone.off('click.fileUpload dragenter.fileUpload dragover.fileUpload dragleave.fileUpload drop.fileUpload');
-            fileInput.off('change.fileUpload');
-            $(document).off('click.removeFile');
+            $dropZone.off('click.solucaoModal dragenter.solucaoModal dragover.solucaoModal dragleave.solucaoModal drop.solucaoModal');
+            $fileInput.off('change.solucaoModal');
+            $(document).off('click.solucaoRemoveFile');
 
-            dropZone.on('click.fileUpload', function (e) {
-                if (e.target !== fileInput[0]) {
-                    fileInput.click();
+            $dropZone.on('click.solucaoModal', function (e) {
+                if ($(e.target).hasClass('file-input') || $(e.target).closest('.file-input').length) {
+                    return;
                 }
+                $fileInput.click();
             });
 
-            fileInput.on('change.fileUpload', function () {
-                handleFileSelect(this.files);
+            $fileInput.on('change.solucaoModal', function () {
+                handleFileSelect(this.files, $modal);
             });
 
-            dropZone.on('dragenter.fileUpload', function (e) {
+            $dropZone.on('dragenter.solucaoModal', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
                 dragCounter++;
 
                 if (dragCounter === 1) {
                     $(this).addClass('drag-over');
-
                     if (navigator.vibrate) {
                         navigator.vibrate(50);
                     }
                 }
             });
 
-            dropZone.on('dragover.fileUpload', function (e) {
+            $dropZone.on('dragover.solucaoModal', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
             });
 
-            dropZone.on('dragleave.fileUpload', function (e) {
+            $dropZone.on('dragleave.solucaoModal', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
                 dragCounter--;
@@ -120,7 +117,7 @@
                 }
             });
 
-            dropZone.on('drop.fileUpload', function (e) {
+            $dropZone.on('drop.solucaoModal', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
                 dragCounter = 0;
@@ -132,26 +129,27 @@
                     Array.from(files).forEach(file => {
                         dt.items.add(file);
                     });
-                    fileInput[0].files = dt.files;
+                    $fileInput[0].files = dt.files;
 
                     if (navigator.vibrate) {
                         navigator.vibrate([100, 50, 100]);
                     }
 
-                    handleFileSelect(files);
+                    handleFileSelect(files, $modal);
                 }
             });
 
-            $(document).on('click.removeFile', '.remove-file', function () {
+            $(document).on('click.solucaoRemoveFile', '.remove-file', function () {
+                if (!$modal.hasClass('show')) return;
+
                 const $fileItem = $(this).closest('.selected-file-item');
                 const indexToRemove = parseInt($(this).data('index'));
-                const currentFiles = Array.from(fileInput[0].files);
+                const currentFiles = Array.from($fileInput[0].files);
 
                 $fileItem.animate({
                     opacity: 0,
                     transform: 'translateX(100px)'
                 }, 300, function () {
-
                     const dt = new DataTransfer();
                     currentFiles.forEach((file, index) => {
                         if (index !== indexToRemove) {
@@ -159,17 +157,14 @@
                         }
                     });
 
-                    fileInput[0].files = dt.files;
-                    handleFileSelect(fileInput[0].files);
+                    $fileInput[0].files = dt.files;
+                    handleFileSelect($fileInput[0].files, $modal);
                 });
             });
         });
 
-
-
         $(document).on('click', '.solucao-btn', function () {
             $('#solucaoChamadoModal').modal('show');
-            // $('#solucaoChamadoForm').off('submit');
         });
 
         $(document).on('click', '.voltar-btn', function () {
@@ -188,16 +183,27 @@
             $('#solucaoSpinner').removeClass('d-none');
             $('#solucaoSubmitBtn').prop('disabled', true);
 
+            const formData = new FormData();
+            formData.append('descricao', descricao);
+            formData.append('tipo', 'solution');
+            formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+
+            const fileInput = $('#solucaoChamadoModal .file-input')[0];
+            if (fileInput && fileInput.files.length > 0) {
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    formData.append('anexos[]', fileInput.files[i]);
+                }
+            }
+
             $.ajax({
                 url: '{{ route("api.chamados.addSolution", $chamado->id) }}',
                 type: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                 },
-                data: {
-                    descricao: descricao,
-                    tipo: 'solution',
-                },
+                data: formData,
+                processData: false,
+                contentType: false,
                 success: function (response) {
                     $('#solucaoChamadoModal').modal('hide');
                     showAlert('Solução adicionada com sucesso!', 'success');
@@ -219,7 +225,7 @@
             e.preventDefault();
 
             const commentText = $('#comment-text').val().trim();
-            const fileInput = $('#anexo')[0];
+            const fileInput = $('#add-comment-card .file-input')[0];
             const spinner = $('#comentarioSpinner');
             const submitBtn = $('#addCommentBtn');
 
@@ -228,26 +234,22 @@
                 return;
             }
 
-            // Show loading state
             submitBtn.prop('disabled', true);
             spinner.removeClass('d-none');
 
             const originalBtnText = submitBtn.html();
             submitBtn.html('<span class="spinner-border spinner-border-sm" id="comentarioSpinner"></span> Enviando...');
 
-            // create formData object
-
             const formData = new FormData();
             formData.append('descricao', commentText);
             formData.append('tipo', 'comment');
             formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
 
-            if (fileInput.files.length > 0) {
+            if (fileInput && fileInput.files.length > 0) {
                 for (let i = 0; i < fileInput.files.length; i++) {
                     formData.append('anexos[]', fileInput.files[i]);
                 }
             }
-            console.log(formData);
 
             $.ajax({
                 url: '{{ route("api.chamados.addComentario", $chamado->id) }}',
@@ -285,7 +287,6 @@
             const button = $(this);
             const originalHtml = button.html();
 
-            // Show loading state
             button.prop('disabled', true);
             button.html('<i class="fas fa-spinner fa-spin"></i>');
 
@@ -293,21 +294,18 @@
                 url: `{{ route('api.anexos.download', ':anexoId') }}`.replace(':anexoId', anexoId),
                 type: 'GET',
                 xhrFields: {
-                    responseType: 'blob' // Important for file downloads
+                    responseType: 'blob'
                 },
                 success: function (data, status, xhr) {
-                    // Create blob link to download
                     const blob = new Blob([data]);
                     const link = document.createElement('a');
                     link.href = window.URL.createObjectURL(blob);
                     link.download = filename;
 
-                    // Trigger download
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
 
-                    // Clean up
                     window.URL.revokeObjectURL(link.href);
                 },
                 error: function (xhr, status, error) {
@@ -327,7 +325,6 @@
                     showAlert(errorMessage, 'error');
                 },
                 complete: function () {
-                    // Restore button state
                     button.prop('disabled', false);
                     button.html(originalHtml);
                 }
@@ -378,44 +375,45 @@
         });
 
         $('#add-comment-card').on('click', function () {
-            const dropZone = $('#anexoDropZone');
-            const fileInput = $('#anexo');
+            const $card = $(this);
+            const $dropZone = $card.find('.drop-zone');
+            const $fileInput = $card.find('.file-input');
             let dragCounter = 0;
 
-            dropZone.off('click.fileUpload dragenter.fileUpload dragover.fileUpload dragleave.fileUpload drop.fileUpload');
-            fileInput.off('change.fileUpload');
-            $(document).off('click.removeFile');
+            $dropZone.off('click.commentCard dragenter.commentCard dragover.commentCard dragleave.commentCard drop.commentCard');
+            $fileInput.off('change.commentCard');
+            $(document).off('click.commentRemoveFile');
 
-            dropZone.on('click.fileUpload', function (e) {
-                if (e.target !== fileInput[0]) {
-                    fileInput.click();
+            $dropZone.on('click.commentCard', function (e) {
+                if ($(e.target).hasClass('file-input') || $(e.target).closest('.file-input').length) {
+                    return;
                 }
+                $fileInput.click();
             });
 
-            fileInput.on('change.fileUpload', function () {
-                handleFileSelect(this.files);
+            $fileInput.on('change.commentCard', function () {
+                handleFileSelect(this.files, $card);
             });
 
-            dropZone.on('dragenter.fileUpload', function (e) {
+            $dropZone.on('dragenter.commentCard', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
                 dragCounter++;
 
                 if (dragCounter === 1) {
                     $(this).addClass('drag-over');
-
                     if (navigator.vibrate) {
                         navigator.vibrate(50);
                     }
                 }
             });
 
-            dropZone.on('dragover.fileUpload', function (e) {
+            $dropZone.on('dragover.commentCard', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
             });
 
-            dropZone.on('dragleave.fileUpload', function (e) {
+            $dropZone.on('dragleave.commentCard', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
                 dragCounter--;
@@ -425,7 +423,7 @@
                 }
             });
 
-            dropZone.on('drop.fileUpload', function (e) {
+            $dropZone.on('drop.commentCard', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
                 dragCounter = 0;
@@ -437,26 +435,27 @@
                     Array.from(files).forEach(file => {
                         dt.items.add(file);
                     });
-                    fileInput[0].files = dt.files;
+                    $fileInput[0].files = dt.files;
 
                     if (navigator.vibrate) {
                         navigator.vibrate([100, 50, 100]);
                     }
 
-                    handleFileSelect(files);
+                    handleFileSelect(files, $card);
                 }
             });
 
-            $(document).on('click.removeFile', '.remove-file', function () {
+            $(document).on('click.commentRemoveFile', '.remove-file', function () {
+                if (!$card.is(':visible') || !$(this).closest('#add-comment-card').length) return;
+
                 const $fileItem = $(this).closest('.selected-file-item');
                 const indexToRemove = parseInt($(this).data('index'));
-                const currentFiles = Array.from(fileInput[0].files);
+                const currentFiles = Array.from($fileInput[0].files);
 
                 $fileItem.animate({
                     opacity: 0,
                     transform: 'translateX(100px)'
                 }, 300, function () {
-
                     const dt = new DataTransfer();
                     currentFiles.forEach((file, index) => {
                         if (index !== indexToRemove) {
@@ -464,26 +463,26 @@
                         }
                     });
 
-                    fileInput[0].files = dt.files;
-                    handleFileSelect(fileInput[0].files);
+                    $fileInput[0].files = dt.files;
+                    handleFileSelect($fileInput[0].files, $card);
                 });
             });
         });
 
-
         $('#solucaoChamadoModal').on('hidden.bs.modal', function () {
-            const dropZone = $('#anexoDropZone');
-            const fileInput = $('#anexo');
+            const $modal = $(this);
+            const $dropZone = $modal.find('.drop-zone');
+            const $fileInput = $modal.find('.file-input');
 
-            dropZone.off('.fileUpload');
-            fileInput.off('.fileUpload');
-            $(document).off('click.removeFile');
+            $dropZone.off('.solucaoModal');
+            $fileInput.off('.solucaoModal');
+            $(document).off('click.solucaoRemoveFile');
 
-            dropZone.removeClass('has-files drag-over');
-            $('#solucaoDropZoneText').html('<i class="fas fa-cloud-upload-alt"></i> Arraste e solte os arquivos aqui ou clique para selecionar');
-            $('#anexo-feedback').hide();
-            $('#selectedFilesContainer').hide();
-            $('#selectedFilesList').empty();
+            $dropZone.removeClass('has-files drag-over');
+            $modal.find('.drop-zone-text').html('<i class="fas fa-cloud-upload-alt"></i> Arraste e solte os arquivos aqui ou clique para selecionar');
+            $modal.find('.file-feedback').hide();
+            $modal.find('.selected-files-container').hide();
+            $modal.find('.selected-files-list').empty();
             resetModal('#solucaoChamadoForm', '#solucaoModalErrors');
         });
 
@@ -503,8 +502,17 @@
     function cancelComment() {
         $('#comment-text').val('');
         $('#add-comment-card .card-body').slideUp();
-    }
 
+        const $card = $('#add-comment-card');
+        const $dropZone = $card.find('.drop-zone');
+        const $fileInput = $card.find('.file-input');
+
+        $dropZone.removeClass('has-files drag-over');
+        $card.find('.drop-zone-text').html('<i class="fas fa-cloud-upload-alt"></i> Arraste e solte os arquivos aqui ou clique para selecionar');
+        $card.find('.selected-files-container').hide();
+        $card.find('.selected-files-list').empty();
+        if ($fileInput[0]) $fileInput[0].files = new DataTransfer().files;
+    }
 
     function showAlert(message, type) {
         if (typeof toastr !== 'undefined') {
@@ -551,7 +559,6 @@
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
 
-
     function initializeFileDisplay() {
         document.querySelectorAll('.file-icon').forEach(function (icon) {
             const fileType = icon.getAttribute('data-file-type');
@@ -561,28 +568,25 @@
             icon.className += ' ' + iconClasses;
         });
 
-        // Update file sizes
         document.querySelectorAll('.file-size').forEach(function (sizeElement) {
             const bytes = parseInt(sizeElement.getAttribute('data-size'));
             sizeElement.textContent = formatFileSize(bytes);
         });
     }
 
-    // Initialize when DOM is loaded
     document.addEventListener('DOMContentLoaded', function () {
         initializeFileDisplay();
     });
 
-    // Also initialize when new comments are loaded via AJAX (if applicable)
     function reinitializeFileDisplay() {
         initializeFileDisplay();
     }
 
-    function handleFileSelect(files) {
-        const dropZoneText = $('#dropZoneText');
-        const dropZone = $('#anexoDropZone');
-        const selectedFilesContainer = $('#selectedFilesContainer');
-        const selectedFilesList = $('#selectedFilesList');
+    function handleFileSelect(files, $container) {
+        const $dropZoneText = $container.find('.drop-zone-text');
+        const $dropZone = $container.find('.drop-zone');
+        const $selectedFilesContainer = $container.find('.selected-files-container');
+        const $selectedFilesList = $container.find('.selected-files-list');
 
         if (files.length > 0) {
             const validTypes = ['image/jpeg', 'image/png', 'application/pdf', 'application/zip', 'application/x-rar-compressed', 'video/mp4'];
@@ -605,21 +609,19 @@
             }
 
             if (validFiles.length > 0) {
-                dropZone.addClass('has-files');
+                $dropZone.addClass('has-files');
 
                 if (validFiles.length === 1) {
-                    dropZoneText.html(`<i class="fas fa-check-circle"></i> ${validFiles[0].name}`);
+                    $dropZoneText.html(`<i class="fas fa-check-circle"></i> ${validFiles[0].name}`);
                 } else {
-                    dropZoneText.html(`<i class="fas fa-check-circle"></i> ${validFiles.length} arquivos selecionados`);
+                    $dropZoneText.html(`<i class="fas fa-check-circle"></i> ${validFiles.length} arquivos selecionados`);
                 }
 
-                selectedFilesList.empty();
+                $selectedFilesList.empty();
                 validFiles.forEach((file, index) => {
                     const fileSize = (file.size / (1024 * 1024)).toFixed(1);
                     const fileExtension = file.name.split('.').pop();
-                    console.log(fileExtension);
                     const fileIcon = getFileIcon(fileExtension);
-                    console.log(fileIcon);
                     const fileItem = $(`
                     <div class="selected-file-item d-flex justify-content-between align-items-center p-2 mb-1 bg-light rounded" style="opacity: 0; transform: translateY(20px);">
                         <span class="file-info">
@@ -633,7 +635,7 @@
                     </div>
                 `);
 
-                    selectedFilesList.append(fileItem);
+                    $selectedFilesList.append(fileItem);
 
                     setTimeout(() => {
                         fileItem.animate({
@@ -643,17 +645,17 @@
                     }, index * 100);
                 });
 
-                selectedFilesContainer.slideDown(400);
+                $selectedFilesContainer.slideDown(400);
                 showAlert(`${validFiles.length} arquivo(s) válido(s) selecionado(s)`, 'success');
             } else {
-                dropZone.removeClass('has-files');
-                dropZoneText.html('<i class="fas fa-cloud-upload-alt"></i> Arraste e solte os arquivos aqui ou clique para selecionar');
-                selectedFilesContainer.slideUp(400);
+                $dropZone.removeClass('has-files');
+                $dropZoneText.html('<i class="fas fa-cloud-upload-alt"></i> Arraste e solte os arquivos aqui ou clique para selecionar');
+                $selectedFilesContainer.slideUp(400);
             }
         } else {
-            dropZone.removeClass('has-files');
-            dropZoneText.html('<i class="fas fa-cloud-upload-alt"></i> Arraste e solte os arquivos aqui ou clique para selecionar');
-            selectedFilesContainer.slideUp(400);
+            $dropZone.removeClass('has-files');
+            $dropZoneText.html('<i class="fas fa-cloud-upload-alt"></i> Arraste e solte os arquivos aqui ou clique para selecionar');
+            $selectedFilesContainer.slideUp(400);
         }
     }
 
@@ -673,6 +675,5 @@
                 return '#6c757d';
         }
     }
-
 
 </script>

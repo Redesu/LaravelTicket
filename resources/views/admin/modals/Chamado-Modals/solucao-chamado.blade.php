@@ -17,21 +17,20 @@
                     </div>
 
                     <div class="col-12">
-                        <div class="form-group">
-                            <label for="solucaoAnexo">Anexo (Opcional - Múltiplos arquivos permitidos)</label>
-                            <div class="solucao-drop-zone" id="solucaoAnexoDropZone">
-                                <span class="solucao-drop-zone-text" id="solucaoDropZoneText">
+                        <div class="form-group file-upload-component">
+                            <label>Anexo (Opcional - Múltiplos arquivos permitidos)</label>
+                            <div class="drop-zone">
+                                <span class="drop-zone-text">
                                     <i class="fas fa-cloud-upload-alt"></i>
                                     Arraste e solte os arquivos aqui ou clique para selecionar
                                 </span>
-                                <input type="file" class="d-none" id="solucaoAnexo" name="anexos[]" multiple
+                                <input type="file" class="d-none file-input" name="anexos[]" multiple
                                     accept=".jpg,.jpeg,.png,.pdf,.zip,.rar,.mp4">
                             </div>
-                            <div class="invalid-feedback d-block" id="solucaoAnexo-feedback" style="display: none;">
-                            </div>
-                            <div id="selectedFilesContainer" class="mt-2" style="display: none;">
+                            <div class="invalid-feedback d-block file-feedback" style="display: none;"></div>
+                            <div class="selected-files-container mt-2" style="display: none;">
                                 <small class="text-muted">Arquivos selecionados:</small>
-                                <div id="selectedFilesList"></div>
+                                <div class="selected-files-list"></div>
                             </div>
                         </div>
                     </div>
