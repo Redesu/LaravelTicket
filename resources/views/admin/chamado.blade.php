@@ -212,11 +212,6 @@
                 </div>
                 <div class="card-body">
                     <p class="lead">{{ $chamado->descricao }}</p>
-                    <small class="text-muted">
-                        <i class="fas fa-calendar"></i> Criado em:
-                        {{ $chamado->created_at ? $chamado->created_at->format('d/m/Y H:i') : 'N/A' }}
-                    </small>
-
                     @if($chamado->anexos && $chamado->anexos->count() > 0)
                         <div class="mt-3">
                             <h6><i class="fas fa-paperclip"></i> Arquivos anexados ao chamado:</h6>
@@ -250,6 +245,10 @@
                             </div>
                         </div>
                     @endif
+                    <small class="text-muted">
+                        <i class="fas fa-calendar"></i> Criado em:
+                        {{ $chamado->created_at ? $chamado->created_at->format('d/m/Y H:i') : 'N/A' }}
+                    </small>
                 </div>
             </div>
 

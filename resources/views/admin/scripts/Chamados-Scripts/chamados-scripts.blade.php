@@ -4,6 +4,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/js/adminlte.min.js"></script>
 <script src="{{ asset('js/FloatingActionButton.js') }}"></script>
+<script src="{{ asset('js/AppUtils.js') }}"></script>
 
 
 <!-- DataTables -->
@@ -549,49 +550,5 @@
         }
     }
 
-    function getFileColor(fileType) {
-        switch (fileType) {
-            case 'application/pdf':
-                return '#dc3545';
-            case 'image/jpeg':
-            case 'image/png':
-                return '#28a745';
-            case 'application/zip':
-            case 'application/x-rar-compressed':
-                return '#ffc107';
-            case 'video/mp4':
-                return '#6f42c1';
-            default:
-                return '#6c757d';
-        }
-    }
-
-    function refreshTable() {
-        // Get existing DataTable instance
-        const table = $('#dataTable').DataTable();
-        if (table) {
-            table.ajax.reload();
-            showAlert('Chamados recarregados com sucesso', 'success');
-        } else {
-            showAlert('Erro ao recarregar tabela', 'error');
-        }
-    }
-
-    function showAlert(message, type) {
-        if (typeof toastr !== 'undefined') {
-            const validTypes = ['success', 'error', 'warning', 'info'];
-            const toastrType = validTypes.includes(type) ? type : 'info';
-
-            toastr[toastrType](message);
-        } else {
-            alert(message);
-        }
-    }
-
-    function resetModal(formSelector) {
-        $(formSelector)[0].reset();
-        $(formSelector + ' button[type="submit"]').prop('disabled', false);
-        $(formSelector + ' .spinner-border').addClass('d-none');
-    }
 
 </script>
