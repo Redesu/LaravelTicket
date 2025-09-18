@@ -1,4 +1,4 @@
-function showAlert(message, type) {
+export default function showAlert(message, type) {
     if (typeof toastr !== 'undefined') {
         const validTypes = ['success', 'error', 'warning', 'info'];
         const toastrType = validTypes.includes(type) ? type : 'info';
@@ -9,7 +9,7 @@ function showAlert(message, type) {
     }
 }
 
-function refreshTable() {
+export function refreshTable() {
     // Get existing DataTable instance
     const table = $('#dataTable').DataTable();
     if (table) {
@@ -20,13 +20,13 @@ function refreshTable() {
     }
 }
 
-function resetModal(formSelector) {
+export function resetModal(formSelector) {
     $(formSelector)[0].reset();
     $(formSelector + ' button[type="submit"]').prop('disabled', false);
     $(formSelector + ' .spinner-border').addClass('d-none');
 }
 
-function getFileColor(fileType) {
+export function getFileColor(fileType) {
     switch (fileType) {
         case 'application/pdf':
             return '#dc3545';

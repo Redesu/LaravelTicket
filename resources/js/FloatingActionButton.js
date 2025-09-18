@@ -1,4 +1,4 @@
-class FloatingActionButton {
+export default class FloatingActionButton {
     constructor() {
         this.fabContainer = document.getElementById('fabContainer');
         this.fabMain = document.getElementById('fabMain');

@@ -50,3 +50,5 @@
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 @yield('js')
 @stop
+
+@vite('resources/js/app.js')
