@@ -96,7 +96,6 @@
 
     @section('js')
 
-    @include('admin.scripts.chamados-scripts.chamados-scripts')
     <script>
         window.routes = {
             chamadosDataTable: '{{ route('api.chamados.data-tables') }}',
@@ -112,3 +111,4 @@
     @stop
 
     @vite('resources/js/datatables.js')
+    @vite('resources/js/chamados.js')

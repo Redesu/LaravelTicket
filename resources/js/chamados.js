@@ -1,7 +1,16 @@
+import $ from 'jquery';
+import 'bootstrap';
+
+window.$ = window.jQuery = $;
+
+let modals = {};
 
 $(function () {
 
     const currentUserId = window.currentUserId;
+    modals.createChamado = new bootstrap.Modal(document.getElementById('createChamadoModal'));
+    modals.editChamados = new bootstrap.Modal(document.getElementById('editChamadosModal'));
+    modals.filtrarChamados = new bootstrap.Modal(document.getElementById('filtrarChamadosModal'));
 
     var table = $('#dataTable').DataTable({
         responsive: true,
@@ -195,7 +204,7 @@ $(function () {
         $('#editChamadosDepartamento').val(rowData.departamento_id || rowData.departamento);
         $('#editChamadosCategoria').val(rowData.categoria_id || rowData.categoria);
         $('#editChamadosUsuario').val(rowData.usuario_id || rowData.user_id);
-        $('#editChamadosModal').modal('show');
+        modals.editChamadosModal.show();
         $('#editChamadosForm').off('submit'); // Remove previous submit handler
     });
 
@@ -307,7 +316,7 @@ $(function () {
 
         table.ajax.reload();
 
-        $('#filtrarChamadosModal').modal('hide');
+        modals.filtrarChamadosModal.hide();
         showAlert('Filtros limpos com sucesso', 'success');
     })
 
@@ -334,7 +343,7 @@ $(function () {
             contentType: false,
             success: function (response) {
                 table.ajax.reload();
-                $('#createChamadoModal').modal('hide');
+                modals.createChamadoModal.hide();
                 showAlert('Chamado criado com sucesso', 'success');
             },
             error: function (xhr, status, error) {
@@ -376,7 +385,7 @@ $(function () {
             data: formData,
             success: function (response) {
                 table.ajax.reload();
-                $('#editChamadosModal').modal('hide');
+                modals.editChamadosModal.hide();
                 showAlert('Chamado atualizado com sucesso', 'success');
             },
             error: function (xhr, status, error) {
@@ -398,7 +407,7 @@ $(function () {
         spinner.removeClass('d-none');
 
         table.ajax.reload(function (json) {
-            $('#filtrarChamadosModal').modal('hide');
+            modals.filtrarChamadosModal.hide();
 
             showAlert('Filtros aplicados com sucesso', 'success');
 
