@@ -97,5 +97,18 @@
     @section('js')
 
     @include('admin.scripts.chamados-scripts.chamados-scripts')
+    <script>
+        window.routes = {
+            chamadosDataTable: '{{ route('api.chamados.data-tables') }}',
+            chamadosShow: '{{ route('admin.chamados.show', ':id') }}',
+            chamadosDelete: '{{ route('api.chamados.delete') }}',
+            chamadosPost: '{{ route('api.chamados.post') }}',
+            chamadosPut: '{{ route('api.chamados.put', ':id') }}',
+        }
+
+        window.currentUserId = {{ auth()->user()->id ?? 'null' }}
+    </script>
 
     @stop
+
+    @vite('resources/js/datatables.js')

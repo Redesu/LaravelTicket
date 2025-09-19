@@ -85,3 +85,5 @@
     @section('js')
     @include('admin.scripts.departamentos-scripts.departamentos-scripts')
     @stop
+
+    @vite('resources/js/dataTables.js')

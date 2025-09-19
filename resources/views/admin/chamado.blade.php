@@ -429,3 +429,5 @@
     @include('admin.scripts.chamado-scripts.chamado-scripts')
 
 @endsection
+
+@vite('resources/js/chamado.js')
