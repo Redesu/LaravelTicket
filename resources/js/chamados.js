@@ -1,16 +1,18 @@
 import $ from 'jquery';
 import 'bootstrap';
+import { Modal } from 'bootstrap';
 
 window.$ = window.jQuery = $;
-
-let modals = {};
 
 $(function () {
 
     const currentUserId = window.currentUserId;
-    modals.createChamado = new bootstrap.Modal(document.getElementById('createChamadoModal'));
-    modals.editChamados = new bootstrap.Modal(document.getElementById('editChamadosModal'));
-    modals.filtrarChamados = new bootstrap.Modal(document.getElementById('filtrarChamadosModal'));
+
+    const modals = {
+        createChamadoModal: new Modal(document.getElementById('createChamadoModal')),
+        editChamadosModal: new Modal(document.getElementById('editChamadosModal')),
+        filtrarChamadosModal: new Modal(document.getElementById('filtrarChamadosModal'))
+    };
 
     var table = $('#dataTable').DataTable({
         responsive: true,
@@ -107,7 +109,7 @@ $(function () {
                 render: function (data, type, row) {
                     let actions = '';
                     if (currentUserId) {
-                        actions += `<button class="btn btn-primary btn-sm edit-btn" data-bs-toggle="modal" data-bs-target="#editChamadosModal"><i class="fas fa-edit"></i> Editar</button> `;
+                        actions += `<button class="btn btn-primary btn-sm edit-btn" data-id="${row.id}"><i class="fas fa-edit"></i> Editar</button> `;
                         actions += `<button class="btn btn-danger btn-sm delete-btn" data-id="${row.id}"><i class="fas fa-trash"></i> Excluir</button>`;
                     }
                     return actions;
@@ -204,11 +206,12 @@ $(function () {
         $('#editChamadosDepartamento').val(rowData.departamento_id || rowData.departamento);
         $('#editChamadosCategoria').val(rowData.categoria_id || rowData.categoria);
         $('#editChamadosUsuario').val(rowData.usuario_id || rowData.user_id);
-        modals.editChamadosModal.show();
         $('#editChamadosForm').off('submit'); // Remove previous submit handler
+
+        modals.editChamadosModal.show();
     });
 
-    $('#createChamadoModal').on('shown.bs.modal', function () {
+    document.getElementById('createChamadoModal').addEventListener('shown.bs.modal', function () {
         const dropZone = $('#anexoDropZone');
         const fileInput = $('#anexo');
         let dragCounter = 0;
@@ -322,7 +325,6 @@ $(function () {
 
     $('#createChamadoForm').on('submit', function (e) {
         e.preventDefault();
-
         const submitBtn = $('#submitBtn');
         const spinner = $('#spinner');
 
@@ -415,9 +417,7 @@ $(function () {
         })
     });
 
-
-
-    $('#createChamadoModal').on('hidden.bs.modal', function () {
+    document.getElementById('createChamadoModal').addEventListener('hidden.bs.modal', function () {
         const dropZone = $('#anexoDropZone');
         const fileInput = $('#anexo');
 
@@ -433,11 +433,11 @@ $(function () {
         resetModal('#createChamadoForm');
     });
 
-    $('#editChamadosModal').on('hidden.bs.modal', function () {
+    document.getElementById('editChamadosModal').addEventListener('hidden.bs.modal', function () {
         resetModal('#editChamadosForm');
     });
 
-    $('#filtrarChamadosModal').on('hidden.bs.modal', function () {
+    document.getElementById('filtrarChamadosModal').addEventListener('hidden.bs.modal', function () {
         resetModal('#filtrarChamadosForm');
     });
 });
@@ -535,4 +535,19 @@ function getFileIcon(fileType) {
     }
 }
 
-
+function getFileColor(fileType) {
+    switch (fileType) {
+        case 'application/pdf':
+            return '#dc3545';
+        case 'image/jpeg':
+        case 'image/png':
+            return '#28a745';
+        case 'application/zip':
+        case 'application/x-rar-compressed':
+            return '#ffc107';
+        case 'video/mp4':
+            return '#6f42c1';
+        default:
+            return '#6c757d';
+    }
+}

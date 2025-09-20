@@ -43,7 +43,8 @@
                                     <span class="spinner-border spinner-border-sm"></span>
                                     <i class="fas fa-comment"></i> Enviar Comentário
                                 </button>
-                                <button type="button" class="btn btn-secondary" id="cancel-main-comment-form">
+                                <button type="button" class="btn btn-secondary cancel-comment-btn"
+                                    id="cancel-main-comment-form">
                                     <i class="fas fa-times"></i> Cancelar
                                 </button>
                             </div>
@@ -95,7 +96,7 @@
                                     <span class="spinner-border spinner-border-sm d-none" id="comentarioSpinner"></span>
                                     <i class="fas fa-comment"></i> Adicionar Comentário
                                 </button>
-                                <button type="button" class="btn btn-secondary" onclick="cancelComment()">
+                                <button type="button" class="btn btn-secondary cancel-comment-btn">
                                     <i class="fas fa-times"></i> Cancelar
                                 </button>
                             </div>
@@ -255,7 +256,7 @@
             <!-- Action buttons -->
             <div class="card">
                 <div class="card-body">
-                    <a class="btn btn-secondary voltar-btn" id="voltarBtn" onclick="goBack()">
+                    <a class="btn btn-secondary voltar-btn" id="voltarBtn">
                         <span class="spinner-border spinner-border-sm d-none" id="voltarSpinner"></span>
                         <i class="fas fa-arrow-left"></i> Voltar
                     </a>
@@ -402,7 +403,7 @@
                 data-bs-target="#solucaoChamadoModal">
                 <i class="fas fa-check"></i>
             </button>
-            <button class="fab-action comment adicionar-comentario-btn" data-tooltip="Comentar" onclick="showAddComment()">
+            <button class="fab-action comment adicionar-comentario-btn reply-btn" data-tooltip="Comentar">
                 <i class="fas fa-comments"></i>
             </button>
         @endif
@@ -426,7 +427,26 @@
 
 @section('js')
 
-    @include('admin.scripts.chamado-scripts.chamado-scripts')
+    <script>
+        window.routes = {
+            addSolution: '{{ route('api.chamados.addSolution', $chamado->id) }}',
+            addComment: '{{ route('api.chamados.addComentario', $chamado->id) }}',
+            anexosDownload: '{{ route('api.anexos.download', ':anexoId') }}',
+            chamadosPut: '{{ route('api.chamados.put', ':id') }}',
+        }
+
+        window.chamado = {
+            status: '{{ $chamado->status }}',
+            id: '{{ $chamado->id }}',
+            titulo: '{{ $chamado->titulo }}',
+            descricao: '{{ $chamado->descricao }}',
+            status: '{{ $chamado->status }}',
+            prioridade: '{{ $chamado->prioridade }}',
+            departamento: '{{ $chamado->departamento->nome }}',
+            categoria: '{{ $chamado->categoria->nome }}',
+            usuario: '{{ $chamado->usuario->id }}'
+        }
+    </script>
 
 @endsection
 
