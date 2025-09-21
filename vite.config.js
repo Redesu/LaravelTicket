@@ -10,7 +10,9 @@ export default defineConfig({
                 'resources/js/app.js',
                 'resources/js/datatables.js',
                 'resources/js/chamados.js',
-                'resources/js/chamado.js'
+                'resources/js/chamado.js',
+                'resources/js/categorias.js',
+                'resources/js/departamentos.js',
             ],
             refresh: true,
         }),

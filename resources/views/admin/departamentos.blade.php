@@ -25,8 +25,7 @@
 
     <div class="row mb-3">
         <div class="col-12">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                data-bs-target="#createDepartamentoModal" id="createDepartamentoBtn">
+            <button type="button" class="btn btn-primary create-btn" id="createDepartamentoBtn">
                 <i class="fas fa-plus"></i> Criar Departamento
             </button>
             <button type="button" class="btn btn-success" onclick="refreshTable()">
@@ -60,8 +59,7 @@
     <div class="fab-backdrop" id="fabBackdrop"></div>
     <div class="fab-container" id="fabContainer">
         <div class="fab-actions">
-            <button class="fab-action create" data-tooltip="Novo Departamento" data-bs-toggle="modal"
-                data-bs-target="#createDepartamentoModal" id="createDepartamentoBtn">
+            <button class="fab-action create create-btn" data-tooltip="Novo Departamento" id="createDepartamentoBtn">
                 <i class="fas fa-plus"></i>
             </button>
             <button class="fab-action sync btn-success" data-tooltip="Recarregar" onclick="refreshTable()">
@@ -78,7 +76,15 @@
     @stop
 
     @section('js')
-    @include('admin.scripts.departamentos-scripts.departamentos-scripts')
+    <script>
+        window.routes = {
+            departamentosDataTable: '{{ route('api.departamentos.data-tables') }}',
+            departamentosDelete: '{{ route('api.departamentos.delete') }}',
+            departamentosPost: '{{ route('api.departamentos.post') }}',
+            departamentosPut: '{{ route('api.departamentos.put', ':id') }}',
+        }
+    </script>
     @stop
 
     @vite('resources/js/dataTables.js')
+    @vite('resources/js/departamentos.js')

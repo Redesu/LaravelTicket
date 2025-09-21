@@ -95,7 +95,7 @@
                                                 data-jdenticon-value="{{ $comentario->usuario->name }}"></svg>
                                         @endif
 
-                                        <span class="username ms-1">
+                                        <span class="username ms-1" style="margin-left: 0.5rem;">
                                             {{ $comentario->usuario->name }}
                                             @if($comentario->tipo == 'edit')
                                                 <span class="badge badge-info ml-1">EDITADO</span>

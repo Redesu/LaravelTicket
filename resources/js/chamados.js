@@ -150,7 +150,12 @@ $(function () {
         lengthMenu: [[15, 25, 50, -1], [15, 25, 50, "Todos"]],
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/pt-BR.json',
-            processing: '<i class="fas fa-spinner fa-spin fa-2x"></i><br>Carregando dados...'
+            processing: `
+            <div class="custom-processing">
+                <div class="dataTables_spinner"></div>
+                <span>Carregando dados...</span>
+            </div>
+        `
         },
     });
 

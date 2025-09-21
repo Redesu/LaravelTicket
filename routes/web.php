@@ -8,6 +8,7 @@ use App\Http\Controllers\Categorias\CategoriaController;
 use App\Http\Controllers\Chamados\ChamadoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Departamentos\DepartamentoController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -20,6 +21,7 @@ Route::prefix('/admin')->middleware('auth')->group(function () {
     Route::get('/chamados/{id}', [ChamadoController::class, 'showChamado'])->name('admin.chamados.show');
     Route::get('/categorias', [CategoriaController::class, 'showCategorias'])->name('admin.categorias');
     Route::get('/departamentos', [DepartamentoController::class, 'showDepartamentos'])->name('admin.departamentos');
+    Route::get('/settings', [UserController::class, 'showUserSettings'])->name('admin.settings');
 });
 
 
@@ -63,6 +65,10 @@ Route::prefix('api/departamentos')->middleware('auth')->group(function () {
     Route::post('/', [DepartamentoController::class, 'insertDepartamento'])->name('api.departamentos.post');
     Route::put('/{id}', [DepartamentoController::class, 'updateDepartamento'])->name('api.departamentos.put');
     Route::delete('/', [DepartamentoController::class, 'deleteDepartamento'])->name('api.departamentos.delete');
+});
+
+Route::prefix('api/users')->middleware('auth')->group(function () {
+    Route::put('/{id}', [UserController::class, 'updateUserSettings'])->name('api.users.put');
 });
 
 Route::prefix('anexos')->middleware('auth')->group(function () {

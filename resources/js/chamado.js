@@ -68,7 +68,7 @@ $(function () {
         $('#editChamadosDescricao').val(window.chamado.descricao);
         $('#editChamadosStatus').val(window.chamado.status);
         $('#editChamadosPrioridade').val(window.chamado.prioridade);
-        $('#editChamadosDepartamento').val(window.chamado.nome);
+        $('#editChamadosDepartamento').val(window.chamado.departamento);
         $('#editChamadosCategoria').val(window.chamado.categoria);
         $('#editChamadosUsuario').val(window.chamado.usuario);
         $('#editChamadoForm').off('submit');
