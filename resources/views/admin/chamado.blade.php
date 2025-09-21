@@ -29,29 +29,6 @@
 
             <!-- Comments Section (Above Description) -->
             <div id="comments-section">
-                <div class="card card-success card-outline" id="main-comment-form" style="display: none;">
-                    <div class="card-body">
-                        <form id="add-comment-form">
-                            @csrf
-                            <input type="hidden" name="parent_id" value="">
-                            <div class="form-group">
-                                <textarea class="form-control" name="descricao" rows="4"
-                                    placeholder="Digite seu comentário..."></textarea>
-                            </div>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-success">
-                                    <span class="spinner-border spinner-border-sm"></span>
-                                    <i class="fas fa-comment"></i> Enviar Comentário
-                                </button>
-                                <button type="button" class="btn btn-secondary cancel-comment-btn"
-                                    id="cancel-main-comment-form">
-                                    <i class="fas fa-times"></i> Cancelar
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
                 <!-- Add Comment Form -->
                 <div class="card card-success card-outline collapsed-card collapsed" id="add-comment-card">
                     <div class="card-header">
@@ -171,8 +148,8 @@
                                                                 <i class="fas fa-file file-icon"
                                                                     data-file-type="{{ strtolower(pathinfo($anexo->nome_original, PATHINFO_EXTENSION)) }}"></i>
                                                                 <div class="flex-grow-1 ml-2">
-                                                                    <small
-                                                                        class="font-weight-bold d-block">{{ $anexo->nome_original }}</small>
+                                                                    <small class="font-weight-bold d-block filename-wrapper"
+                                                                        title="{{ $anexo->nome_original }}">{{ $anexo->nome_original }}</small>
                                                                     <small class="text-muted">
                                                                         <span class="file-size"
                                                                             data-size="{{ $anexo->tamanho }}"></span> •
@@ -417,12 +394,6 @@
 @include('admin.modals.chamado-modals.solucao-chamado')
 
 @stop
-
-@section('css')
-
-    @include('admin.css.chamado-css')
-
-@endsection
 
 
 @section('js')

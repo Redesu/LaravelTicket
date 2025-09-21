@@ -211,6 +211,10 @@ $(function () {
         modals.editChamadosModal.show();
     });
 
+    $(document).on('click', '.create-btn', function () {
+        modals.createChamadoModal.show();
+    })
+
     document.getElementById('createChamadoModal').addEventListener('shown.bs.modal', function () {
         const dropZone = $('#anexoDropZone');
         const fileInput = $('#anexo');

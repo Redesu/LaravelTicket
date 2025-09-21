@@ -1,10 +1,6 @@
 @extends('layouts.admin')
 
 
-@section('css')
-    @include('admin.css.chamado-css')
-@endsection
-
 @section('title', 'Chamados')
 
 @section(section: 'content_header')
@@ -30,8 +26,7 @@
 
     <div class="row mb-3">
         <div class="col-12">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createChamadoModal"
-                id="createTicketBtn">
+            <button type="button" class="btn btn-primary create-btn" id="createTicketBtn">
                 <i class="fas fa-plus"></i> Criar Chamado
             </button>
             <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#filtrarChamadosModal">
@@ -72,8 +67,7 @@
     <div class="fab-backdrop" id="fabBackdrop"></div>
     <div class="fab-container" id="fabContainer">
         <div class="fab-actions">
-            <button class="fab-action create" data-tooltip="Novo Chamado" data-bs-toggle="modal"
-                data-bs-target="#createChamadoModal" id="createTicketBtn">
+            <button class="fab-action create create-btn" data-tooltip="Novo Chamado" id="createTicketBtn">
                 <i class="fas fa-plus"></i>
             </button>
             <button class="fab-action filter solucao-btn" data-tooltip="Filtrar" data-bs-toggle="modal"

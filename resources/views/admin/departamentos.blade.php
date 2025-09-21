@@ -1,10 +1,5 @@
 @extends('layouts.admin')
 
-
-@section('css')
-    @include('admin.css.chamado-css')
-@endsection
-
 @section('title', 'Departamentos')
 
 @section(section: 'content_header')

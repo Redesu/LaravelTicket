@@ -52,6 +52,10 @@ $(function () {
         showAddComment();
     });
 
+    $(document).on('click', '.cancel-comment-btn', function () {
+        cancelComment();
+    })
+
 
     $(document).on('click', '.edit-btn', function () {
         if (modals.editChamadosModal) {
@@ -178,10 +182,6 @@ $(function () {
         goBack();
     });
 
-    $(document).on('click', 'cancel-comment-btn', function () {
-        cancelComment();
-        console.log('cancel comment');
-    });
 
     $('#solucaoChamadoForm').on('submit', function (e) {
         e.preventDefault();
@@ -509,6 +509,7 @@ $(function () {
             resetModal('#editChamadosForm', '#editChamadosModalErrors');
         });
     }
+    applyFileIcons();
 });
 
 function showAddComment() {
@@ -560,6 +561,19 @@ function formatFileSize(bytes) {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
 
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+function applyFileIcons() {
+    $('.file-icon[data-file-type]').each(function () {
+        const $icon = $(this);
+        const fileExtension = $icon.data('file-type');
+
+        // Use your existing getFileIcon function
+        const iconClasses = getFileIcon(fileExtension);
+
+        // Remove the default fa-file class and apply the new classes
+        $icon.removeClass('fa-file').addClass(iconClasses);
+    });
 }
 
 function getFileColor(fileType) {

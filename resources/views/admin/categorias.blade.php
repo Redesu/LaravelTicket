@@ -1,10 +1,5 @@
 @extends('layouts.admin')
 
-
-@section('css')
-    @include('admin.css.chamado-css')
-@endsection
-
 @section('title', 'Categorias')
 
 @section(section: 'content_header')
@@ -30,8 +25,7 @@
 
     <div class="row mb-3">
         <div class="col-12">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createCategoriaModal"
-                id="createCategoriaBtn">
+            <button type="button" class="btn btn-primary create-btn" id="createCategoriaBtn">
                 <i class="fas fa-plus"></i> Criar Categoria
             </button>
             <button type="button" class="btn btn-success" onclick="refreshTable()">
@@ -64,8 +58,7 @@
     <div class="fab-backdrop" id="fabBackdrop"></div>
     <div class="fab-container" id="fabContainer">
         <div class="fab-actions">
-            <button class="fab-action create" data-tooltip="Nova Categoria" data-bs-toggle="modal"
-                data-bs-target="#createCategoriaModal" id="createCategoriaBtn">
+            <button class="fab-action create create-btn" data-tooltip="Nova Categoria" id="createCategoriaBtn">
                 <i class="fas fa-plus"></i>
             </button>
             <button class="fab-action sync btn-success" data-tooltip="Recarregar" onclick="refreshTable()">
@@ -82,7 +75,16 @@
 @stop
 
 @section('js')
-@include('admin.scripts.categorias-scripts.categorias-scripts')
+<script>
+    window.routes = {
+        categoriasDataTable: "{{ route('api.categorias.data-tables') }}",
+        categoriasDelete: "{{ route('api.categorias.delete') }}",
+        categoriasPost: "{{ route('api.categorias.post') }}",
+        categoriasPut: "{{ route('api.categorias.put', ':id') }}",
+    }
+
+</script>
 @stop
 
 @vite('resources/js/dataTables.js')
+@vite('resources/js/categorias.js')
