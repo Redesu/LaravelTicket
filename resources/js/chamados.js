@@ -311,6 +311,7 @@ $(function () {
                 handleFileSelect(fileInput[0].files);
             });
         });
+
     });
 
     $('#clearFilters').on('click', function () {
@@ -424,7 +425,7 @@ $(function () {
         })
     });
 
-    document.getElementById('createChamadoModal').addEventListener('hidden.bs.modal', function () {
+    $('#createChamadoModal').on('hidden.bs.modal', function () {
         const dropZone = $('#anexoDropZone');
         const fileInput = $('#anexo');
 
