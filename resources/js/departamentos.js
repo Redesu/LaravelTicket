@@ -125,7 +125,6 @@ $(function () {
 
         submitBtn.prop('disabled', true);
         spinner.removeClass('d-none');
-        console.log($(this).serialize());
 
         $.ajax({
             url: window.routes.departamentosPost,

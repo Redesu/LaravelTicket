@@ -13,6 +13,7 @@ export default defineConfig({
                 'resources/js/chamado.js',
                 'resources/js/categorias.js',
                 'resources/js/departamentos.js',
+                'resources/js/settings.js'
             ],
             refresh: true,
         }),

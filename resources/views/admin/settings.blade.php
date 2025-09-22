@@ -26,13 +26,18 @@
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="avatar">Avatar</label>
-                        @if($user->avatar)
-                            <div class="mb-2">
-                                <img src="{{ url("storage/{$user->avatar}") }}" alt="{{ $user->name }}" class="avatar"
-                                    style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
+                        <div class="mb-2">
+                            <img id="avatarPreview" src="{{ $user->avatar_url ?? '' }}" alt="{{ $user->name }}"
+                                class="avatar"
+                                style="width: 150px; height:150px; border-radius: 50%; object-fit: cover; {{ !$user->avatar_url ? 'display: none;' : '' }}">
+                            <div id="avatarPlaceholder"
+                                class="{{ $user->avatar_url ? 'd-none' : 'd-flex align-items-center justify-content-center' }}"
+                                style="width: 150px; height: 150px; border-radius: 50%; background-color: #f8f9fa; border: 2px dashed #dee2e6;">
+                                <i class="fas fa-user text-muted" style="font-size: 2rem;"></i>
                             </div>
-                        @endif
+                        </div>
                         <input type="file" class="form-control" id="avatar" name="avatar" accept="image/*">
+                        <small class="form-text text-muted">Selecione uma imagem para ver a prévia</small>
                         @error('avatar')
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
@@ -41,6 +46,7 @@
 
                 <div class="col-md-6">
                     <div class="form-group">
+                        <input type="hidden" id="updateUserId" name="id" value="{{ $user->id }}">
                         <label for="name">Nome</label>
                         <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name"
                             value="{{ old('name', $user->name) }}" required>
@@ -82,7 +88,8 @@
 
                 <div class="col-md-12">
                     <div class="form-group">
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary" id="updateSubmitBtn">
+                            <span class="spinner-border spinner-border-sm d-none" id="updateSpinner"></span>
                             <i class="fas fa-save"></i> Salvar
                         </button>
                         <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
@@ -97,5 +104,10 @@
 
 @section('js')
     <script>
+        window.routes = {
+            updateUser: "{{ route('api.users.put', $user->id) }}"
+        }
     </script>
 @endsection
+
+@vite('resources/js/settings.js')

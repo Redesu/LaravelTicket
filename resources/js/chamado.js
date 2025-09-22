@@ -1,5 +1,6 @@
 import jdenticon from "jdenticon/standalone";
 import { Modal } from 'bootstrap';
+import './FloatingActionButton.js';
 
 window.jdenticon = jdenticon;
 
@@ -61,7 +62,6 @@ $(function () {
         if (modals.editChamadosModal) {
             modals.editChamadosModal.show();
         }
-        console.log(window.chamado.status)
 
         $('#editChamadoId').val(window.chamado.id);
         $('#editChamadosTitulo').val(window.chamado.titulo);

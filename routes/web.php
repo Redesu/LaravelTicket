@@ -68,7 +68,7 @@ Route::prefix('api/departamentos')->middleware('auth')->group(function () {
 });
 
 Route::prefix('api/users')->middleware('auth')->group(function () {
-    Route::put('/{id}', [UserController::class, 'updateUserSettings'])->name('api.users.put');
+    Route::post('/{id}', [UserController::class, 'updateUserSettings'])->name('api.users.put');
 });
 
 Route::prefix('anexos')->middleware('auth')->group(function () {
