@@ -80,5 +80,4 @@
 @stop
 
 @section('js')
-<script> console.log('Login page loaded'); </script>
 @stop

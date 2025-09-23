@@ -134,9 +134,9 @@ return [
     */
 
     'usermenu_enabled' => true,
-    'usermenu_header' => false,
+    'usermenu_header' => true,
     'usermenu_header_class' => 'bg-primary',
-    'usermenu_image' => false,
+    'usermenu_image' => true,
     'usermenu_desc' => false,
     'usermenu_profile_url' => false,
 
@@ -283,8 +283,8 @@ return [
     */
 
     'laravel_asset_bundling' => false,
-    'laravel_css_path' => 'css/app.css',
-    'laravel_js_path' => 'js/app.js',
+    'laravel_css_path' => 'resources/css/app.css',
+    'laravel_js_path' => 'resources/js/app.js',
 
     /*
     |--------------------------------------------------------------------------

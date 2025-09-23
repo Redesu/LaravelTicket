@@ -89,7 +89,7 @@
                                 <div class="user-block">
                                     <div class="d-flex align-items-center me-1">
                                         @if($comentario->usuario->avatar)
-                                            <img class="img-circle" src="{{ $comentario->usuario->avatar }}" alt="User Image">
+                                            <img class="img-circle" src="{{ $comentario->usuario->avatar_url }}" alt="User Image">
                                         @else
                                             <svg class="img-circle" width="40" height="40"
                                                 data-jdenticon-value="{{ $comentario->usuario->name }}"></svg>

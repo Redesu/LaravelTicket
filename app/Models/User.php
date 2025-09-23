@@ -61,4 +61,9 @@ class User extends Authenticatable
     {
         return $this->avatar !== null;
     }
+
+    public function adminlte_image(): string
+    {
+        return $this->avatar_url ?? 'vendor/adminlte/dist/img/user2-160x160.jpg';
+    }
 }

@@ -100,7 +100,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-times"></i> Fechar
                     </button>
                     <button type="submit" class="btn btn-primary" id="editSubmitBtn">

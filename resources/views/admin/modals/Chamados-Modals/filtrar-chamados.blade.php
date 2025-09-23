@@ -8,9 +8,8 @@
                     <h4 class="modal-title text-white" id="filtrarChamadosModalLabel">
                         <i class="fas fa-filter"></i> Filtrar Chamados
                     </h4>
-                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Fechar">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
 
@@ -157,7 +156,7 @@
                     </button>
 
                     <!-- Close Button -->
-                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                    <button type="button" class="btn btn-default" data-bs-dismiss="modal">
                         <i class="fas fa-times"></i> Fechar
                     </button>
 
