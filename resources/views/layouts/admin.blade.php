@@ -31,12 +31,11 @@
 @stop
 
 @section('css')
+@vite('resources/css/app.css')
 @yield('css')
 @stop
 
 @section('js')
+@vite('resources/js/app.js')
 @yield('js')
 @stop
-
-@vite('resources/js/app.js')
-@vite('resources/css/app.css')

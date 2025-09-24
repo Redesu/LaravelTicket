@@ -1,3 +1,5 @@
+@import 'toastr/build/toastr.min.css';
+
 a[href="#main"],
 a[href="#navigation"] {
     display: none !important;
