@@ -4,7 +4,8 @@
     "functions": {
         "api/index.php": {
             "runtime": "vercel-php@0.7.4"
-        }
+        },
+        "excludeFiles": "{node_modules,storage,tests,vendor/*/tests,vendor/*/docs,*.log,*.cache}/**"
     },
     "routes": [
         {
