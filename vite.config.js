@@ -8,7 +8,7 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
-                'resources/js/datatables.js',
+                'resources/js/dataTables.js',
                 'resources/js/chamados.js',
                 'resources/js/chamado.js',
                 'resources/js/categorias.js',
