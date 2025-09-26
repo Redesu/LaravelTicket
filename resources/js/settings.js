@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import 'bootstrap';
+import showAlert from './AppUtils.js';
 
 window.$ = window.jQuery = $;
 
