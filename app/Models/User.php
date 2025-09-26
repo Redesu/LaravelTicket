@@ -50,11 +50,11 @@ class User extends Authenticatable
 
     public function getAvatarUrlAttribute(): ?string
     {
-        if (!$this->avatar) {
-            return null;
+        if ($this->avatar) {
+            return Storage::url($this->avatar);
         }
 
-        return Storage::url($this->avatar);
+        return null;
     }
 
     public function hasAvatar(): bool
@@ -64,6 +64,10 @@ class User extends Authenticatable
 
     public function adminlte_image(): string
     {
-        return $this->avatar_url ?? asset('vendor/adminlte/dist/img/avatar5.png');
+        if ($this->avatar) {
+            return Storage::url($this->avatar);
+        }
+
+        return asset('vendor/adminlte/dist/img/avatar5.png');
     }
 }
