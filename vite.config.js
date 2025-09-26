@@ -8,6 +8,8 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
+                'resources/js/AppUtils.js',
+                'resources/js/FloatingActionButton.js',
                 'resources/js/dataTables.js',
                 'resources/js/chamados.js',
                 'resources/js/chamado.js',
