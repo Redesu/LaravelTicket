@@ -1,11 +1,10 @@
 {
     "version": 2,
-    "buildCommand": "composer install --no-dev --optimize-autoloader && npm ci && npm run build",
     "framework": null,
     "functions": {
         "api/index.php": {
             "runtime": "vercel-php@0.7.4",
-            "excludeFiles": "{node_modules,storage,tests,vendor/*/tests,vendor/*/docs,*.log,*.cache}/**"
+            "excludeFiles": "{storage/logs,storage/framework/cache,storage/framework/sessions,bootstrap/cache,tests,node_modules}/**"
         }
     },
     "routes": [

@@ -1,1 +1,10 @@
 /vendor
+/node_modules
+/storage/logs
+/tests
+/.env
+/.env.*
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
