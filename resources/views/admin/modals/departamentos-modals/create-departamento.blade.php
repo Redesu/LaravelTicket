@@ -1,12 +1,12 @@
-<div class="modal fade" id="createCategoriaModal" tabindex="-1" aria-labelledby="createCategoriaModalLabel"
+<div class="modal fade" id="createDepartamentoModal" tabindex="-1" aria-labelledby="createDepartamentoModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form id="createCategoriaForm">
+            <form id="createDepartamentoForm">
                 @csrf
                 <div class="modal-header bg-primary">
-                    <h4 class="modal-title text-white" id="createCategoriaModalLabel">
-                        <i class="fas fa-plus-circle"></i> Criar uma nova categoria
+                    <h4 class="modal-title text-white" id="createDepartamentoModalLabel">
+                        <i class="fas fa-plus-circle"></i> Criar um novo Departamento
                     </h4>
                     <button type="button" class="close text-white" data-dismiss="modal" aria-label="Fechar">
                         <span aria-hidden="true">&times;</span>
@@ -23,13 +23,19 @@
                         </div>
                     </div>
 
+                    <div class="mb-3">
+                        <label for="descricao" class="form-label">Descrição</label>
+                        <textarea class="form-control form-control-lg" id="descricao" name="descricao"
+                            rows="5"></textarea>
+                    </div>
+
                 </div>
                 <div class="modal-footer"> <button type="button" class="btn btn-secondary" data-dismiss="modal">
                         <i class="fas fa-times"></i> Fechar
                     </button>
                     <button type="submit" class="btn btn-primary" id="submitBtn">
                         <span class="spinner-border spinner-border-sm d-none" id="spinner"></span>
-                        <i class="fas fa-plus-circle"></i> Criar categoria
+                        <i class="fas fa-plus-circle"></i> Criar Departamento
                     </button>
                 </div>
             </form>

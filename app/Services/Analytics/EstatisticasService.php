@@ -17,7 +17,7 @@ class EstatisticasService
 
             return GetEstatisticasResponseDTO::success(
                 qntdNovosChamados: $qntdNovosChamados,
-                porcentagemChamadosFechados: $porcentagemChamadosFechados,
+                porcentagemChamadosFechados: $porcentagemChamadosFechados ?? '100',
                 qntdChamadosUrgentes: $qntdChamadosUrgentes,
                 qntdUsuarios: $usuariosRegistrados
             );

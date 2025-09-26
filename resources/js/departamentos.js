@@ -2,6 +2,7 @@
 import { Modal } from "bootstrap";
 import $ from 'jquery';
 import 'bootstrap';
+import showAlert from "./AppUtils";
 
 window.$ = window.jQuery = $;
 

@@ -5,7 +5,7 @@ import 'datatables.net-responsive-bs4';
 import 'datatables.net-buttons-bs4';
 import 'datatables.net-buttons/js/buttons.html5.js';
 import DataTable from 'datatables.net-bs4';
-import { resetModal, getFileColor, refreshTable } from './AppUtils';
+import { resetModal, getFileColor, refreshTable } from './AppUtils.js';
 import './FloatingActionButton.js';
 
 

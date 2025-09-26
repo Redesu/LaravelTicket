@@ -104,5 +104,5 @@
 
     @stop
 
-    @vite('resources/js/datatables.js')
+    @vite('resources/js/dataTables.js')
     @vite('resources/js/chamados.js')

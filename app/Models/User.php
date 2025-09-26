@@ -6,8 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Log;
-use Storage;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
@@ -60,7 +59,7 @@ class User extends Authenticatable
             return null;
         }
 
-        return Storage::url($this->avatar);
+        return null;
     }
 
     public function hasAvatar(): bool
@@ -70,6 +69,10 @@ class User extends Authenticatable
 
     public function adminlte_image(): string
     {
-        return $this->avatar_url ?? 'vendor/adminlte/dist/img/user2-160x160.jpg';
+        if ($this->avatar) {
+            return Storage::url($this->avatar);
+        }
+
+        return asset('vendor/adminlte/dist/img/avatar5.png');
     }
 }
