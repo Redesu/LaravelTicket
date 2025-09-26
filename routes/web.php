@@ -10,6 +10,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Departamentos\DepartamentoController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 Route::get('/', function () {
     return view('welcome');
@@ -73,6 +74,18 @@ Route::prefix('api/users')->middleware('auth')->group(function () {
 
 Route::prefix('anexos')->middleware('auth')->group(function () {
     Route::get('/{id}/download', [AnexoController::class, 'download'])->name('api.anexos.download');
+});
+
+Route::get('/debug', function () {
+    $disk = Storage::disk('public');
+    return [
+        'storage_path' => storage_path('app/public'),
+        'public_path' => public_path('storage'),
+        'avatars_exists' => $disk->exists('avatars'),
+        'avatars_files' => $disk->exists('avatars') ? $disk->files('avatars') : [],
+        'symlink_exists' => is_link(public_path('storage')),
+        'symlink_target' => is_link(public_path('storage')) ? readlink(public_path('storage')) : null,
+    ];
 });
 
 

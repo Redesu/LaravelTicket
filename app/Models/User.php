@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Log;
 use Storage;
 
 class User extends Authenticatable
@@ -51,6 +52,11 @@ class User extends Authenticatable
     public function getAvatarUrlAttribute(): ?string
     {
         if (!$this->avatar) {
+            return null;
+        }
+
+        if (!Storage::disk('public')->exists($this->avatar)) {
+            Log::warning('Avatar not found: ' . $this->avatar);
             return null;
         }
 
