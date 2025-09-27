@@ -21,8 +21,16 @@ class UserUpdateService
                 if ($user->avatar) {
                     Storage::disk('public')->delete($user->avatar);
                 }
+
+                Storage::disk('public')->makeDirectory('avatars');
+
                 $avatarPath = $DTO->getAvatar()->store('avatars', 'public');
                 $user->avatar = $avatarPath;
+
+                Log::info('Avatar stored', [
+                    'path' => $avatarPath,
+                    'exists' => Storage::disk('public')->exists($avatarPath)
+                ]);
             }
 
             if ($DTO->getName()) {
