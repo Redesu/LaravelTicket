@@ -88,4 +88,8 @@ Route::get('/debug', function () {
     ];
 });
 
+Route::get('/linkstorage', function () {
+    Artisan::call('storage:link');
+});
+
 
