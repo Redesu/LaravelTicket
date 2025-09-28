@@ -60,7 +60,7 @@ class User extends Authenticatable
             return null;
         }
 
-        return Storage::url($this->avatar);
+        return asset('storage/' . $this->avatar);
     }
 
     public function hasAvatar(): bool
