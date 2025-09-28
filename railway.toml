@@ -2,4 +2,4 @@
 builder = "nixpacks"
 
 [deploy]
-startCommand = "chmod -R ug+rw storage bootstrap/cache && php artisan storage:link --force && php artisan serve --host=0.0.0.0 --port=$PORT"
+startCommand = "chmod -R ug+rw storage bootstrap/cache && php artisan config:cache && php artisan route:cache && php artisan storage:link --force && php artisan serve --host=0.0.0.0 --port=$PORT"
