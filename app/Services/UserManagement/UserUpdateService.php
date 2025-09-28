@@ -24,7 +24,7 @@ class UserUpdateService
 
                 Storage::disk('public')->makeDirectory('avatars');
 
-                $avatarPath = $DTO->getAvatar()->store('avatars', 'public');
+                $avatarPath = Storage::disk('public')->put('avatars', $DTO->getAvatar());
                 $user->avatar = $avatarPath;
 
                 Log::info('Avatar stored', [
