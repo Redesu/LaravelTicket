@@ -16,7 +16,6 @@ class SecurityHeaders
      */
     public function handle(Request $request, Closure $next): Response
     {
-        Vite::useCspNonce();
         $response = $next($request);
         if (app()->environment('local')) {
             return $next($request);
@@ -32,7 +31,7 @@ class SecurityHeaders
         // content security policy
         $response->headers->set(
             'Content-Security-Policy',
-            "script-src 'nonce-" . Vite::cspNonce() . "' 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none';",
+            "script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none';",
             $replace = true
         );
 
@@ -59,6 +58,11 @@ class SecurityHeaders
 
         // permissions policy
 
+        // removing any other existing policies
+        $response->headers->remove('Permissions-Policy');
+        $response->headers->remove('Permission-Policy');
+
+        // adding new policies
         $response->headers->set(
             'Permissions-Policy',
             'autoplay=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()',
