@@ -32,7 +32,7 @@ class SecurityHeaders
         // content security policy
         $response->headers->set(
             'Content-Security-Policy',
-            "script-src 'nonce-" . Vite::cspNonce() . "' 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; object-src 'none'; base-uri 'none';",
+            "script-src 'nonce-" . Vite::cspNonce() . "' 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none';",
             $replace = true
         );
 
