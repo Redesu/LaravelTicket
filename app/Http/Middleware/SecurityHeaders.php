@@ -32,9 +32,10 @@ class SecurityHeaders
         // content security policy
         $response->headers->set(
             'Content-Security-Policy',
-            "script-src 'nonce-" . Vite::cspNonce() . "' 'self' 'strict-dynamic' https://cdnjs.cloudflare.com; object-src 'none'; base-uri 'none'; require-trusted-types-for 'script';",
+            "script-src 'nonce-" . Vite::cspNonce() . "' 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; object-src 'none'; base-uri 'none';",
             $replace = true
         );
+
         // x frame options
         $response->headers->set(
             'X-Frame-Options',
