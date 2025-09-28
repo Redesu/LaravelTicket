@@ -19,17 +19,17 @@ class UserUpdateService
 
             if ($DTO->hasAvatar()) {
                 if ($user->avatar) {
-                    Storage::disk('public')->delete($user->avatar);
+                    Storage::disk('cloudinary')->delete($user->avatar);
                 }
 
-                Storage::disk('public')->makeDirectory('avatars');
+                Storage::disk('cloudinary')->makeDirectory('avatars');
 
-                $avatarPath = Storage::disk('public')->put('avatars', $DTO->getAvatar());
+                $avatarPath = Storage::disk('cloudinary')->put('avatars', $DTO->getAvatar());
                 $user->avatar = $avatarPath;
 
                 Log::info('Avatar stored', [
                     'path' => $avatarPath,
-                    'exists' => Storage::disk('public')->exists($avatarPath)
+                    'exists' => Storage::disk('cloudinary')->exists($avatarPath)
                 ]);
             }
 

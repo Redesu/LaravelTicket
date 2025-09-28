@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Cloudinary\Cloudinary;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -55,12 +56,9 @@ class User extends Authenticatable
             return null;
         }
 
-        if (!Storage::disk('public')->exists($this->avatar)) {
-            Log::warning('Avatar not found: ' . $this->avatar);
-            return null;
-        }
+        $avatarUrl = cloudinary()->image($this->avatar)->toUrl();
 
-        return asset('storage/' . $this->avatar);
+        return $avatarUrl;
     }
 
     public function hasAvatar(): bool
@@ -70,10 +68,11 @@ class User extends Authenticatable
 
     public function adminlte_image(): string
     {
-        if ($this->avatar) {
-            return Storage::url($this->avatar);
+        if (!$this->avatar) {
+            return asset('vendor/adminlte/dist/img/avatar5.png');
         }
 
-        return asset('vendor/adminlte/dist/img/avatar5.png');
+        $avatarUrl = cloudinary()->image($this->avatar)->toUrl();
+        return $avatarUrl;
     }
 }
