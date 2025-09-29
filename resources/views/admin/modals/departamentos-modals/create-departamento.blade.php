@@ -25,7 +25,7 @@
 
                     <div class="mb-3">
                         <label for="descricao" class="form-label">Descrição</label>
-                        <textarea class="form-control form-control-lg" id="descricao" name="descricao"
+                        <textarea class="form-control form-control-lg" id="descricao" name="descricao" required
                             rows="5"></textarea>
                     </div>
 
