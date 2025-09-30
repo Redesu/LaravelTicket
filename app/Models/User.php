@@ -56,9 +56,7 @@ class User extends Authenticatable
             return null;
         }
 
-        $avatarUrl = cloudinary()->image($this->avatar)->toUrl();
-
-        return $avatarUrl;
+        return Storage::url($this->avatar);
     }
 
     public function hasAvatar(): bool
@@ -68,11 +66,10 @@ class User extends Authenticatable
 
     public function adminlte_image(): string
     {
-        if (!$this->avatar) {
-            return asset('vendor/adminlte/dist/img/avatar5.png');
+        if ($this->avatar) {
+            return Storage::url($this->avatar);
         }
 
-        $avatarUrl = cloudinary()->image($this->avatar)->toUrl();
-        return $avatarUrl;
+        return asset('vendor/adminlte/dist/img/avatar5.png');
     }
 }
