@@ -5,6 +5,7 @@
 ---
 
 ## You can find a live version [HERE](https://laravelticket-production.up.railway.app/)
+### Apache version running inside AWS [HERE](http://18.224.72.104/)
 
 ## Features
 
