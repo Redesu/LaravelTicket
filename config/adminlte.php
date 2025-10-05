@@ -549,7 +549,7 @@ return [
 
     'iframe' => [
         'default_tab' => [
-            'url' => '/admin/dashboard',
+            'url' => route('admin.dashboard'),
             'title' => null,
         ],
         'buttons' => [
