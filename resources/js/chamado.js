@@ -1,8 +1,7 @@
 import jdenticon from "jdenticon/standalone";
 import { Modal } from 'bootstrap';
 import './FloatingActionButton.js';
-import showAlert from './AppUtils.js';
-import resetModal from './AppUtils.js';
+import showAlert, { resetModal } from './AppUtils.js';
 
 window.jdenticon = jdenticon;
 
