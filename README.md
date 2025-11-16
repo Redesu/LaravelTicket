@@ -5,14 +5,15 @@
 ---
 
 ## You can find a live version [HERE](https://laravelticket-production.up.railway.app/)
+
 ### Apache version running inside AWS [HERE](https://www.redesu.com.br/LaravelTicket)
 
 ## Features
 
--   **Ticket Management:**  Users can create, view, edit, and delete support tickets.
-    ![Ticket Management](https://i.imgur.com/Rv9pEXE.png) -   **User Management:** Includes user registration and login. Authenticated users can manage their profiles and tickets.
-    ![User Management](https://i.imgur.com/s9zxsgj.gif)-   **Dashboard:** An administrative dashboard provides statistics and an overview of the ticketing system.
-    ![Dashboard](https://i.imgur.com/NhiSsPj.png) -   **Department and Category Management::** Tickets can be organized by department and category, which are manageable.
+-   **Ticket Management:** Users can create, view, edit, and delete support tickets.
+    ![Ticket Management](https://i.imgur.com/Rv9pEXE.png) - **User Management:** Includes user registration and login. Authenticated users can manage their profiles and tickets.
+    ![User Management](https://i.imgur.com/s9zxsgj.gif)- **Dashboard:** An administrative dashboard provides statistics and an overview of the ticketing system.
+    ![Dashboard](https://i.imgur.com/NhiSsPj.png) - **Department and Category Management::** Tickets can be organized by department and category, which are manageable.
     ![Department and Category Management](https://i.imgur.com/LMbhdLG.gif)
 
 ---
@@ -59,7 +60,7 @@
 ├── composer.json             # Project dependencies for Composer
 └── README.md                 # Project README file
 
-````
+```
 
 ---
 
@@ -79,9 +80,9 @@
 ### 1. Clone the repository
 
 ```sh
-git clone [https://github.com/Redesu/LaravelTicket.git](https://github.com/Redesu/LaravelTicket.git) # Adjust if the repository name is different
+git clone [https://github.com/Redesu/LaravelTicket.git](https://github.com/Redesu/LaravelTicket.git)
 cd LaravelTicket
-````
+```
 
 ### 2\. Install dependencies
 
@@ -122,14 +123,14 @@ php artisan serve
 npm run dev
 ```
 
------
+---
 
 ## Usage
 
-  - Open [http://localhost:8000](http://localhost:8000) with your browser to see the application.
-  - Register and login to create your tickets and manage them.
+-   Open [http://localhost:8000](http://localhost:8000) with your browser to see the application.
+-   Register and login to create your tickets and manage them.
 
------
+---
 
 ## API Endpoints
 
@@ -139,45 +140,49 @@ See `routes/web.php` for more details on each endpoint.
 
 **Authentication Endpoints:**
 
-  - `POST /auth/login` – Logins the user
-  - `POST /auth/register` – Register the user
-  - `POST /auth/logout` – Logouts the user
+-   `POST /auth/login` – Logins the user
+-   `POST /auth/register` – Register the user
+-   `POST /auth/logout` – Logouts the user
 
 **Tickets**
 
-  - `GET /api/chamados/data-tables` – Retrieves ticket data for display in DataTables.
-  - `POST /api/chamados` – Creates a new ticket.
-  - `POST /api/chamados/{id}/comment` – Adds a comment to a specific ticket.
-  - `POST /api/chamados/{id}/solution` – Adds a solution to a specific ticket.
-  - `PUT /api/chamados/{id}` – Updates a specific ticket.
-  - `DELETE /api/chamados` – Deletes a ticket.
-  - `GET /api/chamados/stats/overview` – Retrieves an overview of ticket statistics.
+-   `GET /api/chamados/data-tables` – Retrieves ticket data for display in DataTables.
+-   `POST /api/chamados` – Creates a new ticket.
+-   `POST /api/chamados/{id}/comment` – Adds a comment to a specific ticket.
+-   `POST /api/chamados/{id}/solution` – Adds a solution to a specific ticket.
+-   `PUT /api/chamados/{id}` – Updates a specific ticket.
+-   `DELETE /api/chamados` – Deletes a ticket.
+-   `GET /api/chamados/stats/overview` – Retrieves an overview of ticket statistics.
 
-  **Categories**
-  - `GET /api/categorias/data-tables` - Retrieves category data for DataTables.
-  - `POST /api/categorias` - Creates a new category.
-  - `PUT /api/categorias/{id}` - Updates a specific category.
-  - `DELETE /api/categorias` - Deletes a category.
+**Categories**
 
-  **Departments**
-  - `GET /api/departamentos/data-tables` - Retrieves department data for DataTables.
-  - `POST /api/departamentos` - Creates a new department.
-  - `PUT /api/departamentos/{id}` - Updates a specific department.
-  - `DELETE /api/departamentos` - Deletes a department.
+-   `GET /api/categorias/data-tables` - Retrieves category data for DataTables.
+-   `POST /api/categorias` - Creates a new category.
+-   `PUT /api/categorias/{id}` - Updates a specific category.
+-   `DELETE /api/categorias` - Deletes a category.
 
-  **Users**
-  - `POST /api/users/{id}` - Updates the settings for a specific user.
+**Departments**
 
-  **Attachments**
-  - `GET /anexos/{id}/download` - Downloads a specific attachment.
+-   `GET /api/departamentos/data-tables` - Retrieves department data for DataTables.
+-   `POST /api/departamentos` - Creates a new department.
+-   `PUT /api/departamentos/{id}` - Updates a specific department.
+-   `DELETE /api/departamentos` - Deletes a department.
 
------
+**Users**
+
+-   `POST /api/users/{id}` - Updates the settings for a specific user.
+
+**Attachments**
+
+-   `GET /anexos/{id}/download` - Downloads a specific attachment.
+
+---
 
 ## Contributing
 
 Pull requests are welcome\! For major changes, please open an issue first to discuss what you would like to change.
 
------
+---
 
 ## License
 
