@@ -45,4 +45,9 @@ abstract class DuskTestCase extends BaseTestCase
             )
         );
     }
+
+    protected function baseUrl(): string
+    {
+        return 'http://localhost:8000';
+    }
 }
