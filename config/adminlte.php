@@ -549,7 +549,7 @@ return [
 
     'iframe' => [
         'default_tab' => [
-            'url' => 'LaravelTicket/admin/dashboard',
+            'url' => '/admin/dashboard',
             'title' => null,
         ],
         'buttons' => [
