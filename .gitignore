@@ -30,3 +30,5 @@ Homestead.json
 .phpactor.json
 auth.json
 .phpunit.cache/test-results
+.phpunit.cache/test-results
+/.phpunit.cache
