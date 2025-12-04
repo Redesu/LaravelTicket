@@ -4,13 +4,14 @@
 @section('auth_header', __('adminlte::adminlte.register_message'))
 
 @section('auth_body')
-<form action="{{ route('register') }}" method="post">
+<form action="{{ route('register') }}" method="post"
+    onsubmit="this.querySelector('button[type='submit']').disabled = true;">
     @csrf
 
     {{-- Name field --}}
     <div class="input-group mb-3">
         <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
-            value="{{ old('name') }}" placeholder="{{ __('adminlte::adminlte.full_name') }}" autofocus>
+            value="{{ old('name') }}" placeholder="{{ __('adminlte::adminlte.full_name') }}" required autofocus>
 
         <div class="input-group-append">
             <div class="input-group-text">
@@ -28,7 +29,7 @@
     {{-- Email field --}}
     <div class="input-group mb-3">
         <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-            value="{{ old('email') }}" placeholder="{{ __('adminlte::adminlte.email') }}">
+            value="{{ old('email') }}" placeholder="{{ __('adminlte::adminlte.email') }}" required>
 
         <div class="input-group-append">
             <div class="input-group-text">
@@ -46,7 +47,7 @@
     {{-- Password field --}}
     <div class="input-group mb-3">
         <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
-            placeholder="{{ __('adminlte::adminlte.password') }}">
+            placeholder="{{ __('adminlte::adminlte.password') }}" required>
 
         <div class="input-group-append">
             <div class="input-group-text">
@@ -65,7 +66,7 @@
     <div class="input-group mb-3">
         <input type="password" name="password_confirmation"
             class="form-control @error('password_confirmation') is-invalid @enderror"
-            placeholder="{{ __('adminlte::adminlte.retype_password') }}">
+            placeholder="{{ __('adminlte::adminlte.retype_password') }}" required>
 
         <div class="input-group-append">
             <div class="input-group-text">
