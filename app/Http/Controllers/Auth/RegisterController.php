@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Log;
 
 class RegisterController extends Controller
@@ -16,15 +18,23 @@ class RegisterController extends Controller
         return view('auth.register');
     }
 
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        Log::debug('Request data:', $request->all());
+        $validated = $request->validated();
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed'
-        ]);
+        $existingUser = User::where('email', $validated['email'])->first();
+
+        if ($existingUser) {
+            if ($existingUser->created_at > now()->subSeconds(20)) {
+                Log::info('Double submission caught for email: ' . $validated['email']);
+                Auth::login($existingUser, remember: true);
+                return redirect('/')->with('success', 'Usuário registrado com sucesso!');
+            }
+
+            throw ValidationException::withMessages([
+                'email' => ['O email já está em uso.'],
+            ]);
+        }
 
         $user = User::create([
             'name' => $validated['name'],
@@ -32,8 +42,8 @@ class RegisterController extends Controller
             'password' => bcrypt($validated['password']),
         ]);
 
-        Auth::login($user);
+        Auth::login($user, remember: true);
 
-        return redirect('/')->with('success', 'Registration successful!');
+        return redirect('/')->with('success', 'Usuário registrado com sucesso!');
     }
 }
