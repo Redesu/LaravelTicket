@@ -53,4 +53,18 @@ class ChamadosTest extends DuskTestCase
                 ->waitFor('.toast-success');
         });
     }
+
+    public function testUserCanViewChamadoDetails()
+    {
+        $this->loginAsUser();
+
+        $this->browse(function (Browser $browser) {
+            $browser->visit('/admin/chamados')
+                ->waitForText('Chamados')
+                ->waitFor('#datatable tbody tr')
+                ->pause(2000)
+                ->click('#dataTable tbody tr:first-child')
+                ->assertSeeIn('h1', 'Detalhes');
+        });
+    }
 }
