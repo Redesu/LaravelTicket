@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Auth;
-use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Log;
 
@@ -21,12 +20,12 @@ class RegisterController extends Controller
     public function register(RegisterRequest $request)
     {
         $validated = $request->validated();
+        Log::info('Registration attempt for email: ' . $validated['email']);
 
         $existingUser = User::where('email', $validated['email'])->first();
 
         if ($existingUser) {
             if ($existingUser->created_at > now()->subSeconds(20)) {
-                Log::info('Double submission caught for email: ' . $validated['email']);
                 Auth::login($existingUser, remember: true);
                 return redirect('/')->with('success', 'Usuário registrado com sucesso!');
             }
