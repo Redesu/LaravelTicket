@@ -15,10 +15,6 @@ php artisan config:clear
 php artisan cache:clear
 php artisan route:clear
 php artisan view:clear
-
-echo "Optimizing..."
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+php artisan optimize:clear
 
 echo "Deployment complete!"
