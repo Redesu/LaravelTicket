@@ -11,9 +11,7 @@ class RegistrationTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_user_can_register()
     {
 

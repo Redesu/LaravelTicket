@@ -16,17 +16,17 @@ class LoginTest extends DuskTestCase
     public function testUserCanLogin(): void
     {
         $user = User::factory()->create([
-            'name' => 'John Doe',
-            'email' => 'i6KZ0@example.com',
+            'name' => 'Joao',
+            'email' => 'joao@gmail.com',
             'password' => bcrypt('password')
         ]);
 
         $this->browse(function (Browser $browser) use ($user) {
             $browser->visit('/auth/login')
-                    ->type('email', $user->email)
-                    ->type('password', 'password')
-                    ->press('Entrar')
-                    ->assertPathIs('/');
+                ->type('email', $user->email)
+                ->type('password', 'password')
+                ->press('Entrar')
+                ->assertPathIs('/');
         });
     }
 }
