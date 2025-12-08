@@ -23,6 +23,7 @@ class ChamadoFactory extends Factory
             'categoria_id' => fake()->numberBetween(1, 3),
             'departamento_id' => fake()->numberBetween(1, 2),
             'user_id' => fake()->numberBetween(1, 2),
+            'created_by' => fake()->numberBetween(1, 2),
             'prioridade' => fake()->randomElement(['Urgente', 'Alta', 'Média', 'Baixa']),
         ];
     }
