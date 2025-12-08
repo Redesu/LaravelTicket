@@ -31,4 +31,18 @@ class UpdateChamadoRequest extends FormRequest
             'user_id' => 'required|integer|exists:users,id',
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'titulo.required' => 'O campo título é obrigatório.',
+            'descricao.required' => 'O campo descrição é obrigatório.',
+            'prioridade.required' => 'O campo prioridade é obrigatório.',
+            'prioridade.in' => 'A prioridade deve ser Baixa, Média, Alta ou Urgente.',
+            'status.required' => 'O campo status é obrigatório.',
+            'categoria_nome.required' => 'O campo categoria é obrigatório.',
+            'departamento_nome.required' => 'O campo departamento é obrigatório.',
+            'user_id.required' => 'O campo usuário é obrigatório.',
+        ];
+    }
 }
