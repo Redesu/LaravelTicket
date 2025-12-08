@@ -72,7 +72,7 @@ class DeleteChamadoResponseDTO
 
     public function toJsonResponse(int $statusCode = null): JsonResponse
     {
-        $statusCode = $statusCode ?? ($this->success ? 201 : 500);
+        $statusCode = $statusCode ?? ($this->success ? 200 : 500);
         return response()->json($this->toArray(), $statusCode);
     }
 }
