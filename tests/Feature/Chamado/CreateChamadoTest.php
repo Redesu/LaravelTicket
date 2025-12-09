@@ -2,18 +2,18 @@
 
 namespace Tests\Feature\Chamado;
 
-use App\Models\Chamado;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class DeleteChamado extends TestCase
+class CreateChamadoTest extends TestCase
 {
     use RefreshDatabase;
-
-    public function user_can_delete_chamado(): void
+    #[Test]
+    public function test_user_can_create_chamado(): void
     {
+
         $this->seed();
 
         $user = User::factory()->create([
@@ -22,19 +22,15 @@ class DeleteChamado extends TestCase
             'password' => bcrypt('password')
         ]);
 
-        $chamado = Chamado::factory()->create([
+        $response = $this->actingAs($user)->post('/api/chamados', [
             'titulo' => 'Resetar senha',
-            'descricao' => 'Preciso resetar minha senha',
             'prioridade' => 'alta',
+            'descricao' => 'Preciso resetar minha senha',
             'departamento_id' => '1',
             'categoria_id' => '2',
             'user_id' => '1',
-            'created_by' => '1'
         ]);
 
-
-        $response = $this->actingAs($user)->delete('/api/chamados/' . $chamado->id);
-
-        $response->assertStatus(200);
+        $response->assertStatus(201);
     }
 }

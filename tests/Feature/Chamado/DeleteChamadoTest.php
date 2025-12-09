@@ -8,13 +8,15 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class EditChamado extends TestCase
+class DeleteChamadoTest extends TestCase
 {
     use RefreshDatabase;
-    #[Test]
-    public function test_user_can_edit_chamado(): void
+
+    public function test_user_can_delete_chamado(): void
     {
+        $this->withoutExceptionHandling();
         $this->seed();
+
         $user = User::factory()->create([
             'name' => 'Joao',
             'email' => 'joao@gmail.com',
@@ -28,21 +30,14 @@ class EditChamado extends TestCase
             'departamento_id' => '1',
             'categoria_id' => '2',
             'user_id' => '1',
-            'created_by' => '1'
+            'created_by' => '2'
         ]);
 
-        $response = $this->actingAs($user)->put('/api/chamados/' . $chamado->id, [
-            'titulo' => 'Resetar senha',
-            'prioridade' => 'Urgente',
-            'status' => 'aberto',
-            'descricao' => 'Preciso resetar minha senha',
-            'departamento_nome' => 'SUPORTE',
-            'categoria_nome' => 'SUPORTE',
-            'user_id' => '1',
+
+        $response = $this->actingAs($user)->delete('/api/chamados/', [
+            'id' => $chamado->id
         ]);
 
         $response->assertStatus(200);
-
-
     }
 }

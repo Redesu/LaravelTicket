@@ -8,7 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class ViewChamado extends TestCase
+class ViewChamadoTest extends TestCase
 {
 
     use RefreshDatabase;
@@ -17,7 +17,6 @@ class ViewChamado extends TestCase
     {
 
         $this->seed();
-        $this->withoutExceptionHandling();
         $user = User::factory()->create([
             'name' => 'Joao',
             'email' => 'joao@gmail.com',
