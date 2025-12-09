@@ -27,8 +27,8 @@ class EditChamadoTest extends TestCase
             'prioridade' => 'alta',
             'departamento_id' => '1',
             'categoria_id' => '2',
-            'user_id' => '1',
-            'created_by' => '1'
+            'user_id' => $user->id,
+            'created_by' => $user->id
         ]);
 
         $response = $this->actingAs($user)->put('/api/chamados/' . $chamado->id, [

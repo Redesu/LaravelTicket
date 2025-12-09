@@ -29,8 +29,8 @@ class DeleteChamadoTest extends TestCase
             'prioridade' => 'alta',
             'departamento_id' => '1',
             'categoria_id' => '2',
-            'user_id' => '1',
-            'created_by' => '2'
+            'user_id' => $user->id,
+            'created_by' => $user->id
         ]);
 
 
