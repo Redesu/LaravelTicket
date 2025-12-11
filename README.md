@@ -84,7 +84,7 @@ git clone [https://github.com/Redesu/LaravelTicket.git](https://github.com/Redes
 cd LaravelTicket
 ```
 
-### 2\. Install dependencies
+### 2. Install dependencies
 
 ```sh
 npm install
@@ -99,7 +99,7 @@ bun install
 composer install
 ```
 
-### 3\. Configure Environment Variables
+### 3. Configure Environment Variables
 
 Create a `.env` file in the root of the project by copying `.env.example` (if available, otherwise create it manually):
 
@@ -115,7 +115,7 @@ CLOUDINARY_UPLOAD_PRESET=your_cloudinary_upload_preset # Optional
 APP_ENV=production # This can be local or production
 ```
 
-### 4\. Run the development server
+### 4. Run the development server
 
 ```sh
 php artisan serve
@@ -177,6 +177,33 @@ See `routes/web.php` for more details on each endpoint.
 -   `GET /anexos/{id}/download` - Downloads a specific attachment.
 
 ---
+
+## Testing
+
+The project includes automated tests for the backend using **PHPUnit**. The test suite includes both unit tests for controllers and integration tests for routes. It also includes integration tests for the backend and frontend using **Dusk**.
+
+### Test Structure
+
+```text
+└───test
+    ├───Browser
+    ├───Feature
+    └───Unit
+```
+
+### Running Tests
+
+To run PHPUnit tests, run the following command:
+
+```sh
+php artisan test
+```
+
+To run Dusk tests, run the following command:
+
+```sh
+php artisan dusk
+```
 
 ## Contributing
 
