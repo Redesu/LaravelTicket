@@ -14,6 +14,7 @@ class EditChamadoTest extends TestCase
     #[Test]
     public function test_user_can_edit_chamado(): void
     {
+        $this->withoutExceptionHandling();
         $this->seed();
         $user = User::factory()->create([
             'name' => 'Joao',
@@ -38,7 +39,7 @@ class EditChamadoTest extends TestCase
             'descricao' => 'Preciso resetar minha senha',
             'departamento_nome' => 'SUPORTE',
             'categoria_nome' => 'SUPORTE',
-            'user_id' => '1',
+            'user_id' => $user->id,
         ]);
 
         $response->assertStatus(200);
