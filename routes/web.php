@@ -73,7 +73,7 @@ Route::prefix('api/users')->middleware('auth')->group(function () {
 });
 
 Route::prefix('anexos')->middleware('auth')->group(function () {
-    Route::get('/{id}/download', [AnexoController::class, 'download'])->name('api.anexos.download');
+    Route::get('/{id}/download', [AnexoController::class, 'downloadAnexos'])->name('api.anexos.download');
 });
 
 Route::get('/debug', function () {

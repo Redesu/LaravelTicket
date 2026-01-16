@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Anexo;
 use Illuminate\Http\Request;
 use Storage;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class AnexoController extends Controller
 {
-    public function download($id)
+    public function downloadAnexos($id): BinaryFileResponse|RedirectResponse
     {
         $anexo = Anexo::find($id);
 
